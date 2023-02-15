@@ -1,5 +1,5 @@
 {
-  "name": "app-salon-php-mvc-sass-s",
+  "name": "app-ventas-php-mvc-sass-s",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -26,5 +26,8 @@
     "gulp-webp": "^4.0.1",
     "sass": "^1.41.1",
     "terser": "^5.3.8"
+  },
+  "dependencies": {
+    "composer": "^4.1.0"
   }
 }
