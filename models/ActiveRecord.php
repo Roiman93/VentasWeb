@@ -4,6 +4,7 @@ class ActiveRecord {
 
     // Base DE DATOS
     protected static $db;
+    protected static $db_conf;
     protected static $tabla = '';
     protected static $columnasDB = [];
 
@@ -14,6 +15,11 @@ class ActiveRecord {
     public static function setDB($database) {
         self::$db = $database;
     }
+
+    public static function setDB_config($database){
+        self::$db_conf = $database;
+    }
+
 
     public static function setAlerta($tipo, $mensaje) {
         static::$alertas[$tipo][] = $mensaje;
@@ -30,9 +36,14 @@ class ActiveRecord {
     }
 
     // Consulta SQL para crear un objeto en Memoria
-    public static function consultarSQL($query) {
+    public static function consultarSQL($query,$interfaz) {
         // Consultar la base de datos
-        $resultado = self::$db->query($query);
+        if($interfaz=='config'){
+            $resultado = self::$db_conf->query($query);
+        }else{
+            $resultado = self::$db->query($query);
+        }
+       
 
         // Iterar los resultados
         $array = [];
@@ -125,9 +136,9 @@ class ActiveRecord {
     }
 
     // Busca un registro por su id
-    public static function where($columna, $valor) {
+    public static function where($columna, $valor,$interfaz) {
         $query = "SELECT * FROM " . static::$tabla  ." WHERE ${columna} = '${valor}'";
-        $resultado = self::consultarSQL($query);
+        $resultado = self::consultarSQL($query,$interfaz);
         return array_shift( $resultado ) ;
     }
 
@@ -148,13 +159,23 @@ class ActiveRecord {
         $query .= " ) VALUES (' "; 
         $query .= join("', '", array_values($atributos));
         $query .= " ') ";
+        print_r('<br>'.$this->interfaz.'</br>');
+        //Resultado de la consulta
+        if($this->interfaz=='config'){
+            $resultado = self::$db_conf->query($query);
+            return [
+                'resultado' =>  $resultado,
+                'id' => self::$db_conf->insert_id
+             ];
+        }else{
+            $resultado = self::$db->query($query);
+            return [
+                'resultado' =>  $resultado,
+                'id' => self::$db->insert_id
+             ];
+        }
         
-        // Resultado de la consulta
-        $resultado = self::$db->query($query);
-        return [
-           'resultado' =>  $resultado,
-           'id' => self::$db->insert_id
-        ];
+      
     }
 
     // Actualizar el registro
@@ -175,15 +196,26 @@ class ActiveRecord {
         $query .= " LIMIT 1 "; 
 
         // Actualizar BD
-        $resultado = self::$db->query($query);
-        return $resultado;
+        if($this->interfaz=='config'){
+            $resultado = self::$db_conf->query($query);
+            return $resultado;
+        }else{
+            $resultado = self::$db->query($query);
+            return $resultado;
+        }
     }
 
     // Eliminar un Registro por su ID
     public function eliminar() {
         $query = "DELETE FROM "  . static::$tabla . " WHERE id = " . self::$db->escape_string($this->id) . " LIMIT 1";
+        if($this->interfaz=='config'){
+        $resultado = self::$db_conf->query($query);
+        return $resultado;
+        }else{
         $resultado = self::$db->query($query);
         return $resultado;
+        }
+
     }
 
 }

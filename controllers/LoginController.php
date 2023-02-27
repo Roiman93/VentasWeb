@@ -12,11 +12,12 @@ class LoginController {
 
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $auth = new Usuario($_POST);
+            $auth->interfaz = 'config';
             $alertas = $auth->validarLogin();
 
             if(empty($alertas)) {
                 // Comprobar que exista el usuario
-                $usuario = Usuario::where('email', $auth->email);
+                $usuario = Usuario::where('email', $auth->email,$auth->interfaz);
 
                 if($usuario) {
                     // Verificar el password
@@ -63,15 +64,17 @@ class LoginController {
 
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $auth = new Usuario($_POST);
+            $auth->interfaz = 'config';
             $alertas = $auth->validarEmail();
 
             if(empty($alertas)) {
-                 $usuario = Usuario::where('email', $auth->email);
+                 $usuario = Usuario::where('email', $auth->email,$auth->interfaz);
 
                  if($usuario && $usuario->confirmado === "1") {
                         
                     // Generar un token
                     $usuario->crearToken();
+                    $usuario->interfaz = 'config';
                     $usuario->guardar();
 
                     //  Enviar el email
@@ -99,9 +102,10 @@ class LoginController {
         $error = false;
 
         $token = s($_GET['token']);
+        $auth->interfaz = 'config';
 
         // Buscar usuario por su token
-        $usuario = Usuario::where('token', $token);
+        $usuario = Usuario::where('token', $token,$auth->interfaz);
 
         if(empty($usuario)) {
             Usuario::setAlerta('error', 'Token No Válido');
@@ -157,6 +161,8 @@ class LoginController {
 
                     // Generar un Token único
                     $usuario->crearToken();
+                    // Se define la interfaz
+                    $usuario->interfaz = 'config';
 
                     // Enviar el Email
                     $email = new Email($usuario->nombre, $usuario->email, $usuario->token);
@@ -185,7 +191,8 @@ class LoginController {
     public static function confirmar(Router $router) {
         $alertas = [];
         $token = s($_GET['token']);
-        $usuario = Usuario::where('token', $token);
+        $usuario->interfaz = 'config';
+        $usuario = Usuario::where('token', $token,$usuario->interfaz);
 
         if(empty($usuario)) {
             // Mostrar mensaje de error
@@ -194,6 +201,7 @@ class LoginController {
             // Modificar a usuario confirmado
             $usuario->confirmado = "1";
             $usuario->token = null;
+           
             $usuario->guardar();
             Usuario::setAlerta('exito', 'Cuenta Comprobada Correctamente');
         }
