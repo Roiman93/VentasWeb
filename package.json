@@ -1,13 +1,23 @@
 {
-  "name": "app-ventas-php-mvc-sass-s",
+  "name": "ventas-web-php-mvc",
   "version": "1.0.0",
-  "description": "",
+  "description": "sistema de ventas y facturacion web para pequeñas y medinas empresas  ",
   "main": "index.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "gulp"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Roiman93/VentasWeb.git"
+  },
+  "keywords": [],
+  "author": "ing-royman-rodriguez",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Roiman93/VentasWeb/issues"
+  },
+  "homepage": "https://github.com/Roiman93/VentasWeb#readme",
   "devDependencies": {
     "browser-sync": "^2.26.13",
     "cssnano": "^4.1.10",
@@ -26,8 +36,6 @@
     "gulp-webp": "^4.0.1",
     "sass": "^1.41.1",
     "terser": "^5.3.8"
-  },
-  "dependencies": {
-    "composer": "^4.1.0"
+   
   }
 }

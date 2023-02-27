@@ -1,17 +1,28 @@
 const { src, dest, watch , series, parallel } = require('gulp');
-const sass = require('gulp-sass')(require('sass'));
-const autoprefixer = require('autoprefixer');
-const postcss    = require('gulp-postcss')
-const sourcemaps = require('gulp-sourcemaps')
-const cssnano = require('cssnano');
-const concat = require('gulp-concat');
-const terser = require('gulp-terser-js');
-const rename = require('gulp-rename');
-const imagemin = require('gulp-imagemin'); // Minificar imagenes 
-const notify = require('gulp-notify');
-const cache = require('gulp-cache');
-const clean = require('gulp-clean');
-const webp = require('gulp-webp');
+
+//CSS
+const sass          = require('gulp-sass')(require('sass'));
+const autoprefixer  = require('autoprefixer');
+const cssnano       = require('cssnano');
+const postcss       = require('gulp-postcss')
+const sourcemaps    = require('gulp-sourcemaps')
+
+// Imagenes
+const cache         = require('gulp-cache');
+const imagemin      = require('gulp-imagemin');
+const webp          = require('gulp-webp');
+
+//Javascript
+const terser        = require('gulp-terser-js');
+const concat        = require('gulp-concat');
+const rename        = require('gulp-rename');
+
+// Notificaciòn
+const notify        = require('gulp-notify');
+
+// 
+const clean         = require('gulp-clean');
+
 
 const paths = {
     scss: 'src/scss/**/*.scss',
@@ -51,6 +62,24 @@ function versionWebp() {
         .pipe(dest('public/build/img'))
         .pipe(notify({ message: 'Imagen Completada'}));
 }
+
+function imgmin() {
+    return src(paths.imagenes)
+        .pipe(changed(imgDest))
+        .pipe(imagemin([
+            imagemin.gifsicle({
+                interlaced: true
+            }),
+            imagemin.mozjpeg({
+                progressive: true
+            }),
+            imagemin.optipng({
+                optimizationLevel: 5
+            })
+        ]))
+        .pipe(gulp.dest(imgDest));
+}
+
 
 
 function watchArchivos() {
