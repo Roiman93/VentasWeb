@@ -8,7 +8,7 @@ namespace Controllers;
 use Model\AdminCita;
 use MVC\Router;
 
-class AdminController
+class VentasController
 {
     public static function index(Router $router)
     {
@@ -39,10 +39,9 @@ class AdminController
 
         //$citas = AdminCita::SQL($consulta);
 
-        $router->render("pages/admin", [
+        $router->render("pages/ventas", [
             "nombre" => $_SESSION["nombre"],
-            "citas" => "",
-            "fecha" => $fecha,
+            "pagina" => "Ventas",
         ]);
     }
 }
