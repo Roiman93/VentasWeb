@@ -35,28 +35,61 @@
 
 <body>
 
-
-    <?php if (isset($_SESSION["admin"])) {
-        include_once __DIR__ . "/templates/menu/menu_admin.php";
-    } ?>
-
     <!-- Site content !-->
     <div class="pusher">
-        <?php echo $contenido; ?>
+        <div class="full height">
 
+            <?php if (isset($_SESSION["admin"])) {
+                include_once __DIR__ . "/templates/menu/menu_admin.php";
+            } ?>
+
+            <div class="toc">
+                <div class="article">
+                    <?php echo $contenido; ?>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script>
-    function hide_o_show() {
-
-        $('.ui.sidebar').sidebar('toggle');
-
-    }
-    </script>
-    <script type="text/javascript" src="build/js/Sweetalert.min.js"></script>
-
-    <?php echo $script ?? ""; ?>
 
 </body>
+
+<script>
+function hide_o_show() {
+
+    $('.ui.sidebar').sidebar('toggle');
+
+}
+
+function myFunction(x) {
+    if (x.matches) { // Si la consulta de medios coincide
+        // document.body.style.backgroundColor = "yellow";
+        $('#menu_tablet').hide();
+        $('#menu_mobil').show();
+        $('#div_h').hide();
+
+    } else {
+
+        $('#menu_tablet').show();
+        $('#div_h').show();
+        $('#menu_mobil').hide();
+
+
+        // document.body.style.backgroundColor = "pink";
+    }
+}
+// ejecutar funcion cuando se cargue la pagina por completo
+window.addEventListener("load", function() {
+
+    var x = window.matchMedia("(max-width: 768px)")
+    myFunction(x) // Llamar a la función de escucha en tiempo de ejecución
+    x.addListener(myFunction) // Adjunte la función de escucha en los cambios de estado
+
+});
+</script>
+
+<?php echo $script ?? ""; ?>
+
+<script type="text/javascript" src="build/js/Sweetalert.min.js"></script>
 
 </html>

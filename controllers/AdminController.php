@@ -40,9 +40,9 @@ class AdminController
         //$citas = AdminCita::SQL($consulta);
 
         $router->render("pages/admin", [
-            "nombre" => $_SESSION["nombre"],
-            "citas" => "",
-            "fecha" => $fecha,
+            "name" => $_SESSION["nombre"],
+            "page" => "Inicio",
+            "date_st" => $fecha,
         ]);
     }
 }

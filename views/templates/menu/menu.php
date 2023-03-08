@@ -1,6 +1,9 @@
 <?php
+/**
+ * @format
+ */
 
-  if($_SESSION['ih_tipo'] == 1){?>
+if ($_SESSION["ih_tipo"] == 1) { ?>
 
 <div class="ui main fluid three menu inverted" style="margin: 0 auto 0 auto;">
     <!-- contenido del menu-->
@@ -116,14 +119,7 @@
     </div>
 </div>
 
-
-
-
-
-
-
-
-<?php }else{ ?>
+<?php } else { ?>
 
 <div class="ui main fluid three menu inverted" style="margin: 0 auto 0 auto;">
     <!-- contenido del menu-->

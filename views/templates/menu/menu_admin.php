@@ -1,59 +1,25 @@
-<!-- se muestra o se oculta el menu hacia la izquierda -->
-<!-- <div  class="ui black big launch right attached  button">
-  <i class="content icon"></i>
-  <span class="text">Menú</span>
-</div> -->
-
-
-<!-- Aparece cuando se reduce la pantalla -->
-<div class="ui fixed  inverted main menu">
-    <div class="ui container">
-        <a class="launch icon item">
-            <i onclick="hide_o_show();" class="content icon"></i>
-        </a>
-
-        <div class="item"><?php isset($pagina) ? print $pagina : ""; ?></div>
-
-        <div class="right menu">
-
-            <a class="item">
-                <b>
-                    <i class="user icon"></i> <?php isset($_SESSION["nombre"])
-                        ? print $_SESSION["nombre"]
-                        : print ""; ?></b>
-
-                </b>
-                <b>&nbsp &nbsp
-                    <i class="shield alternate icon"></i> <?php isset(
-                        $_SESSION["admin"]
-                    ) && $_SESSION["admin"] == 1
-                        ? print "Administrador"
-                        : print "Vendedor"; ?>
-                </b>
-            </a>
-
-            <div class="vertically fitted borderless item">
-                <a class="mini ui blue  button" href="/logout">Cerrar Sesión</a>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-<!-- menu vertical -->
-<div class="ui sidebar vertical inverted menu">
-
-
-    <div class="ui hidden divider"></div>
-    <div class="ui hidden divider"></div>
-
-
+<!-- menu vertical general -->
+<div class="ui vertical stackable inverted sidebar menu">
     <div class="item">
         <a class="ui logo icon image" href="">
             <img src="build/img/inicio.webp" width="35%">
         </a>
         <a href="/"><b>Ventas Web</b></a>
+
+    </div>
+
+    <div class="item">
+        <a class="ui logo icon image">
+            <i class="user icon"></i>
+        </a>
+        <a><?php isset($name) ? print $name : print ""; ?></a>
+
+        <a class="ui logo icon image">
+            <i class="shield alternate icon"></i>
+        </a>
+        <a><?php isset($_SESSION["admin"]) && $_SESSION["admin"] == 1
+            ? print "Administrador"
+            : print "Vendedor"; ?></a>
 
     </div>
 
@@ -108,6 +74,7 @@
 
         </div>
     </div>
+
     <div class="item">
         <div class="header">Configuración</div>
         <div class="menu">
@@ -121,5 +88,58 @@
         </div>
     </div>
 
+    <div class="item">
+        <a class="mini ui blue  button" href="/logout">Cerrar Sesión</a>
 
+    </div>
+
+</div>
+
+<!-- menu para mobil -->
+<div id="menu_mobil" class="ui black big  launch right attached fixed button" style='display:none;'
+    onclick="hide_o_show();">
+    <i class="content icon"></i>
+    <span class="text">Menu</span>
+</div>
+
+<!--  menu tablet -->
+<div id="menu_tablet" class="ui fixed inverted main menu">
+    <div class="ui container">
+        <a class="launch icon item">
+            <i onclick="hide_o_show();" class="content icon"></i>
+        </a>
+
+        <div class="item"><?php isset($page) ? print $page : ""; ?></div>
+
+        <div class="right menu">
+            <div class="vertically stackable fitted borderless item">
+                <div class="item">
+
+                    <b>
+                        <i class="user icon"></i> <?php isset($name)
+                            ? print $name
+                            : print ""; ?>
+
+                    </b>
+                    <b>&nbsp &nbsp
+                        <i class="shield alternate icon"></i> <?php isset(
+                            $_SESSION["admin"]
+                        ) && $_SESSION["admin"] == 1
+                            ? print "Administrador"
+                            : print "Vendedor"; ?>
+                    </b>
+                </div>
+
+
+                <div class="item">
+                    <div class="ui hidden  aligned search input">
+
+                        <a class="mini ui blue  button" href="/logout">Cerrar Sesión</a>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>

@@ -40,8 +40,8 @@ class VentasController
         //$citas = AdminCita::SQL($consulta);
 
         $router->render("pages/ventas", [
-            "nombre" => $_SESSION["nombre"],
-            "pagina" => "Ventas",
+            "name" => $_SESSION["nombre"],
+            "page" => "Ventas",
         ]);
     }
 }

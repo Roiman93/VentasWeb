@@ -3,24 +3,23 @@
   <div class="ui hidden divider"></div>
   <!-- Formulario clientes -->
   <div class="ui very relax container m-a-70-m-b-70 ">
-
-      <div class="ui secondary segment">
-          <h2 class="ui right aligned header">Factura Numero:
-              <div class="ui mini disabled input">
-                  <input type="text" name="Nfactura" value="<?php if (
-                      empty($prefj[0]->prefijo)
-                  ) {
+      <!-- indica el prefico y numerode factura actual -->
+      <h2 class="ui header">
+          <i class="file alternate icon"></i>
+          <div class="content">Factura Numero:
+              <div class="sub header">
+                  <?php if (empty($prefj[0]->prefijo)) {
                       print "Configure Resolucion";
                   } else {
                       print $prefj[0]->prefijo . "" . $prefj[0]->n_actual;
-                  } ?>">
+                  } ?>
               </div>
-          </h2>
-      </div>
+          </div>
+      </h2>
 
       <div class="ui secondary segment">
           <div class="ui form">
-              <h4 class="ui dividing header">Datos del cliente</h4>
+              <h4 class="ui dividing header"><i class="address card icon"></i>Datos del cliente</h4>
               <div class="equal width  fields">
 
                   <div class="field">
@@ -60,6 +59,7 @@
 
       </div>
 
+      <!-- botones flotantes -->
       <div class="ui left floated green tertiary  compact segment">
           <h3 class="ui centered header">Acciones</h3>
           <div class="ui small basic icon buttons">
@@ -72,41 +72,51 @@
           </div>
       </div>
 
-      <!-- fin -->
-
       <!-- tabla de facturacion -->
       <selection>
           <table class="ui very compact  small  table" id="tbl_venta">
               <thead>
                   <tr class="ui inverted table">
                       <th width="100px">
-                          <h5 class=" ui header" style="color:#ffff" scope="col">Codigo</h5< /th>
+                          <h5 class=" ui header" style="color:#ffff" scope="col">Codigo</h5>
                       <th>
                           <h5 class=" ui header" style="color:#ffff" scope="col">Descripcion</h5>
                       </th>
                       <th>
                           <h5 class=" ui header" style="color:#ffff" scope="col">Existencia</h5>
                       </th>
-                      <th class="center aligned">
+                      <th class="">
                           <h5 class=" ui header" style="color:#ffff" scope="col">Cantidad</h5>
                       </th>
-                      <th class="right aligned">
+                      <th class=" aligned">
                           <h5 class=" ui header" style="color:#ffff" scope="col">Precio</h5>
                       </th>
-                      <th class="right aligned">
-                          <h5 class=" ui header" style="color:#ffff" scope="col">Precio Total</h5< /th>
+                      <th class=" aligned">
+                          <h5 class=" ui header" style="color:#ffff" scope="col">Precio Total</h5>
                       <th>
                           <h5 class=" ui header" style="color:#ffff" scope="col">Accion</h5>
                       </th>
                   </tr>
+
                   <!-- busqueda de productos -->
                   <tr>
-                      <td><input type="text" name="txt_cod_producto" id="txt_cod_producto"></td>
+                      <td>
+                          <div class="ui input focus">
+                              <input type="text" name="txt_cod_producto" id="txt_cod_producto" placeholder="Buscar...">
+                          </div>
+                      </td>
+
                       <td style="display:none;" id="id"></td>
                       <td id="txt_descripcion">-</td>
                       <td id="txt_existencia">-</td>
-                      <td class="center aligned"><input type="text" name="txt_cant_producto" id="txt_cant_producto"
-                              value="0" min="1" disabled></td>
+
+                      <td class="">
+
+                          <div class="ui  input">
+                              <input type="text" name="txt_cant_producto" id="txt_cant_producto"
+                                  placeholder="Cantidad..." disabled>
+                          </div>
+                      </td>
 
                       <input type="hidden" name="" id="txt_id" value="<?php echo md5(
                           $_SESSION["id"]
@@ -117,8 +127,8 @@
                           ? "1"
                           : "2"; ?>">
 
-                      <td id="txt_precio" class="right aligned">0.00</td>
-                      <td id="txt_precio_total" class="right aligned">0.00</td>
+                      <td id="txt_precio" class=" aligned">0.00</td>
+                      <td id="txt_precio_total" class=" aligned">0.00</td>
                       <td> <a href="#" id="add_product_venta" class="link_add" style="display:none;"><i
                                   class="plus square icon"></i> Agregar</a></td>
                   </tr>
@@ -133,13 +143,13 @@
                       <th colspan="2">
                           <h5 class=" ui header" style="color:#ffff" scope="col">Descripcion</h5>
                       </th>
-                      <th class="center aligned">
+                      <th class=" aligned">
                           <h5 class=" ui header" style="color:#ffff" scope="col">Cantidad</h5>
                       </th>
-                      <th class="right aligned">
+                      <th class=" aligned">
                           <h5 class=" ui header" style="color:#ffff" scope="col">Precio</h5>
                       </th>
-                      <th class="right aligned">
+                      <th class="aligned">
                           <h5 class=" ui header" style="color:#ffff" scope="col">Precio Total</h5>
                       </th>
                       <th>
