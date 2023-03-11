@@ -10,7 +10,9 @@ use Controllers\APIController;
 use Controllers\CitaController;
 use Controllers\LoginController;
 use Controllers\ServicioController;
-use Controllers\VentasController;
+use Controllers\BillingController;
+use Controllers\APICustomerController;
+use Controllers\APIProductController;
 use MVC\Router;
 $router = new Router();
 
@@ -57,7 +59,14 @@ $router->post("/servicios/actualizar", [
 $router->post("/servicios/eliminar", [ServicioController::class, "eliminar"]);
 
 // ventas
-$router->get("/ventas", [VentasController::class, "index"]);
+$router->get("/ventas", [BillingController::class, "index"]);
+$router->post("/api/cliente", [APICustomerController::class, "get_cliente"]);
+
+/* productos */
+$router->post("/api/get_stock_producto", [
+    APIProductController::class,
+    "get_stock_product",
+]);
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();

@@ -22,8 +22,18 @@ class Router
 
     public function comprobarRutas()
     {
-        $currentUrl = $_SERVER["PATH_INFO"] ?? "/";
         $method = $_SERVER["REQUEST_METHOD"];
+
+        if (isset($_SERVER["PATH_INFO"])) {
+            $currentUrl = $_SERVER["PATH_INFO"] ?? "/";
+        } elseif (isset($_SERVER["REQUEST_URI"])) {
+            $currentUrl = $_SERVER["REQUEST_URI"] = ""
+                ? "/"
+                : $_SERVER["REQUEST_URI"];
+        } else {
+            var_dump("no captura la ruta.");
+            exit();
+        }
 
         if ($method === "GET") {
             $fn = $this->getRoutes[$currentUrl] ?? null;

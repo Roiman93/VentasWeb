@@ -1,209 +1,12 @@
 /** @format */
-
+/*  Ejecuta  el codigo luego de cargar todo el html */
 window.addEventListener("load", function () {
-    //busquedas
     $("#c_cliente").focus();
-    serchForDetalle();
-
-    // ocultar
-    $("#btn_new_cliente").slideUp();
 });
 
-// buscar clientes por cedula
-function BuscarCliente() {
-    var cc = $("#c_cliente").val();
-    var action = "searchCliente";
-
-    if (cc == "" || cc == 0) {
-        swal({
-            title: "Oops!",
-            text: "Digite un Nuemero de Documento valido",
-            icon: "warning",
-            button: "ok",
-        }).then((willDelete) => {
-            if (willDelete) {
-                $("#c_cliente").focus();
-            }
-        });
-    } else {
-        $.ajax({
-            url: "modelo/ajax.php",
-            type: "POST",
-            async: true,
-            data: { action: action, cliente: cc },
-
-            success: function (response) {
-                if (response == 0) {
-                    swal({
-                        title: "Cedula No Registrada",
-                        text: "Desea Registrar el Nuevo Cliente",
-                        icon: "warning",
-                        buttons: true,
-                        dangerMode: true,
-                    }).then((willDelete) => {
-                        if (willDelete) {
-                            $("#nom_cliente").prop("disabled", false);
-                            $("#nom2_cliente").prop("disabled", false);
-                            $("#ap_cliente").prop("disabled", false);
-                            $("#ap2_cliente").prop("disabled", false);
-                            $("#idcliente").val("");
-                            $("#nom_cliente").val("");
-                            $("#nom2_cliente").val("");
-                            $("#ap_cliente").val("");
-                            $("#ap2_cliente").val("");
-                            $("#nom_cliente").focus();
-
-                            // MOSTRAR BOTON AGREGAR
-                            $("#btn_new_cliente").slideDown();
-                        } else {
-                            // swal("!No se Realizo Ninguna Accion!");
-                            $("#c_cliente").focus();
-                        }
-                    });
-                } else {
-                    var data = $.parseJSON(response);
-                    $("#idcliente").val(data.id_cliente);
-                    $("#nom_cliente").val(data.nombre_1);
-                    $("#nom2_cliente").val(data.nombre_2);
-                    $("#ap_cliente").val(data.apellido_1);
-                    $("#ap2_cliente").val(data.apellido_2);
-
-                    //ocultar boton
-                    $("#btn_new_cliente").slideUp();
-                    // bloque campos
-                    $("#c_cliente").prop("disabled", true);
-                    $("#idcliente").prop("disabled", true);
-                    $("#nom_cliente").prop("disabled", true);
-                    $("#nom2_cliente").prop("disabled", true);
-                    $("#ap_cliente").prop("disabled", true);
-                    $("#ap2_cliente").prop("disabled", true);
-                    $("#txt_cod_producto").focus();
-                }
-            },
-            error: function (error) {},
-        });
-    }
-}
-// fin
-
-//buscar productos
-function buscar_producto() {
-    var pt = $("#txt_cod_producto").val();
-    var action = "infoProducto";
-
-    if (pt != "") {
-        $.ajax({
-            url: "modelo/ajax.php",
-            type: "POST",
-            async: true,
-            data: { action: action, producto: pt },
-            success: function (response) {
-                if (response != "error") {
-                    var info = JSON.parse(response);
-                    $("#id").html(info.id_producto);
-                    $("#txt_descripcion").html(info.nombre);
-                    $("#txt_existencia").html(info.stock);
-                    $("#txt_cant_producto").val("1");
-                    $("#txt_precio").html(info.precio_venta);
-                    $("#txt_precio_total").html(
-                        formatterPeso.format(info.precio_venta)
-                    );
-
-                    if ($("#txt_existencia").html() > 0) {
-                        // activar cantidad
-                        $("#txt_cant_producto").removeAttr("disabled");
-
-                        $("#txt_cant_producto").focus();
-                        $("#add_product_venta").slideDown();
-                    } else {
-                        // Bloquear cantidad
-                        $("#txt_cant_producto").prop("disabled", true);
-                        // ocultar agregar
-                        $("#add_product_venta").slideUp();
-                        $("#txt_cod_producto").focus();
-                    }
-                } else {
-                    $("#id_producto").html("");
-                    $("#txt_descripcion").html("-");
-                    $("#txt_existencia").html("-");
-                    $("#txt_cant_producto").html("0");
-                    $("#txt_precio").html("0.00");
-                    $("#txt_precio_total").html("0.00");
-
-                    // Bloquear cantidad
-                    $("#txt_cant_producto").prop("disabled", true);
-
-                    // ocultar agregar
-                    $("#add_product_venta").slideUp();
-                    $("#txt_cod_producto").focus();
-                }
-            },
-            error: function (error) {},
-        });
-    }
-}
 // fin
 
 // fin --------
-
-// validaciones
-
-//validar buscar cliente
-var elem = document.getElementById("c_cliente");
-elem.onkeyup = function (e) {
-    if (e.keyCode == 13) {
-        BuscarCliente();
-    }
-};
-//fin
-
-// validar enter codigo producto
-var txt_cod = document.getElementById("txt_cod_producto");
-txt_cod.onkeyup = function (e) {
-    if (e.keyCode == 13) {
-        buscar_producto();
-    }
-};
-//fin
-
-// validar enter cantidad producto
-var txt_cod = document.getElementById("txt_cant_producto");
-txt_cod.onkeyup = function (e) {
-    if (e.keyCode == 13) {
-        ValidarCantidad();
-    }
-};
-
-// validar cantidad antes de agregar
-function ValidarCantidad() {
-    var precio_total = $("#txt_cant_producto").val() * $("#txt_precio").html();
-    var existencia = parseInt($("#txt_existencia").html());
-    var pt = precio_total;
-    $("#txt_precio_total").html(formatterPeso.format(pt));
-    //$('#txt_precio_total').html(pt);
-
-    // oculta el boton agregar si la cantidad es menor que 1
-    if (
-        $("#txt_cant_producto").val() < 1 ||
-        isNaN($("#txt_cant_producto").val()) ||
-        $("#txt_cant_producto").val() > existencia
-    ) {
-        $("#add_product_venta").slideUp();
-    } else {
-        $("#add_product_venta").slideDown();
-        $("#add_product_venta").focus();
-    }
-}
-
-// mostar/ ocultar boton procesar
-function viewProcesar() {
-    if ($("#detalle_venta tr").length > 0) {
-        $("#btn_facturar_venta").show();
-    } else {
-        $("#btn_facturar_venta").hide();
-    }
-}
-//fin
 
 //fin------------
 
@@ -471,33 +274,6 @@ function del_producto_detalle(correlativo) {
     });
 }
 
-// mostrar detalle tabla temporal
-function serchForDetalle(id) {
-    var action = "serchForDetalle";
-    var user = $("#txt_id").val();
-
-    $.ajax({
-        url: "../models/ajax.php",
-        type: "POST",
-        async: true,
-        data: { action: action, user: user },
-        success: function (response) {
-            if (response != "error") {
-                var info = JSON.parse(response);
-
-                $("#detalle_venta").html(info.detalle);
-                $("#detalle_totales").html(info.totales);
-            } else {
-                console.log("no data");
-                $("#detalle_venta").html("");
-                $("#detalle_totales").html("");
-            }
-            viewProcesar();
-        },
-        error: function (error) {},
-    });
-}
-
 //mostrar factura
 function viwfacturas(e) {
     var no = $("#txt_nofact").val();
@@ -521,11 +297,6 @@ function viwfacturas(e) {
         },
         error: function (error) {},
     });
-}
-
-function Cancelar() {
-    var url = "?opcion=ventas";
-    location.href = url;
 }
 
 // limpiar todo el formulario
@@ -553,4 +324,206 @@ function Limpiar_Formulario() {
     $("#c_cliente").prop("disabled", false);
 
     $("#c_cliente").focus();
-} //fin
+}
+
+/* nuevo codigo limpio  */
+
+/* consulta un cliente por cedula */
+async function consultarAPI_Clientes() {
+    /*variabes*/
+    var doc_client = $("#c_cliente").val();
+
+    const datos = new FormData();
+    datos.append("date", doc_client);
+
+    try {
+        /* Petición hacia la api */
+        const url = "http://localhost:8888/api/cliente";
+        const respuesta = await fetch(url, {
+            method: "POST",
+            body: datos,
+        });
+        data = await respuesta.json();
+
+        mostrar_reslutados(data);
+    } catch (error) {}
+}
+/* muestra el resultado de la consulta cliente */
+function mostrar_reslutados(data) {
+    if (data.resultado == null) {
+        console.log("no se encontraron resultados");
+        swal({
+            title: "Cedula No Registrada",
+            text: "Desea Registrar el Nuevo Cliente",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $("#nom_cliente").prop("disabled", false);
+                $("#nom2_cliente").prop("disabled", false);
+                $("#ap_cliente").prop("disabled", false);
+                $("#ap2_cliente").prop("disabled", false);
+                $("#txt_cod_producto").prop("disabled", true);
+                $("#idcliente").val("");
+                $("#nom_cliente").val("");
+                $("#nom2_cliente").val("");
+                $("#ap_cliente").val("");
+                $("#ap2_cliente").val("");
+                $("#nom_cliente").focus();
+
+                // MOSTRAR BOTON AGREGAR
+                $("#btn_new_cliente").slideDown();
+                $("#btn_cancel_cliente").slideDown();
+            } else {
+                // swal("!No se Realizo Ninguna Accion!");
+                $("#c_cliente").focus();
+            }
+        });
+    } else {
+        $("#idcliente").val(data.resultado["cedula"]);
+        $("#nom_cliente").val(data.resultado["nombre_1"]);
+        $("#nom2_cliente").val(data.resultado["nombre_2"]);
+        $("#ap_cliente").val(data.resultado["apellido_1"]);
+        $("#ap2_cliente").val(data.resultado["apellido_2"]);
+
+        /* ocultar boton */
+        $("#btn_new_cliente").slideUp();
+        $("#btn_cancel_cliente").slideUp();
+
+        /* habilitar boton codigo productos */
+        $("#txt_cod_producto").prop("disabled", false);
+
+        /* bloque campos */
+        $("#c_cliente").prop("disabled", true);
+        $("#idcliente").prop("disabled", true);
+        $("#nom_cliente").prop("disabled", true);
+        $("#nom2_cliente").prop("disabled", true);
+        $("#ap_cliente").prop("disabled", true);
+        $("#ap2_cliente").prop("disabled", true);
+        $("#txt_cod_producto").focus();
+    }
+}
+
+/* busca un producto por el codigo */
+async function consultarAPi_productos() {
+    /*variabes*/
+    var codigo = $("#txt_cod_producto").val();
+
+    const datos = new FormData();
+    datos.append("data", codigo);
+
+    try {
+        /* Petición hacia la api */
+        const url = "http://localhost:8888/api/get_stock_producto";
+        const respuesta = await fetch(url, {
+            method: "POST",
+            body: datos,
+        });
+        data = await respuesta.json();
+
+        mostrar_resultado_producto(data);
+    } catch (error) {}
+}
+
+/* muestra el resultado de la consulta producto */
+function mostrar_resultado_producto(data) {
+    var pt = $("#txt_cod_producto").val();
+    var action = "infoProducto";
+
+    if (data.resultado == null) {
+        $("#id_producto").html("");
+        $("#txt_descripcion").html("-");
+        $("#txt_existencia").html("-");
+        $("#txt_cant_producto").html("0");
+        $("#txt_precio").html("0.00");
+        $("#txt_precio_total").html("0.00");
+
+        // Bloquear cantidad
+        $("#txt_cant_producto").prop("disabled", true);
+
+        // ocultar agregar
+        $("#add_product_venta").slideUp();
+        $("#txt_cod_producto").focus();
+    } else {
+        $("#id").html(data.resultado["id_producto"]);
+        $("#txt_descripcion").html(data.resultado["nombre"]);
+        $("#txt_existencia").html(data.resultado["stock"]);
+        $("#txt_cant_producto").val("1");
+        $("#txt_precio").html(data.resultado["precio_venta"]);
+        $("#txt_precio_total").html(
+            formatterPeso.format(data.resultado["precio_venta"])
+        );
+
+        if ($("#txt_existencia").html() > 0) {
+            // activar cantidad
+            $("#txt_cant_producto").removeAttr("disabled");
+
+            $("#txt_cant_producto").focus();
+            $("#add_product_venta").slideDown();
+        } else {
+            // Bloquear cantidad
+            $("#txt_cant_producto").prop("disabled", true);
+            // ocultar agregar
+            $("#add_product_venta").slideUp();
+            $("#txt_cod_producto").focus();
+        }
+    }
+}
+
+/*  validaciones boton enter */
+
+/* buscar por cedual cuando se presiona enter*/
+var elem = document.getElementById("c_cliente");
+elem.onkeyup = function (e) {
+    if (e.keyCode == 13) {
+        consultarAPI_Clientes();
+    }
+};
+
+/*  busca el producto x codigo cuando se presiona enter  */
+var txt_cod = document.getElementById("txt_cod_producto");
+txt_cod.onkeyup = function (e) {
+    if (e.keyCode == 13) {
+        consultarAPi_productos();
+    }
+};
+
+/* Ingresa la cantidad cuando se preciona enter */
+var txt_cod = document.getElementById("txt_cant_producto");
+txt_cod.onkeyup = function (e) {
+    if (e.keyCode == 13) {
+        ValidarCantidad();
+    }
+};
+
+/* verificaciones  */
+
+/* compara la cantidad con la existencia antes de agregarla */
+function ValidarCantidad() {
+    var precio_total = $("#txt_cant_producto").val() * $("#txt_precio").html();
+    var existencia = parseInt($("#txt_existencia").html());
+    var pt = precio_total;
+    $("#txt_precio_total").html(formatterPeso.format(pt));
+
+    /*  oculta el boton agregar si la cantidad es menor que 1 */
+    if (
+        $("#txt_cant_producto").val() < 1 ||
+        isNaN($("#txt_cant_producto").val()) ||
+        $("#txt_cant_producto").val() > existencia
+    ) {
+        $("#add_product_venta").slideUp();
+    } else {
+        $("#add_product_venta").slideDown();
+        $("#add_product_venta").focus();
+    }
+}
+
+/* muestra el boton procesar si existen registros */
+function viewProcesar() {
+    if ($("#detalle_venta tr").length > 0) {
+        $("#btn_facturar_venta").show();
+    } else {
+        $("#btn_facturar_venta").hide();
+    }
+}

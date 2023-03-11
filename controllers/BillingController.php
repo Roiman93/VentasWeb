@@ -4,11 +4,11 @@
  */
 
 namespace Controllers;
-
+header("Access-Control-Allow-Origin: *");
 use Model\AdminCita;
 use MVC\Router;
 
-class VentasController
+class BillingController
 {
     public static function index(Router $router)
     {

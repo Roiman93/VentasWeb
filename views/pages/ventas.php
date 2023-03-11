@@ -51,7 +51,9 @@
                           onkeypress="return lettersOnly(event);">
                   </div>
               </div>
-              <input class="ui green button" type="submit" id="btn_new_cliente" value="Nuevo cliente">
+              <input class="ui green button" type="submit" id="btn_new_cliente" value="Nuevo cliente"
+                  style="display:none;">
+              <input class="ui button" type="submit" id="btn_cancel_cliente" value="Cancelar" style="display:none;">
           </div>
 
           <!-- + -->
@@ -102,7 +104,8 @@
                   <tr>
                       <td>
                           <div class="ui input focus">
-                              <input type="text" name="txt_cod_producto" id="txt_cod_producto" placeholder="Buscar...">
+                              <input type="text" name="txt_cod_producto" id="txt_cod_producto" placeholder="Buscar..."
+                                  disabled>
                           </div>
                       </td>
 
