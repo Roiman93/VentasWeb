@@ -6,16 +6,22 @@
 namespace Model;
 class ActiveRecord
 {
-    // Base DE DATOS
+    /* Base DE DATOS */
     protected static $db;
     protected static $db_conf;
     protected static $tabla = "";
     protected static $columnasDB = [];
 
-    // Alertas y Mensajes
+    /*  Alertas y Mensajes */
     protected static $alertas = [];
+    /* tipo de datos */
+    protected static $fieldTypes = [
+        "name" => "string",
+        "age" => "integer",
+        "email" => "string",
+    ];
 
-    // Definir la conexión a la BD - includes/database.php
+    /*  Definir la conexión a la BD - includes/database.php */
     public static function setDB($database)
     {
         self::$db = $database;
@@ -31,38 +37,145 @@ class ActiveRecord
         static::$alertas[$tipo][] = $mensaje;
     }
 
-    // Validación
+    /*  Validación */
     public static function getAlertas()
     {
         return static::$alertas;
     }
+    /* validamis si la tabla existe en la sistem_confg */
+    public static function tableExistsInDatabase($table)
+    {
+        try {
+            $query =
+                "SELECT COUNT(*) as count FROM information_schema.tables WHERE table_schema = 'sistem_confg' AND table_name = '" .
+                $table .
+                "'";
 
+            $result = self::$db_conf->query($query);
+
+            if ($result === false) {
+                return false; // la tabla no se encuentra en la base de datos
+            } else {
+                $row = $result->fetch_assoc();
+                $count = $row["count"];
+                return $count > 0; // devuelve true si la tabla existe, false si no existe
+            }
+            /* Si la consulta falla, se lanzará una excepción */
+        } catch (Exception $e) {
+            // Si la consulta falla, se muestra un mensaje de error utilizando SweetAlert2
+            echo '<script>
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "' .
+                $e->getMessage() .
+                '"
+                    });
+                </script>';
+            exit();
+        }
+    }
+    /*  se verifica si existe algun error */
     public function validar()
     {
         static::$alertas = [];
         return static::$alertas;
     }
-
-    // Consulta SQL para crear un objeto en Memoria
-    public static function consultarSQL($query, $interfaz)
+    /* captura los errores en una consulta  */
+    public static function getResults($query)
     {
-        // Consultar la base de datos
-        if (isset($interfaz) && $interfaz == "config") {
-            $resultado = self::$db_conf->query($query);
-        } else {
-            $resultado = self::$db->query($query);
+        try {
+            if (self::tableExistsInDatabase(static::$tabla)) {
+                /* echo "La tabla existe"; */
+                $result = self::$db_conf->query($query);
+            } else {
+                /*  echo "La tabla no existe"; */
+                $result = self::$db->query($query);
+            }
+
+            /* Si la consulta falla, se lanzará una excepción */
+        } catch (Exception $e) {
+            echo '<script>
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "' .
+                $e->getMessage() .
+                '"
+                    });
+                </script>';
+            exit();
         }
 
-        // Iterar los resultados
+        /* Si la consulta se realiza correctamente, se retorna el resultado */
+        return $result;
+    }
+
+    function filtrarObjeto($objeto, $valor)
+    {
+        $resultado = [];
+        foreach ($objeto as $clave => $elemento) {
+            if ($elemento == $valor) {
+                $resultado[$clave] = $elemento;
+            }
+        }
+        return (object) $resultado;
+    }
+
+    function eliminarObjeto($objeto, $valor)
+    {
+        foreach ($objeto as $clave => $elemento) {
+            if ($elemento != $valor) {
+                unset($objeto->$clave);
+            }
+        }
+        return $objeto;
+    }
+    /* valida el tipo de datos de los objetos */
+    function validateObjectFields($object, $fieldTypes)
+    {
+        // Verifica que el objeto y los tipos de campo sean arrays
+        if (!is_array($object) || !is_array($fieldTypes)) {
+            throw new InvalidArgumentException(
+                "Se esperaba un objeto y un array de tipos de campo."
+            );
+        }
+
+        foreach ($object as $key => $value) {
+            // Verifica que el campo exista en el array de tipos de campo
+            if (!array_key_exists($key, $fieldTypes)) {
+                throw new InvalidArgumentException(
+                    "El campo $key no está definido en el array de tipos de campo."
+                );
+            }
+
+            // Verifica que el valor del campo coincida con el tipo de campo definido
+            if (gettype($value) !== $fieldTypes[$key]) {
+                throw new InvalidArgumentException(
+                    "El campo $key debe ser de tipo " . $fieldTypes[$key]
+                );
+            }
+        }
+
+        // Si todos los campos son válidos, devuelve verdadero
+        return true;
+    }
+
+    // Consulta SQL para crear un objeto en Memoria
+    public static function consultarSQL($query)
+    {
+        $resultado = self::getResults($query);
+
+        /* Iterar los resultados */
         $array = [];
         while ($registro = $resultado->fetch_assoc()) {
             $array[] = static::crearObjeto($registro);
         }
 
-        // liberar la memoria
+        /*  liberar la memoria */
         $resultado->free();
 
-        // retornar los resultados
+        /* retornar los resultados */
         return $array;
     }
 
@@ -88,8 +201,10 @@ class ActiveRecord
             if ($columna === "id") {
                 continue;
             }
+
             $atributos[$columna] = $this->$columna;
         }
+
         return $atributos;
     }
 
@@ -101,6 +216,7 @@ class ActiveRecord
         foreach ($atributos as $key => $value) {
             $sanitizado[$key] = self::$db->escape_string($value);
         }
+
         return $sanitizado;
     }
 
@@ -118,7 +234,7 @@ class ActiveRecord
     public static function all()
     {
         $query = "SELECT * FROM " . static::$tabla;
-        $resultado = self::consultarSQL($query);
+        $resultado = self::consultarSQL($query, "");
         return $resultado;
     }
 
@@ -139,29 +255,29 @@ class ActiveRecord
         return array_shift($resultado);
     }
 
-    public static function get($prm = [])
-    {
-        $interfaz = "";
-        $query =
-            "SELECT * FROM " .
-            static::$tabla .
-            " WHERE " .
-            $prm["colum"] .
-            " = " .
-            $prm["data"];
-
-        $resultado = self::consultarSQL($query, $interfaz);
-        return array_shift($resultado);
-    }
-
     // Busca un registro por su id
-    public static function where($columna, $valor, $interfaz)
+    public static function where($column, $value, $operator = "")
     {
-        $query =
-            "SELECT * FROM " .
-            static::$tabla .
-            " WHERE ${columna} = '${valor}'";
-        $resultado = self::consultarSQL($query, $interfaz);
+        $query = "";
+        if (isset($operator) && $operator != "") {
+            $query =
+                "SELECT * FROM " .
+                static::$tabla .
+                " WHERE " .
+                $column .
+                " " .
+                $operator .
+                "'" .
+                $value .
+                "'";
+        } else {
+            $query =
+                "SELECT * FROM " .
+                static::$tabla .
+                " WHERE ${column} = '${value}'";
+        }
+
+        $resultado = self::consultarSQL($query);
         return array_shift($resultado);
     }
 
@@ -172,11 +288,36 @@ class ActiveRecord
         return $resultado;
     }
 
+    /* consulta con multiples tablas */
+    public static function select(
+        $tables,
+        $joins,
+        $fields,
+        $join_type = "INNER JOIN"
+    ) {
+        $query = "SELECT " . implode(", ", $fields) . " FROM " . $tables[0];
+
+        foreach ($joins as $key => $join) {
+            $query .=
+                " " . $join_type . " " . $tables[$key + 1] . " ON " . $join;
+        }
+
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // crea un nuevo registro
     public function crear()
     {
+        $interfaz = "";
+
         // Sanitizar los datos
-        $atributos = $this->sanitizarAtributos();
+        $atributos = $this->sanitizarAtributos($_POST);
 
         // Insertar en la base de datos
         $query = " INSERT INTO " . static::$tabla . " ( ";
@@ -184,9 +325,10 @@ class ActiveRecord
         $query .= " ) VALUES (' ";
         $query .= join("', '", array_values($atributos));
         $query .= " ') ";
-        print_r("<br>" . $this->interfaz . "</br>");
-        //Resultado de la consulta
-        if ($this->interfaz == "config") {
+        // print_r("<br>" . $query . "</br>");
+
+        /*   Resultado de la consulta */
+        if (isset($this->interfaz) && $this->interfaz == "config") {
             $resultado = self::$db_conf->query($query);
             return [
                 "resultado" => $resultado,
@@ -251,10 +393,13 @@ class ActiveRecord
     public function guardar()
     {
         $resultado = "";
+
         if (!is_null($this->id)) {
             // actualizar
             $resultado = $this->actualizar();
         } else {
+            // debuguear($this->id);
+            // exit();
             // Creando un nuevo registro
             $resultado = $this->crear();
         }

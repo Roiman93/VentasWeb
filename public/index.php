@@ -67,6 +67,10 @@ $router->post("/api/get_stock_producto", [
     APIProductController::class,
     "get_stock_product",
 ]);
+$router->post("/api/get_add_detalle_producto", [
+    APIProductController::class,
+    "add_detalle_product",
+]);
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();

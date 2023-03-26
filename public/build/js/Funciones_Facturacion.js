@@ -91,60 +91,6 @@ $("#btn_new_cliente").click(function (e) {
 });
 // fin
 
-//agregar producto al detalle
-$("#add_product_venta").click(function (e) {
-    e.preventDefault();
-
-    if ($("#txt_cant_producto").val() > 0) {
-        var id_p = $("#id").html();
-        var codproducto = $("#txt_cod_producto").val();
-        var cantidad = $("#txt_cant_producto").val();
-        var id = $("#txt_id").val();
-        var action = "addProductoDetalle";
-
-        $.ajax({
-            url: "modelo/ajax.php",
-            type: "POST",
-            async: true,
-            data: {
-                action: action,
-                producto: id_p,
-                cantidad: cantidad,
-                token: id,
-            },
-            success: function (response) {
-                if (response != "error") {
-                    var info = JSON.parse(response);
-
-                    $("#detalle_venta").html(info.detalle);
-                    $("#detalle_totales").html(info.totales);
-
-                    $("#txt_cod_producto").val("");
-                    $("#txt_descripcion").html("-");
-                    $("#txt_existencia").html("-");
-                    $("#txt_cant_producto").html("0");
-                    $("#txt_precio").html("0.00");
-                    $("#txt_precio_total").html("0.00");
-
-                    // Bloquear cantidad
-                    $("#txt_cant_producto").prop("disabled", true);
-
-                    // ocultar agregar
-                    $("#add_product_venta").slideUp();
-
-                    $("#txt_cod_producto").focus();
-                    viewProcesar();
-                } else {
-                    console.log("no data");
-                }
-                viewProcesar();
-            },
-            error: function (error) {},
-        });
-    }
-});
-//fin
-
 // procesar venta
 $("#btn_facturar_venta").click(function (e) {
     e.preventDefault();
@@ -428,9 +374,6 @@ async function consultarAPi_productos() {
 
 /* muestra el resultado de la consulta producto */
 function mostrar_resultado_producto(data) {
-    var pt = $("#txt_cod_producto").val();
-    var action = "infoProducto";
-
     if (data.resultado == null) {
         $("#id_producto").html("");
         $("#txt_descripcion").html("-");
@@ -455,21 +398,85 @@ function mostrar_resultado_producto(data) {
             formatterPeso.format(data.resultado["precio_venta"])
         );
 
-        if ($("#txt_existencia").html() > 0) {
-            // activar cantidad
-            $("#txt_cant_producto").removeAttr("disabled");
+        // if ($("#txt_existencia").html() > 0) {
+        //     // activar cantidad
+        //     $("#txt_cant_producto").removeAttr("disabled");
 
-            $("#txt_cant_producto").focus();
-            $("#add_product_venta").slideDown();
-        } else {
-            // Bloquear cantidad
-            $("#txt_cant_producto").prop("disabled", true);
-            // ocultar agregar
-            $("#add_product_venta").slideUp();
-            $("#txt_cod_producto").focus();
-        }
+        //     $("#txt_cant_producto").focus();
+        //     $("#add_product_venta").slideDown();
+        // } else {
+        //     // Bloquear cantidad
+        //     $("#txt_cant_producto").prop("disabled", true);
+        //     // ocultar agregar
+        //     $("#add_product_venta").slideUp();
+        //     $("#txt_cod_producto").focus();
+        // }
     }
 }
+
+/* agregar producto al detalle de la factura  */
+async function agregar_producto() {
+    /* captura de datos */
+    var id_p = $("#id").html();
+    var cantidad = $("#txt_cant_producto").val();
+    var pventa = $("#txt_precio").html();
+    var token = $("#txt_token").val();
+    var valoresAceptados = /^[0-9]+$/;
+
+    if (cantidad.match(valoresAceptados) && cantidad !== "") {
+        // alert("Es numérico");
+
+        const datos = new FormData();
+        /* datos.append("id", null); */
+        datos.append("id_producto", id_p);
+        datos.append("cantidad", cantidad);
+        datos.append("precio_venta", pventa);
+        datos.append("mesa", null);
+        datos.append("token_user", token);
+
+        try {
+            /* Petición hacia la api */
+            const url = "http://localhost:8888/api/get_add_detalle_producto";
+            const respuesta = await fetch(url, {
+                method: "POST",
+                body: datos,
+            });
+            var data = await respuesta.json();
+            mostras_detalle_producto(data);
+        } catch (error) {}
+    } else {
+        alert("No es numérico");
+    }
+}
+
+function mostras_detalle_producto(data) {
+    if (data.resultado == null) {
+        alert("no se recibio respuesta");
+    } else {
+        $("#detalle_venta").html(data.resultado);
+        // $('#detalle_tlt_fact').html(info.totales);
+
+        // $("#detalle_venta").html(info.detalle);
+        // $("#detalle_totales").html(info.totales);
+
+        $("#txt_cod_producto").val("");
+        $("#txt_descripcion").html("-");
+        $("#txt_existencia").html("-");
+        $("#txt_cant_producto").html("0");
+        $("#txt_precio").html("0.00");
+        $("#txt_precio_total").html("0.00");
+
+        // Bloquear cantidad
+        $("#txt_cant_producto").prop("disabled", true);
+
+        // ocultar agregar
+        $("#add_product_venta").slideUp();
+
+        $("#txt_cod_producto").focus();
+        viewProcesar();
+    }
+}
+//fin
 
 /*  validaciones boton enter */
 
@@ -497,6 +504,10 @@ txt_cod.onkeyup = function (e) {
     }
 };
 
+$("#add_producto").click(function (e) {
+    agregar_producto();
+});
+
 /* verificaciones  */
 
 /* compara la cantidad con la existencia antes de agregarla */
@@ -504,19 +515,19 @@ function ValidarCantidad() {
     var precio_total = $("#txt_cant_producto").val() * $("#txt_precio").html();
     var existencia = parseInt($("#txt_existencia").html());
     var pt = precio_total;
-    $("#txt_precio_total").html(formatterPeso.format(pt));
+    // $("#txt_precio_total").html(formatterPeso.format(pt));
 
-    /*  oculta el boton agregar si la cantidad es menor que 1 */
-    if (
-        $("#txt_cant_producto").val() < 1 ||
-        isNaN($("#txt_cant_producto").val()) ||
-        $("#txt_cant_producto").val() > existencia
-    ) {
-        $("#add_product_venta").slideUp();
-    } else {
-        $("#add_product_venta").slideDown();
-        $("#add_product_venta").focus();
-    }
+    // /*  oculta el boton agregar si la cantidad es menor que 1 */
+    // if (
+    //     $("#txt_cant_producto").val() !== 1 ||
+    //     isNaN($("#txt_cant_producto").val()) ||
+    //     $("#txt_cant_producto").val() == existencia
+    // ) {
+    //     $("#add_product_venta").slideUp();
+    // } else {
+    //     $("#add_product_venta").slideDown();
+    //     $("#add_product_venta").focus();
+    // }
 }
 
 /* muestra el boton procesar si existen registros */

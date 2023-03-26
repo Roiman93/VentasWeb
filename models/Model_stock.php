@@ -7,7 +7,13 @@ namespace Model;
 /* existencia */
 class Model_stock extends ActiveRecord
 {
-    // Base de datos
+    /*  declaracias de variables */
+    public $ar_detalle_product = [];
+    public $id;
+    public $nombre;
+    public $precio;
+
+    /* Base de datos */
     protected static $tabla = "inventario";
     protected static $columnasDB = [
         "id_producto",
@@ -19,10 +25,6 @@ class Model_stock extends ActiveRecord
         "stock",
     ];
 
-    public $id;
-    public $nombre;
-    public $precio;
-
     public function __construct($args = [])
     {
         $this->id_producto = $args["id_producto"] ?? null;
@@ -32,6 +34,29 @@ class Model_stock extends ActiveRecord
         $this->entradas = $args["entradas"] ?? "";
         $this->salidas = $args["salidas"] ?? "";
         $this->stock = $args["stock"] ?? "";
+    }
+
+    public function producto_detalle($prm = [])
+    {
+        // debuguear($_POST);
+
+        if (isset($_POST)) {
+            $this->ar_detalle_product([
+                [
+                    "id" => $_POST["id"],
+                    "codigo" => $_POST["codigo"],
+                    "cantidad" => $_POST["cantidad"],
+                    "token" => $_POST["token"],
+                ],
+            ]);
+
+            // array_push($this->ar_detalle_product["id"] .= $_POST["id"]);
+            // $this->ar_detalle_product["codigo"] .= $_POST["codigo"];
+            // $this->ar_detalle_product["cantidad"] .= $_POST["cantidad"];
+            // $this->ar_detalle_product["token"] .= $_POST["token"];
+        }
+
+        return $this->ar_detalle_product;
     }
 
     public function validar()

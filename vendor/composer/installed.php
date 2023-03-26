@@ -3,7 +3,7 @@
         'name' => 'ing-roiman-rodriguez/ventas-web',
         'pretty_version' => 'dev-develop',
         'version' => 'dev-develop',
-        'reference' => '0fd687505e9c6cfc644dfffd3206984861df9e14',
+        'reference' => 'd33c42c7834da54919e22c500262fa2930ed45bf',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -22,7 +22,7 @@
         'ing-roiman-rodriguez/ventas-web' => array(
             'pretty_version' => 'dev-develop',
             'version' => 'dev-develop',
-            'reference' => '0fd687505e9c6cfc644dfffd3206984861df9e14',
+            'reference' => 'd33c42c7834da54919e22c500262fa2930ed45bf',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

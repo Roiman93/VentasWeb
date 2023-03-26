@@ -47,10 +47,7 @@ class APICustomerController
         // consulta el cliente con el numero de documento
 
         $model = new Model_customer($_POST);
-        $resultado = $model->get([
-            "colum" => "cedula",
-            "data" => $_POST["date"],
-        ]);
+        $resultado = Model_customer::where("cedula", $_POST["date"]);
 
         echo json_encode(["resultado" => $resultado]);
     }

@@ -37,7 +37,7 @@ class BillingController
         $consulta .= " ON servicios.id=citasServicios.servicioId ";
         $consulta .= " WHERE fecha =  '${fecha}' ";
 
-        //$citas = AdminCita::SQL($consulta);
+        // $citas = AdminCita::SQL($consulta);
 
         $router->render("pages/ventas", [
             "name" => $_SESSION["nombre"],

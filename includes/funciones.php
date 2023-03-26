@@ -40,3 +40,9 @@ function isAdmin(): void
         header("Location: /");
     }
 }
+
+/* busca la ruta absoluta de un archivo */
+function getAbsolutePath($file_path)
+{
+    return realpath($file_path);
+}

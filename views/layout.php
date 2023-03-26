@@ -31,28 +31,35 @@
 
     <title>Sistema Ventas</title>
 
+    <style>
+    /*  mantiene fija la cabecera de la tabla  */
+    thead.sticky {
+        position: sticky;
+        top: 0;
+        background-color: #fff;
+        z-index: 1;
+    }
+    </style>
+
 </head>
+
 
 <body>
 
-    <!-- Site content !-->
+    <?php if (isset($_SESSION["admin"])) {
+        include_once __DIR__ . "/templates/menu/menu_admin.php";
+    } ?>
+
+
     <div class="pusher">
-        <div class="full height">
-
-            <?php if (isset($_SESSION["admin"])) {
-                include_once __DIR__ . "/templates/menu/menu_admin.php";
-            } ?>
-
-            <div class="toc">
-                <div class="article">
-                    <?php echo $contenido; ?>
-                </div>
-            </div>
+        <div class="article">
+            <?php echo $contenido; ?>
         </div>
     </div>
 
-
+    <?php echo $script ?? ""; ?>
 </body>
+
 
 <script>
 function hide_o_show() {
@@ -84,11 +91,12 @@ window.addEventListener("load", function() {
     var x = window.matchMedia("(max-width: 768px)")
     myFunction(x) // Llamar a la función de escucha en tiempo de ejecución
     x.addListener(myFunction) // Adjunte la función de escucha en los cambios de estado
+    $('.ui.button').popup();
+
+
 
 });
 </script>
-
-<?php echo $script ?? ""; ?>
 
 <script type="text/javascript" src="build/js/Sweetalert.min.js"></script>
 

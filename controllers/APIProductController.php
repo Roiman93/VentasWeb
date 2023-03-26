@@ -7,7 +7,9 @@ namespace Controllers;
 header("Access-Control-Allow-Origin: *");
 use Model\Model_product;
 use Model\Model_stock;
-
+use Model\Model_billing_tmp;
+use Classes\Html;
+use Classes\Process;
 /* producto */
 class APIProductController
 {
@@ -19,24 +21,24 @@ class APIProductController
 
     public static function guardar()
     {
-        // Almacena la Cita y devuelve el ID
-        // $cita = new Cita($_POST);
-        // $resultado = $cita->guardar();
+        /*  Almacena la Cita y devuelve el ID */
+        $cita = new Cita($_POST);
+        $resultado = $cita->guardar();
 
         $id = $resultado["id"];
 
         // Almacena la Cita y el Servicio
 
-        // Almacena los Servicios con el ID de la Cita
-        // $idServicios = explode(",", $_POST['servicios']);
-        // foreach($idServicios as $idServicio) {
-        //     $args = [
-        //         'citaId' => $id,
-        //         'servicioId' => $idServicio
-        //     ];
-        //     $citaServicio = new CitaServicio($args);
-        //     $citaServicio->guardar();
-        // }
+        /*  Almacena los Servicios con el ID de la Cita */
+        $idServicios = explode(",", $_POST["servicios"]);
+        foreach ($idServicios as $idServicio) {
+            $args = [
+                "citaId" => $id,
+                "servicioId" => $idServicio,
+            ];
+            $citaServicio = new CitaServicio($args);
+            $citaServicio->guardar();
+        }
 
         echo json_encode(["resultado" => $resultado]);
     }
@@ -45,12 +47,45 @@ class APIProductController
     public static function get_stock_product()
     {
         $model = new Model_stock($_POST);
-        $resultado = $model->get([
-            "colum" => "codigo",
-            "data" => $_POST["data"],
-        ]);
+        $resultado = $model->where("codigo", $_POST["data"]);
 
         echo json_encode(["resultado" => $resultado]);
+    }
+
+    /* almacena temporalmente los productos del detalle */
+    public static function add_detalle_product()
+    {
+        $token = $_POST["token_user"];
+        $model = new Model_billing_tmp($_POST);
+        $resultado = $model->guardar();
+
+        /* retorna el id  del insert */
+        $id = $resultado["id"];
+
+        if (isset($resultado["id"])) {
+            $dato = Model_billing_tmp::all();
+        }
+
+        /* filtramos los datos */
+        $dat = $model->eliminarObjeto($dato, $token);
+
+        /* calculo los detalles de la factura */
+        $detalle_totales = Process::total_billing($dat);
+
+        /*  Validamos si el objeto está vacío */
+        if (empty((array) $dato)) {
+            $tabla = null;
+        } else {
+            $tabla = Html::crearTabla($dato, ["delete"]);
+        }
+
+        /*  Resultado en formato JSON */
+        $result = json_encode([
+            "resultado" => $tabla,
+            "resumen" => $detalle_totales,
+        ]);
+
+        echo $result;
     }
 
     /*    elimina un producto */
