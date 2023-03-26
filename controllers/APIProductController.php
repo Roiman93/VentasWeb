@@ -63,20 +63,23 @@ class APIProductController
         $id = $resultado["id"];
 
         if (isset($resultado["id"])) {
-            $dato = Model_billing_tmp::all();
+            $datos = Model_billing_tmp::all();
+            /* filtramos los datos */
+            $datos_filt = $model->eliminarObjeto($datos, $token);
+            /*  cosnsultamos todos los productos */
+            $productos = Model_product::all();
+            /* comparamos  los 2 objetos */
+            $dt_detalles = $model->innerObjeto($datos_filt, $productos);
         }
 
-        /* filtramos los datos */
-        $dat = $model->eliminarObjeto($dato, $token);
-
-        /* calculo los detalles de la factura */
-        $detalle_totales = Process::total_billing($dat);
+        /* calculo del resumen de la factura */
+        $detalle_totales = Process::total_billing($dt_detalles);
 
         /*  Validamos si el objeto está vacío */
-        if (empty((array) $dato)) {
+        if (empty((array) $dt_detalles)) {
             $tabla = null;
         } else {
-            $tabla = Html::crearTabla($dato, ["delete"]);
+            $tabla = Html::crearTabla($dt_detalles, ["delete"]);
         }
 
         /*  Resultado en formato JSON */

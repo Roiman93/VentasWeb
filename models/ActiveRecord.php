@@ -111,6 +111,29 @@ class ActiveRecord
         return $result;
     }
 
+    /* compara 2 objeto y crea uno nuevo con las conincidencias */
+    function innerObjeto($obj1, $obj2)
+    {
+        $resultados = [];
+        foreach ($obj1 as $clave => $elemento) {
+            foreach ($obj2 as $clave => $value) {
+                if ($elemento->id_producto == $value->id_producto) {
+                    $resultado = [
+                        "id" => $elemento->id,
+                        "Producto" => $value->nombre,
+                        "Cantidad" => $elemento->cantidad,
+                        "Precio" => $elemento->precio_venta,
+                        "Total" =>
+                            $elemento->precio_venta * $elemento->cantidad,
+                    ];
+                    $resultados[] = (object) $resultado;
+                }
+            }
+        }
+
+        return $resultados;
+    }
+
     function filtrarObjeto($objeto, $valor)
     {
         $resultado = [];
@@ -121,7 +144,7 @@ class ActiveRecord
         }
         return (object) $resultado;
     }
-
+    /* elimina un objeto por el valor que reciba */
     function eliminarObjeto($objeto, $valor)
     {
         foreach ($objeto as $clave => $elemento) {
@@ -131,6 +154,7 @@ class ActiveRecord
         }
         return $objeto;
     }
+
     /* valida el tipo de datos de los objetos */
     function validateObjectFields($object, $fieldTypes)
     {

@@ -7,6 +7,7 @@ namespace Classes;
 
 class Process
 {
+    /* se calcula el resumen de la factura  */
     public static function total_billing($objeto)
     {
         $resultado = [];
@@ -15,16 +16,16 @@ class Process
         $total_factura = 0;
 
         foreach ($objeto as $key => $value) {
-            $sub_total = round($value->cantidad * $value->precio_venta, 2);
+            $sub_total = round($value->Total, 2);
             $total = round($total + $sub_total, 2);
         }
 
-        $impuesto = round($sub_total * (19 / 100), 2);
-        $tl_sniva = round($sub_total - $impuesto, 2);
+        $impuesto = round($total * (19 / 100), 2);
+        $tl_sniva = round($total - $impuesto, 2);
         $total_factura = round($tl_sniva + $impuesto, 2);
 
         /*  total a pagar  */
-        $tlt = number_format($total, 2, ".", ".");
+        $tlt = number_format($total_factura, 2, ".", ".");
         /* subtotal sin iva */
         $tl_s = number_format($tl_sniva, 2, ".", ".");
         /* iva */
@@ -34,6 +35,6 @@ class Process
         $resultado["sub_total"] = $tl_s;
         $resultado["iva"] = $inpto;
 
-        return (object) $resultado;
+        return $resultado;
     }
 }

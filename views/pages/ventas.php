@@ -142,9 +142,26 @@
       </div>
 
       <!-- Tabla resumen factura -->
-      <div id="detalle_totales">
-          <!-- Tabla ajax -->
+      <div class="ui tiny stackable compact right floated inverted  segment">
+
+          <div class="ui mini green inverted statistic">
+              <div class="label">Total: </div>
+              <div id="txt_total" class="value"></div>
+          </div>
+          <div class="ui mini green inverted statistic">
+              <div class="label">Iva: </div>
+              <div id="txt_iva" class="value"></div>
+          </div>
+
+          <div class="ui mini green  inverted statistic">
+              <div class="label">Subtotal: </div>
+              <div id="txt_subtotal" class="value"></div>
+          </div>
+          <p></p>
+
       </div>
+
+
 
   </div>
 

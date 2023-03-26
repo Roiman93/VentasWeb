@@ -44,7 +44,7 @@
 </head>
 
 
-<body>
+<body style="">
 
     <?php if (isset($_SESSION["admin"])) {
         include_once __DIR__ . "/templates/menu/menu_admin.php";
@@ -92,8 +92,6 @@ window.addEventListener("load", function() {
     myFunction(x) // Llamar a la función de escucha en tiempo de ejecución
     x.addListener(myFunction) // Adjunte la función de escucha en los cambios de estado
     $('.ui.button').popup();
-
-
 
 });
 </script>

@@ -454,10 +454,9 @@ function mostras_detalle_producto(data) {
         alert("no se recibio respuesta");
     } else {
         $("#detalle_venta").html(data.resultado);
-        // $('#detalle_tlt_fact').html(info.totales);
-
-        // $("#detalle_venta").html(info.detalle);
-        // $("#detalle_totales").html(info.totales);
+        $("#txt_iva").html(" $" + data.resumen.iva);
+        $("#txt_subtotal").html(" $" + data.resumen.sub_total);
+        $("#txt_total").html(" $" + data.resumen.total);
 
         $("#txt_cod_producto").val("");
         $("#txt_descripcion").html("-");
