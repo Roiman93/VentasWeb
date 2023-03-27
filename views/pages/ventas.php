@@ -142,49 +142,34 @@
       </div>
 
       <!-- Tabla resumen factura -->
-      <div class="ui inverted stackable grid">
-          <div class="sixteen wide column center aligned">
-              <div class="ui three column grid">
-                  <div class="column centered aligned">
-                      <div class="ui mini green statistic">
-                          <div id="txt_subtotal" class="value"></div>
-                          <div class="label">Subtotal</div>
+      <!-- <div class="ui right aligned  inverted segment"> -->
+      <div class="ui right floated inverted stackable segment">
+          <div class="ui inverted relaxed divided list">
+              <div class="item">
+                  <div class="content">
+                      <div class="header">Subtotal: <span id="txt_subtotal"></span>
                       </div>
+
                   </div>
-                  <div class="column centered aligned">
-                      <div class="ui mini green statistic">
-                          <div id="txt_iva" class="value"></div>
-                          <div class="label">Iva</div>
+              </div>
+              <div class="item">
+                  <div class="content">
+                      <div class="header">Iva: <span id="txt_iva"></span>
                       </div>
+
                   </div>
-                  <div class="column centered aligned">
-                      <div class="ui mini green statistic">
-                          <div id="txt_total" class="value"></div>
-                          <div class="label">Total</div>
+              </div>
+              <div class="item">
+                  <div class="content">
+                      <div class="header">Total: <spam id="txt_total"></spam>
                       </div>
+
                   </div>
               </div>
           </div>
       </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      <div class="ui hidden divider"></div>
+      <div class="ui hidden divider"></div>
 
   </div>
 
