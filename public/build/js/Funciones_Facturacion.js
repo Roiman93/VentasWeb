@@ -294,10 +294,37 @@ async function consultarAPI_Clientes() {
         mostrar_reslutados(data);
     } catch (error) {}
 }
+
 /* muestra el resultado de la consulta cliente */
 function mostrar_reslutados(data) {
-    if (data.resultado == null) {
-        console.log("no se encontraron resultados");
+    if (typeof data === "undefined") {
+        // Data es undefined, no se recibió respuesta del servidor
+        swal({
+            title: "Error",
+            text: "No se recibió respuesta del servidor",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $("#c_cliente").focus();
+            }
+        });
+    } else if (data.error) {
+        // Data contiene un error
+        swal({
+            title: "Error",
+            text: data.error,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $("#c_cliente").focus();
+            }
+        });
+    } else if (data.resultado === null) {
+        // Data contiene un resultado nulo, no existe el registro
         swal({
             title: "Cedula No Registrada",
             text: "Desea Registrar el Nuevo Cliente",
@@ -306,47 +333,39 @@ function mostrar_reslutados(data) {
             dangerMode: true,
         }).then((willDelete) => {
             if (willDelete) {
-                $("#nom_cliente").prop("disabled", false);
-                $("#nom2_cliente").prop("disabled", false);
-                $("#ap_cliente").prop("disabled", false);
-                $("#ap2_cliente").prop("disabled", false);
+                $(
+                    "#nom_cliente, #nom2_cliente, #ap_cliente, #ap2_cliente"
+                ).prop("disabled", false);
                 $("#txt_cod_producto").prop("disabled", true);
-                $("#idcliente").val("");
-                $("#nom_cliente").val("");
-                $("#nom2_cliente").val("");
-                $("#ap_cliente").val("");
-                $("#ap2_cliente").val("");
+                $(
+                    "#id_cliente, #nom_cliente, #nom2_cliente, #ap_cliente, #ap2_cliente"
+                ).val("");
                 $("#nom_cliente").focus();
 
                 // MOSTRAR BOTON AGREGAR
-                $("#btn_new_cliente").slideDown();
-                $("#btn_cancel_cliente").slideDown();
+                $("#btn_new_cliente, #btn_cancel_cliente").slideDown();
             } else {
-                // swal("!No se Realizo Ninguna Accion!");
                 $("#c_cliente").focus();
             }
         });
     } else {
-        $("#idcliente").val(data.resultado["cedula"]);
-        $("#nom_cliente").val(data.resultado["nombre_1"]);
-        $("#nom2_cliente").val(data.resultado["nombre_2"]);
-        $("#ap_cliente").val(data.resultado["apellido_1"]);
-        $("#ap2_cliente").val(data.resultado["apellido_2"]);
+        // Data contiene un resultado válido, se encontró el registro
+        $("#id_cliente").val(data.resultado[0].id_cliente);
+        $("#nom_cliente").val(data.resultado[0].nombre_1);
+        $("#nom2_cliente").val(data.resultado[0].nombre_2);
+        $("#ap_cliente").val(data.resultado[0].apellido_1);
+        $("#ap2_cliente").val(data.resultado[0].apellido_2);
 
-        /* ocultar boton */
-        $("#btn_new_cliente").slideUp();
-        $("#btn_cancel_cliente").slideUp();
+        // OCULTAR BOTON
+        $("#btn_new_cliente, #btn_cancel_cliente").slideUp();
 
-        /* habilitar boton codigo productos */
+        // HABILITAR BOTON CODIGO PRODUCTOS
         $("#txt_cod_producto").prop("disabled", false);
 
-        /* bloque campos */
-        $("#c_cliente").prop("disabled", true);
-        $("#idcliente").prop("disabled", true);
-        $("#nom_cliente").prop("disabled", true);
-        $("#nom2_cliente").prop("disabled", true);
-        $("#ap_cliente").prop("disabled", true);
-        $("#ap2_cliente").prop("disabled", true);
+        // BLOQUE CAMPOS
+        $(
+            "#c_cliente, #idcliente, #nom_cliente, #nom2_cliente, #ap_cliente, #ap2_cliente"
+        ).prop("disabled", true);
         $("#txt_cod_producto").focus();
     }
 }
@@ -389,13 +408,13 @@ function mostrar_resultado_producto(data) {
         $("#add_product_venta").slideUp();
         $("#txt_cod_producto").focus();
     } else {
-        $("#id").html(data.resultado["id_producto"]);
-        $("#txt_descripcion").html(data.resultado["nombre"]);
-        $("#txt_existencia").html(data.resultado["stock"]);
+        $("#id").html(data.resultado[0].id_producto);
+        $("#txt_descripcion").html(data.resultado[0].nombre);
+        $("#txt_existencia").html(data.resultado[0].stock);
         $("#txt_cant_producto").val("1");
-        $("#txt_precio").html(data.resultado["precio_venta"]);
+        $("#txt_precio").html(data.resultado[0].precio_venta);
         $("#txt_precio_total").html(
-            formatterPeso.format(data.resultado["precio_venta"])
+            formatterPeso.format(data.resultado[0].precio_venta)
         );
 
         // if ($("#txt_existencia").html() > 0) {
@@ -449,6 +468,27 @@ async function agregar_producto() {
     }
 }
 
+/* eliminar producto del detalle */
+async function APi_producto_delete(id) {
+    /*variabes*/
+    var token = $("#txt_token").val();
+    const datos = new FormData();
+    datos.append("id", id);
+    datos.append("token_user", token);
+
+    try {
+        /* Petición hacia la api */
+        const url = "http://localhost:8888/api/delete_detalle_producto";
+        const respuesta = await fetch(url, {
+            method: "POST",
+            body: datos,
+        });
+        data = await respuesta.json();
+
+        mostras_detalle_producto(data);
+    } catch (error) {}
+}
+
 function mostras_detalle_producto(data) {
     if (data.resultado == null) {
         alert("no se recibio respuesta");
@@ -476,6 +516,29 @@ function mostras_detalle_producto(data) {
     }
 }
 //fin
+
+/* Genera la factura y la guarda en la bd */
+async function guardar_factura() {
+    /*variabes*/
+    var token = $("#txt_token").val();
+    var doc_client = $("#c_cliente").val();
+
+    const datos = new FormData();
+    datos.append("token_user", token);
+    datos.append("id_cliente", doc_client);
+
+    try {
+        /* Petición hacia la api */
+        const url = "http://localhost:8888/api/delete_detalle_producto";
+        const respuesta = await fetch(url, {
+            method: "POST",
+            body: datos,
+        });
+        data = await respuesta.json();
+
+        mostras_detalle_producto(data);
+    } catch (error) {}
+}
 
 /*  validaciones boton enter */
 
@@ -536,4 +599,28 @@ function viewProcesar() {
     } else {
         $("#btn_facturar_venta").hide();
     }
+}
+
+/* eliminar registros  */
+function eliminar(id) {
+    swal({
+        title: "¿Seguro que deseas eliminar el Registro?",
+        text: "No podrás deshacer este paso...",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            if (APi_producto_delete(id)) {
+                swal("!Registro Eliminado!", {
+                    icon: "success",
+                });
+            }
+        } else {
+            swal("!No se Realizo Ningun Cambio!");
+        }
+    });
+
+    // Código para eliminar el elemento con el ID especificado
+    // El parámetro "element" representa el elemento HTML que se hizo clic
 }

@@ -185,22 +185,30 @@ class ActiveRecord
         return true;
     }
 
-    // Consulta SQL para crear un objeto en Memoria
+    /* Consulta SQL para crear un objeto en Memoria */
     public static function consultarSQL($query)
     {
         $resultado = self::getResults($query);
-
-        /* Iterar los resultados */
         $array = [];
-        while ($registro = $resultado->fetch_assoc()) {
-            $array[] = static::crearObjeto($registro);
+
+        if ($resultado !== true) {
+            if ($resultado->num_rows > 0) {
+                /* Iterar los resultados */
+                while ($registro = $resultado->fetch_assoc()) {
+                    $array[] = static::crearObjeto($registro);
+                }
+
+                /*  liberar la memoria */
+                $resultado->free();
+                /* retornar los resultados */
+                return $array;
+            } else {
+                /*  solo se encontro 1 registro */
+            }
+        } else {
+            /*   hubo un error en la consulta */
+            return $resultado;
         }
-
-        /*  liberar la memoria */
-        $resultado->free();
-
-        /* retornar los resultados */
-        return $array;
     }
 
     // Crea el objeto en memoria que es igual al de la BD
@@ -254,11 +262,27 @@ class ActiveRecord
         }
     }
 
+    /* Eliminar un Registro por su ID */
+    public function eliminar($id_table, $valor)
+    {
+        $query =
+            "DELETE FROM " .
+            static::$tabla .
+            " WHERE " .
+            $id_table .
+            " = " .
+            $valor .
+            " LIMIT 1";
+
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+    }
+
     // Todos los registros
     public static function all()
     {
         $query = "SELECT * FROM " . static::$tabla;
-        $resultado = self::consultarSQL($query, "");
+        $resultado = self::consultarSQL($query);
         return $resultado;
     }
 
@@ -302,7 +326,8 @@ class ActiveRecord
         }
 
         $resultado = self::consultarSQL($query);
-        return array_shift($resultado);
+
+        return (object) $resultado;
     }
 
     // Consulta Plana de SQL (Utilizar cuando los métodos del modelo no son suficientes)
@@ -386,24 +411,6 @@ class ActiveRecord
         $query .= " LIMIT 1 ";
 
         // Actualizar BD
-        if ($this->interfaz == "config") {
-            $resultado = self::$db_conf->query($query);
-            return $resultado;
-        } else {
-            $resultado = self::$db->query($query);
-            return $resultado;
-        }
-    }
-
-    // Eliminar un Registro por su ID
-    public function eliminar()
-    {
-        $query =
-            "DELETE FROM " .
-            static::$tabla .
-            " WHERE id = " .
-            self::$db->escape_string($this->id) .
-            " LIMIT 1";
         if ($this->interfaz == "config") {
             $resultado = self::$db_conf->query($query);
             return $resultado;

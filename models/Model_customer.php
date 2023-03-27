@@ -20,9 +20,13 @@ class Model_customer extends ActiveRecord
         "fecha",
     ];
 
-    public $id;
-    public $nombre;
-    public $precio;
+    public $id_cliente;
+    public $cedula;
+    public $nombre_1;
+    public $nombre_2;
+    public $apellido_1;
+    public $apellido_2;
+    public $fecha;
 
     public function __construct($args = [])
     {
@@ -44,9 +48,6 @@ class Model_customer extends ActiveRecord
         if (!$this->nombre_1) {
             self::$alertas["error"][] = "El Nombre  es Obligatorio";
         }
-        if (!$this->nombre_1) {
-            self::$alertas["error"][] = "El Nombre  es Obligatorio";
-        }
         if (!$this->nombre_2) {
             self::$alertas["error"][] = "El Nombre  es Obligatorio";
         }
@@ -54,9 +55,6 @@ class Model_customer extends ActiveRecord
             self::$alertas["error"][] = "El Nombre  es Obligatorio";
         }
         if (!$this->apellido_2) {
-            self::$alertas["error"][] = "El apellido  es Obligatorio";
-        }
-        if (!$this->apellido_1) {
             self::$alertas["error"][] = "El apellido  es Obligatorio";
         }
         if (!$this->fecha) {

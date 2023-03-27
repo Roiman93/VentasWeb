@@ -13,6 +13,7 @@ use Controllers\ServicioController;
 use Controllers\BillingController;
 use Controllers\APICustomerController;
 use Controllers\APIProductController;
+use Controllers\APIBillingConroller;
 use MVC\Router;
 $router = new Router();
 
@@ -70,6 +71,10 @@ $router->post("/api/get_stock_producto", [
 $router->post("/api/get_add_detalle_producto", [
     APIProductController::class,
     "add_detalle_product",
+]);
+$router->post("/api/delete_detalle_producto", [
+    APIProductController::class,
+    "delete_detalle_product",
 ]);
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador

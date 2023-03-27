@@ -46,10 +46,23 @@ class APICustomerController
     {
         // consulta el cliente con el numero de documento
 
+        /*   Validamos si contiene solo numeros */
+        if (isset($_POST["date"]) && is_numeric($_POST["date"])) {
+            $value = $_POST["date"];
+        } else {
+            // $_POST["date"] no contiene solo números
+            $resultado = json_encode([
+                "error" => "Ingrese un numero de cedula valido",
+            ]);
+            echo $resultado;
+            exit();
+        }
+
         $model = new Model_customer($_POST);
-        $resultado = Model_customer::where("cedula", $_POST["date"]);
+        $resultado = Model_customer::where("cedula", $value);
 
         echo json_encode(["resultado" => $resultado]);
+        exit();
     }
 
     public static function eliminar()

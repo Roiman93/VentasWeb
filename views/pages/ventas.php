@@ -3,7 +3,7 @@
 
   <!-- Formulario clientes -->
   <div class="ui very relax container m-a-70-m-b-70 ">
-
+      <!-- botones guardar y cancelar -->
       <div class="ui small right floated   icon buttons">
           <button id="btn_facturar_venta" class="positive ui  button" data-content="Guardar"
               data-position="top center"><i class="save icon"></i></button>
@@ -11,7 +11,7 @@
               data-content="Cancelar operación" data-position="top center"><i class="cancel icon"></i></button>
       </div>
 
-      <!-- indica el prefico y numerode factura actual -->
+      <!-- indica el prefijo y numero de factura actual -->
       <h2 class="ui header">
           <i class="file alternate icon"></i>
           <div class="content">Factura Numero:
@@ -30,10 +30,10 @@
           <div class="ui form">
               <h4 class="ui dividing header"><i class="address card icon"></i>Datos del cliente</h4>
               <div class="equal width  fields">
-
+                  <input type="hidden" id="id_cliente">
                   <div class="field">
                       <label>Cedula</label>
-                      <input type="number" id="c_cliente" placeholder="Cedula" required
+                      <input type="text" id="c_cliente" placeholder="Cedula" required
                           onkeypress="return valideKey(event);">
                   </div>
 
@@ -142,24 +142,47 @@
       </div>
 
       <!-- Tabla resumen factura -->
-      <div class="ui tiny stackable compact right floated inverted  segment">
-
-          <div class="ui mini green inverted statistic">
-              <div class="label">Total: </div>
-              <div id="txt_total" class="value"></div>
+      <div class="ui inverted stackable grid">
+          <div class="sixteen wide column center aligned">
+              <div class="ui three column grid">
+                  <div class="column centered aligned">
+                      <div class="ui mini green statistic">
+                          <div id="txt_subtotal" class="value"></div>
+                          <div class="label">Subtotal</div>
+                      </div>
+                  </div>
+                  <div class="column centered aligned">
+                      <div class="ui mini green statistic">
+                          <div id="txt_iva" class="value"></div>
+                          <div class="label">Iva</div>
+                      </div>
+                  </div>
+                  <div class="column centered aligned">
+                      <div class="ui mini green statistic">
+                          <div id="txt_total" class="value"></div>
+                          <div class="label">Total</div>
+                      </div>
+                  </div>
+              </div>
           </div>
-          <div class="ui mini green inverted statistic">
-              <div class="label">Iva: </div>
-              <div id="txt_iva" class="value"></div>
-          </div>
-
-          <div class="ui mini green  inverted statistic">
-              <div class="label">Subtotal: </div>
-              <div id="txt_subtotal" class="value"></div>
-          </div>
-          <p></p>
-
       </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
