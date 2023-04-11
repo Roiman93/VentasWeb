@@ -85,12 +85,17 @@ class ActiveRecord
     public static function getResults($query)
     {
         try {
+            $insert_id = '';
             if (self::tableExistsInDatabase(static::$tabla)) {
                 /* echo "La tabla existe"; */
                 $result = self::$db_conf->query($query);
+                $insert_id = self::$db_conf->insert_id;
+                
+
             } else {
                 /*  echo "La tabla no existe"; */
                 $result = self::$db->query($query);
+                $insert_id = self::$db->insert_id;
             }
 
             /* Si la consulta falla, se lanzará una excepción */
@@ -108,7 +113,10 @@ class ActiveRecord
         }
 
         /* Si la consulta se realiza correctamente, se retorna el resultado */
-        return $result;
+        return array(
+            "resultado" => $result,
+            "insert_id" => $insert_id
+        );
     }
 
     /* compara 2 objeto y crea uno nuevo con las conincidencias */
@@ -185,45 +193,159 @@ class ActiveRecord
         return true;
     }
 
-    /* Consulta SQL para crear un objeto en Memoria */
-    public static function consultarSQL($query)
-    {
+    /* consulta SQL para crear un array */
+    public static function consultSQL_AR($query){
+
         $resultado = self::getResults($query);
         $array = [];
 
-        if ($resultado !== true) {
-            if ($resultado->num_rows > 0) {
-                /* Iterar los resultados */
-                while ($registro = $resultado->fetch_assoc()) {
-                    $array[] = static::crearObjeto($registro);
-                }
+        if ($resultado['resultado']->num_rows > 0) {
+            /* Iterar los resultados */
+            while ($registro = $resultado['resultado']->fetch_assoc()) {
+                $array[] = (object) $registro;
+            }
 
-                /*  liberar la memoria */
-                $resultado->free();
-                /* retornar los resultados */
+        }
+         /* retornar los resultados */
+         return $array;
+
+    }
+
+    /* Consulta SQL para crear un objeto en Memoria */
+
+    public static function consultarSQL($query)
+    {
+        // Validar que la consulta no esté vacía
+        if (empty($query)) {
+            return null;
+        }
+
+        $resultado = self::getResults($query);
+        
+        if ($resultado['resultado'] !== true) {
+            /* Consulta SELECT */
+            if ($resultado['resultado']->num_rows > 0) {
+                /* Iterar los resultados */
+                $array = [];
+                while ($registro = $resultado['resultado']->fetch_assoc()) {
+                    $array[] = static::crearObjeto($registro);
+                    
+                }          
+                
                 return $array;
+
             } else {
-                /*  solo se encontro 1 registro */
+                /* No se encontró ningún registro */
+                return null;
             }
         } else {
-            /*   hubo un error en la consulta */
-            return $resultado;
+            /* Consulta INSERT, UPDATE o DELETE */
+            return $resultado['resultado'];
         }
     }
 
-    // Crea el objeto en memoria que es igual al de la BD
-    protected static function crearObjeto($registro)
-    {
-        $objeto = new static();
+     // Crea el objeto en memoria que es igual al de la BD
+    //  public static function crearObjeto($registro) {
+    //     $objeto = new static;
+    //     foreach ($registro as $key => $value) {
+    //         $objeto->$key = $value;
+    //     }
+    //     return (object) $objeto;
+    // }
 
+    public static function crearObjeto($registro) {
+        $objeto = new static;
         foreach ($registro as $key => $value) {
-            if (property_exists($objeto, $key)) {
-                $objeto->$key = $value;
-            }
+            $objeto->$key = $value;
         }
-
         return $objeto;
     }
+    
+
+    // public static function consultarSQL($query)
+    // {
+    //     $resultado = self::getResults($query);
+        
+    //     if ($resultado['resultado'] !== true) {
+    //         /* Consulta SELECT */
+    //         if ($resultado['resultado']->num_rows > 0) {
+    //             /* Iterar los resultados */
+    //             $array = [];
+    //             while ($registro = $resultado['resultado']->fetch_assoc()) {
+    //                 $array[] = static::crearObjeto($registro);
+    //             }          
+                
+    //            // return count($array) == 1 ? (object) reset($array) : $array;
+    //            return $array;
+
+    //         } else {
+    //             /* No se encontró ningún registro */
+    //             return null;
+    //         }
+    //     } else {
+    //         /* Consulta INSERT, UPDATE o DELETE */
+    //         return $resultado['resultado'];
+    //     }
+    // }
+
+    // public static function consultarSQL($query)
+    // {
+    //     $resultado = self::getResults($query);
+    //     // var_dump($resultado);
+    //     // exit;
+    //     $array = [];
+
+    //     if ($resultado['resultado'] !== true) {
+    //         if ($resultado['resultado']->num_rows > 1) {
+    //             /* Iterar los resultados */
+    //             while ($registro = $resultado['resultado']->fetch_assoc()) {
+    //                 $array[] = static::crearObjeto($registro);
+    //             }
+
+    //             /*  liberar la memoria */
+    //             // $resultado['resultado']->free();
+    //             /* retornar los resultados */
+    //             return $array;
+    //         } else if ($resultado['resultado']->num_rows === 1) {
+    //             /*  solo se encontro 1 registro */
+    //             $registro = $resultado['resultado']->fetch_assoc();
+    //             return static::crearObjeto($registro);
+    //         } else {
+    //         /*  no se encontro ningun registro */ 
+    //             return null;
+    //         }
+    //     } else {
+
+    //         /*   hubo un error en la consulta */
+    //         return $resultado;
+    //     }
+    // }
+
+    // public static function consultarSQL($query)
+    // {
+    //     $resultado = self::getResults($query);
+    //     $array = [];
+
+    //     if ($resultado !== true) {
+    //         if ($resultado->num_rows > 0) {
+    //             /* Iterar los resultados */
+    //             while ($registro = $resultado->fetch_assoc()) {
+    //                 $array[] = static::crearObjeto($registro);
+    //             }
+
+    //             /*  liberar la memoria */
+    //             $resultado->free();
+    //             /* retornar los resultados */
+    //             return $array;
+    //         } else {
+    //             /*  solo se encontro 1 registro */
+    //         }
+    //     } else {
+    //         /*   hubo un error en la consulta */
+    //         return $resultado;
+    //     }
+    // }
+
 
     // Identificar y unir los atributos de la BD
     public function atributos()
@@ -233,7 +355,7 @@ class ActiveRecord
             if ($columna === "id") {
                 continue;
             }
-
+            // echo "Valor de $columna: " . $this->$columna . "\n";
             $atributos[$columna] = $this->$columna;
         }
 
@@ -262,22 +384,6 @@ class ActiveRecord
         }
     }
 
-    /* Eliminar un Registro por su ID */
-    public function eliminar($id_table, $valor)
-    {
-        $query =
-            "DELETE FROM " .
-            static::$tabla .
-            " WHERE " .
-            $id_table .
-            " = " .
-            $valor .
-            " LIMIT 1";
-
-        $resultado = self::consultarSQL($query);
-        return $resultado;
-    }
-
     // Todos los registros
     public static function all()
     {
@@ -303,31 +409,45 @@ class ActiveRecord
         return array_shift($resultado);
     }
 
-    // Busca un registro por su id
-    public static function where($column, $value, $operator = "")
-    {
-        $query = "";
-        if (isset($operator) && $operator != "") {
-            $query =
-                "SELECT * FROM " .
-                static::$tabla .
-                " WHERE " .
-                $column .
-                " " .
-                $operator .
-                "'" .
-                $value .
-                "'";
-        } else {
-            $query =
-                "SELECT * FROM " .
-                static::$tabla .
-                " WHERE ${column} = '${value}'";
+    public static function where($conditions, $operator = "AND") {
+        $query = "SELECT * FROM " . static::$tabla . " WHERE ";
+    
+       /*  recorremos las condiciones y las agregamos a la consulta */
+        foreach ($conditions as $column => $value) {
+            $query .= $column . " = '" . $value . "' " . $operator . " ";
         }
-
+    
+        /*  eliminamos el último operador lógico que se agregó */
+        $query = rtrim($query, $operator . " ");
+    
         $resultado = self::consultarSQL($query);
 
-        return (object) $resultado;
+        /* validamos si la consulta esta vacia */
+        if($resultado == null){
+            return null;
+        } else {
+            return $resultado;
+        }
+    }
+    
+
+    /* consultas avanzadas con inner entre varias tablas */
+    public static function select($tables, $joins, $fields, $join_type = 'INNER JOIN', $where) {
+        $query = 'SELECT ' . implode(', ', $fields) . ' FROM ' . $tables[0];
+
+        foreach($joins as $key => $join) {
+            $query .= ' ' . $join_type . ' ' . $tables[$key + 1] . ' ON ' . $join;
+        }
+
+        $query .= " WHERE ".$where;
+        $resultado = self::consultSQL_AR($query);
+
+        /* validamos si la consulta esta vacia */
+        if($resultado == null){
+            return null;
+        }else {
+            return (object) $resultado;
+        }
     }
 
     // Consulta Plana de SQL (Utilizar cuando los métodos del modelo no son suficientes)
@@ -337,60 +457,95 @@ class ActiveRecord
         return $resultado;
     }
 
-    /* consulta con multiples tablas */
-    public static function select(
-        $tables,
-        $joins,
-        $fields,
-        $join_type = "INNER JOIN"
-    ) {
-        $query = "SELECT " . implode(", ", $fields) . " FROM " . $tables[0];
+    /* realiza la insercion de uno o varios registros  */
+    public function insert($datos = []){
 
-        foreach ($joins as $key => $join) {
-            $query .=
-                " " . $join_type . " " . $tables[$key + 1] . " ON " . $join;
+        $campos = array();
+        $valores = array();
+
+        $primer_fila = reset($datos);
+        $campos[] = "(" . implode(", ", array_keys($primer_fila)) . ")";
+
+        // var_dump($campos);
+        // // debuguear($datos);
+
+        foreach ($datos as $fila) {
+            $valores_fila = array();
+            
+            foreach ($fila as $valor) {
+                $valores_fila[] = "'" . $valor . "'";
+            }
+            
+           
+            $valores[] = "(" . implode(", ", $valores_fila) . ")";
         }
 
-        $resultado = self::consultarSQL($query);
-        return $resultado;
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // crea un nuevo registro
-    public function crear()
-    {
-        $interfaz = "";
-
-        // Sanitizar los datos
-        $atributos = $this->sanitizarAtributos($_POST);
-
-        // Insertar en la base de datos
-        $query = " INSERT INTO " . static::$tabla . " ( ";
-        $query .= join(", ", array_keys($atributos));
-        $query .= " ) VALUES (' ";
-        $query .= join("', '", array_values($atributos));
-        $query .= " ') ";
-        // print_r("<br>" . $query . "</br>");
-
+       
+        
+        $query = "INSERT INTO " . static::$tabla . " ";
+        $query .= "" . implode(", ", $campos) . " ";
+        $query .= "VALUES ";
+        $query .= implode(", ", $valores);
+    
         /*   Resultado de la consulta */
-        if (isset($this->interfaz) && $this->interfaz == "config") {
-            $resultado = self::$db_conf->query($query);
-            return [
-                "resultado" => $resultado,
-                "id" => self::$db_conf->insert_id,
-            ];
-        } else {
-            $resultado = self::$db->query($query);
-            return [
-                "resultado" => $resultado,
-                "id" => self::$db->insert_id,
-            ];
-        }
+        $resultado = self::getResults($query);
+        $insert_id = $resultado['insert_id'];
+        return [
+                   "resultado" => $resultado['resultado'],
+                   "id" => $resultado['insert_id']
+               ];
+
     }
+
+     /* crea un nuevo registro */
+     public function crear()
+     {
+         $interfaz = "";
+     
+         // Sanitizar los datos
+         $atributos = $this->sanitizarAtributos($_POST);
+     
+         // Insertar en la base de datos
+         $query = " INSERT INTO " . static::$tabla . " ( ";
+         $atributos_no_vacios = [];
+         foreach($atributos as $clave => $valor) {
+             if (!empty($valor)) {
+                 $atributos_no_vacios[] = $clave;
+             }
+         }
+         $query .= join(", ", $atributos_no_vacios);
+         $query .= " ) VALUES (' ";
+         $atributos_no_vacios_valores = [];
+         foreach($atributos_no_vacios as $clave) {
+             $valor = $atributos[$clave];
+             if (!empty($valor)) {
+                 $atributos_no_vacios_valores[] = $valor;
+             }
+         }
+         $query .= join("', '", $atributos_no_vacios_valores);
+         $query .= " ') ";
+
+    
+     
+         /*   Resultado de la consulta */
+         $resultado = self::getResults($query);
+         $insert_id = $resultado['insert_id'];
+         return [
+                    "resultado" => $resultado['resultado'],
+                    "id" => $resultado['insert_id']
+                ];
+         
+        //  if (isset($this->interfaz) && $this->interfaz == "config") {
+        //      $resultado = self::$db_conf->query($query);
+        //     
+        //  } else {
+        //      $resultado = self::$db->query($query);
+        //      return [
+        //          "resultado" => $resultado,
+        //          "id" => self::$db->insert_id,
+        //      ];
+        //  }
+     }
 
     // Actualizar el registro
     public function actualizar()
@@ -410,14 +565,46 @@ class ActiveRecord
         $query .= " WHERE id = '" . self::$db->escape_string($this->id) . "' ";
         $query .= " LIMIT 1 ";
 
-        // Actualizar BD
-        if ($this->interfaz == "config") {
-            $resultado = self::$db_conf->query($query);
-            return $resultado;
-        } else {
-            $resultado = self::$db->query($query);
-            return $resultado;
+        $resultado = self::getResults($query);
+        return $resultado;
+
+    }
+
+    /* Eliminar un Registro por su ID */
+    public function eliminar($id_table, $valor)
+    {
+        $query =
+            "DELETE FROM " .
+            static::$tabla .
+            " WHERE " .
+            $id_table .
+            " = '" .
+            $valor .
+            "'";
+            
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+    }
+    /* elimina uno o varios registros */
+    public function delete_batch($datos = [], $operator = 'AND')
+    {
+        if (empty($datos)) {
+            return false;
         }
+        
+        // Iterar para ir agregando cada campo de la BD
+        $condiciones = [];
+        foreach ($datos as $columna => $valor) {
+            $condiciones[] = "{$columna} = '{$valor}'";
+        }
+        
+        // Consulta SQL
+        $query = "DELETE FROM " . static::$tabla . " WHERE ";
+        $query .= join(" {$operator} ", $condiciones);
+
+        // Ejecutar consulta y retornar resultado
+        $resultado = self::getResults($query);
+        return $resultado;
     }
 
     // Registros - CRUD
@@ -429,8 +616,9 @@ class ActiveRecord
             // actualizar
             $resultado = $this->actualizar();
         } else {
-            // debuguear($this->id);
-            // exit();
+               // debuguear($_POST);
+            // //   echo "</br>";
+            //  exit();
             // Creando un nuevo registro
             $resultado = $this->crear();
         }

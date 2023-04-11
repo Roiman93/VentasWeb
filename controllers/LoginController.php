@@ -6,40 +6,90 @@
 namespace Controllers;
 
 use Classes\Email;
+use Classes\Process;
 use Model\Usuario;
 use MVC\Router;
 
 class LoginController
 {
+    // public static function login(Router $router)
+    // {
+    //     $alertas = [];
+
+    //     if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    //         $auth = new Usuario($_POST);
+    //         $alertas = $auth->validarLogin();
+
+    //         if (empty($alertas)) {
+    //             // Comprobar que exista el usuario
+    //             $usuario = Usuario::where("email", $auth->email);
+
+    //             if ($usuario) {
+    //                 // Verificar el password
+    
+    //                 if (
+    //                     $usuario->comprobarPasswordAndVerificado(
+    //                         $auth->password
+    //                     )
+    //                 ) {
+    //                     // Autenticar el usuario
+    //                     session_start();
+
+    //                     $_SESSION["id"] = $usuario->id;
+    //                     $_SESSION["nombre"] =
+    //                         $usuario->nombre . " " . $usuario->apellido;
+    //                     $_SESSION["email"] = $usuario->email;
+    //                     $_SESSION["login"] = true;
+
+    //                     // Redireccionamiento
+    //                     if ($usuario->admin === "1") {
+    //                         $_SESSION["admin"] = $usuario->admin ?? null;
+    //                         header("Location: /admin");
+    //                     } else {
+    //                         header("Location: /cita");
+    //                     }
+    //                 }
+    //             } else {
+    //                 Usuario::setAlerta("error", "Usuario no encontrado");
+    //             }
+    //         }
+    //     }
+
+    //     $alertas = Usuario::getAlertas();
+
+    //     $router->render("auth/login", [
+    //         "alertas" => $alertas,
+    //     ]);
+    // }
+
     public static function login(Router $router)
     {
         $alertas = [];
-
-        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    
+        if ($_SERVER["REQUEST_METHOD"] === "POST"){
             $auth = new Usuario($_POST);
-            $auth->interfaz = "config";
             $alertas = $auth->validarLogin();
-
+    
             if (empty($alertas)) {
                 // Comprobar que exista el usuario
-                $usuario = Usuario::where("email", $auth->email);
+                $resp_u = Usuario::where([
+                    "email" => $auth->email
+                ]);
 
-                if ($usuario) {
+                $usuario = Process::validar_ar($resp_u);
+
+                if ($usuario instanceof Usuario) {
+       
                     // Verificar el password
-                    if (
-                        $usuario->comprobarPasswordAndVerificado(
-                            $auth->password
-                        )
-                    ) {
+                    if ($usuario->comprobarPasswordAndVerificado($auth->password)) {
                         // Autenticar el usuario
                         session_start();
-
+    
                         $_SESSION["id"] = $usuario->id;
-                        $_SESSION["nombre"] =
-                            $usuario->nombre . " " . $usuario->apellido;
+                        $_SESSION["nombre"] = $usuario->nombre . " " . $usuario->apellido;
                         $_SESSION["email"] = $usuario->email;
                         $_SESSION["login"] = true;
-
+    
                         // Redireccionamiento
                         if ($usuario->admin === "1") {
                             $_SESSION["admin"] = $usuario->admin ?? null;
@@ -47,20 +97,22 @@ class LoginController
                         } else {
                             header("Location: /cita");
                         }
+                    } else {
+                        Usuario::setAlerta("error", "Contraseña incorrecta");
                     }
                 } else {
                     Usuario::setAlerta("error", "Usuario no encontrado");
                 }
             }
         }
-
+    
         $alertas = Usuario::getAlertas();
-
+    
         $router->render("auth/login", [
             "alertas" => $alertas,
         ]);
     }
-
+    
     public static function logout()
     {
         session_start();

@@ -16,6 +16,7 @@ class Model_billing_tmp extends ActiveRecord
         "precio_venta",
         "mesa",
         "token_user",
+        "Total"
     ];
 
     /* atributos */
@@ -25,6 +26,7 @@ class Model_billing_tmp extends ActiveRecord
     public $precio_venta;
     public $mesa;
     public $token_user;
+    public $Total;
 
     public function __construct($args = [])
     {
@@ -34,6 +36,7 @@ class Model_billing_tmp extends ActiveRecord
         $this->precio_venta = $args["precio_venta"] ?? "";
         $this->mesa = $args["mesa"] ?? null;
         $this->token_user = $args["token_user"] ?? "";
+        $this->Total = $args["Total"] ?? "";
     }
 
     /*  valida la informacion de los campos  */

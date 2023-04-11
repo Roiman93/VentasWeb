@@ -8,6 +8,8 @@ $baseDir = dirname($vendorDir);
 return array(
     'reports\\' => array($baseDir . '/factura'),
     'pdf\\' => array($baseDir . '/pdf'),
+    'Svg\\' => array($vendorDir . '/phenx/php-svg-lib/src/Svg'),
+    'Sabberworm\\CSS\\' => array($vendorDir . '/sabberworm/php-css-parser/src'),
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Model\\' => array($baseDir . '/models'),
     'MVC\\' => array($baseDir . '/'),

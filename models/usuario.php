@@ -4,7 +4,7 @@ namespace Model;
 
 class Usuario extends ActiveRecord {
     // Base de datos
-    protected static $tabla = 'usuarios';
+    protected static $tabla = 'us_user';
     protected static $columnasDB = ['id', 'nombre', 'apellido', 'email', 'password', 'telefono', 'admin', 'confirmado', 'token'];
 
     public $id;
@@ -90,6 +90,9 @@ class Usuario extends ActiveRecord {
             self::$alertas['error'][] = 'El Usuario ya esta registrado';
         }
 
+        var_dump($query);
+        exit;
+
         return $resultado;
     }
 
@@ -102,6 +105,7 @@ class Usuario extends ActiveRecord {
     }
 
     public function comprobarPasswordAndVerificado($password) {
+
         $resultado = password_verify($password, $this->password);
         
         if(!$resultado || !$this->confirmado) {

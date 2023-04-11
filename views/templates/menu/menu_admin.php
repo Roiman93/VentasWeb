@@ -28,7 +28,7 @@
         <div class="menu">
             <a class="item" href="/ventas"> <i class="shopping  cart icon"></i><label>Ventas</label></a>
             <a class="item" href=""><i class="box icon"></i><label>Mesas</label></a>
-            <a class="item" href=""><i class="id badge icon"></i><label>Registro de
+            <a class="item" href="/cliente"><i class="id badge icon"></i><label>Registro de
                     Clientes</label> </a>
             <!-- <a class="ui item"href="?opcion=List_Cliente"><i class="file alternate icon"></i><label>Listado de Clientes</label></a> -->
             <a class="item" href=""><i class="file alternate icon"></i><label>Listado de

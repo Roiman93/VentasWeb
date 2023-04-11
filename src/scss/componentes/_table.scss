@@ -1,0 +1,8 @@
+ /*  mantiene fija la cabecera de la tabla  */
+
+ thead.sticky {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 1;
+  }
