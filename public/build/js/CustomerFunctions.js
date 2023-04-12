@@ -1,0 +1,1 @@
+window.addEventListener("load",(function(){})),$("#search").click((function(c){})),$("#add").click((function(c){$("#modal_add").modal("show")})),$("#recharge").click((function(c){location.reload(!0)}));

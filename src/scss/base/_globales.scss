@@ -1,10 +1,10 @@
-@use 'variables' as v;
-@use 'mixins' as m;
+@use "variables" as v;
+@use "mixins" as m;
 
 html {
-    font-size: 62.5%;
-    box-sizing: border-box;
-    height: 100%;
+	font-size: 82.5%;
+	box-sizing: border-box;
+	height: 100%;
 }
 // body {
 //     min-height: 100%;
