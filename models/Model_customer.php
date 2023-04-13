@@ -346,9 +346,53 @@ class Model_customer extends ActiveRecord
 			"header" => "Registro de clientes",
 			"fields" => [
 				[
+					"label" => "Hora",
+					"id" => "hora",
+					"name" => "hora",
+					"type" => "time",
+					"data-type" => "time",
+					"required" => true,
+				],
+				[
+					"label" => "fecha",
+					"id" => "fecha",
+					"name" => "fecha",
+					"type" => "date",
+					"data-type" => "date",
+					"required" => true,
+				],
+				[
+					"label" => "Rango",
+					"id" => "range",
+					"name" => "range",
+					"type" => "range",
+					"data-type" => "range",
+					"required" => true,
+				],
+				[
+					"type" => "checkbox",
+					"data-type" => "checkbox",
+					"id" => "ch_doc",
+					"name" => "ch_doc",
+					"label" => "Seleccione una de las opciones",
+					"required" => true,
+					"options" => [
+						"OT" => [
+							"label" => "--Seleccione--",
+							"disabled" => true,
+						],
+						"si" => "si",
+						"no" => "no",
+						"nose" => "nose",
+					],
+					"value" => ["si", "no"],
+				],
+				[
 					"type" => "select",
-					"label" => "Tipo Documento",
+					"data-type" => "select",
+					"id" => "tipo_doc",
 					"name" => "tipo_doc",
+					"label" => "Tipo Documento",
 					"required" => true,
 					"options" => [
 						"OT" => [
@@ -364,6 +408,7 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Numero documento",
 					"id" => "documento",
+					"name" => "documento",
 					"type" => "text",
 					"data-type" => "number",
 					"placeholder" => "Numero de documento",
@@ -373,6 +418,7 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Nombre",
 					"id" => "nombre",
+					"name" => "nombre",
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Primer Nombre",
@@ -382,6 +428,7 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Segundo Nombre",
 					"id" => "s_nombre",
+					"name" => "s_nombre",
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Segundo Nombre",
@@ -391,6 +438,7 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Apellido",
 					"id" => "apellido",
+					"name" => "apellido",
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Apellido",
@@ -400,6 +448,7 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Segundo Apellido",
 					"id" => "s_apellido",
+					"name" => "s_apellido",
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Apellido",
@@ -409,8 +458,9 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Sexo",
 					"id" => "sexo",
-					"type" => "select",
 					"name" => "sexo",
+					"type" => "select",
+					"data-type" => "select",
 					"required" => true,
 					"options" => [
 						"OT" => [
@@ -424,8 +474,32 @@ class Model_customer extends ActiveRecord
 					"value" => "OT",
 				],
 				[
+					"type" => "select",
+					"data-type" => "select",
+					"label" => "G sanguineo",
+					"id" => "g_sanguineo",
+					"name" => "g_sanguineo",
+					"required" => true,
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+						"O" => "O-",
+						"O1" => "O+",
+						"A" => "A-",
+						"A1" => "A+",
+						"B" => "B-",
+						"B1" => "B+",
+						"AB" => "AB-",
+						"AB1" => "AB+",
+					],
+					"value" => "OT",
+				],
+				[
 					"label" => "Edad",
 					"id" => "edad",
+					"name" => "edad",
 					"type" => "text",
 					"data-type" => "number",
 					"placeholder" => "Primer Nombre",
@@ -435,8 +509,9 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Estado civil",
 					"id" => "est_civil",
-					"type" => "select",
 					"name" => "est_civil",
+					"type" => "select",
+					"data-type" => "select",
 					"options" => [
 						"OT" => [
 							"label" => "--Selecione--",
@@ -454,27 +529,27 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Ocupaciòn",
 					"id" => "ocupacion",
+					"name" => "ocupacion",
 					"type" => "text",
 					"data-type" => "text",
-					"name" => "ocupacion",
 					"placeholder" => "ocupacion",
 					"onkeypress" => "return lettersOnly(event);",
 				],
 				[
 					"label" => "Direcciòn",
 					"id" => "direccion",
-					"type" => "text",
-					"data-type" => "text",
 					"name" => "direccion",
+					"type" => "text",
+					"data-type" => "address",
 					"placeholder" => "direccion ",
 					"required" => true,
 				],
 				[
 					"label" => "Telefono",
 					"id" => "telefono",
+					"name" => "telefono",
 					"type" => "text",
 					"data-type" => "number",
-					"name" => "telefono",
 					"placeholder" => "Telefono",
 					"onkeypress" => "return valideKey(event);",
 					"required" => true,

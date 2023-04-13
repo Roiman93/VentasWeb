@@ -188,24 +188,30 @@ class Html
 		// Botones del formulario
 		if (isset($formInfo["buttons"])) {
 			$formHtml .= '<div class="ui buttons">';
-			foreach ($formInfo["buttons"] as $button) {
+
+			foreach ($formInfo["buttons"] as $key => $button) {
 				$formHtml .=
-					'<input class="ui ' .
-					$button["class"] .
-					' button" type="' .
-					$button["type"] .
+					'<button style="margin: 0 0.1em 0 0.1rem;" data-content="' .
+					(isset($button["data-conten"]) ? $button["data-conten"] : "") .
+					'"  name="' .
+					(isset($button["name"]) ? $button["name"] : "") .
 					'" id="' .
-					$button["id"] .
-					'" value="' .
-					$button["label"] .
-					'"';
-
-				if (isset($button["onclick"])) {
-					$formHtml .= ' onclick="' . $button["onclick"] . '"';
-				}
-
-				$formHtml .= ">";
+					(isset($button["id"]) ? $button["id"] : "") .
+					'" data-content="' .
+					(isset($button["data-conten"]) ? $button["data-conten"] : "") .
+					'"  data-position="' .
+					(isset($button["data-position"]) ? $button["data-position"] : "top center") .
+					'" class="' .
+					(isset($button["class"]) ? $button["class"] : "") .
+					'" href="' .
+					(isset($button["href"]) ? $button["href"] : "") .
+					'">' .
+					(isset($button["icon"]) ? '<i class="' . $button["icon"] . '"></i>' : "") .
+					"<label>" .
+					(isset($button["label"]) ? $button["label"] : "") .
+					"</label></button>";
 			}
+
 			$formHtml .= "</div>";
 		}
 
@@ -279,7 +285,7 @@ class Html
 								'"';
 
 							if (isset($field["required"]) && $field["required"] === true) {
-								$output .= " required";
+								$output .= " required= true";
 							}
 
 							if (isset($field["onkeypress"])) {
@@ -429,8 +435,11 @@ class Html
 				} else {
 					switch ($field["type"]) {
 						case "text":
-							$formHtml .= '<div class="field">';
-							$formHtml .= "<label>" . $field["label"] . "</label>";
+							$formHtml .=
+								'<div class=" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required" : "") .
+								' field">';
+							$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
 							$formHtml .=
 								'<input type="' .
 								(isset($field["type"]) ? $field["type"] : "") .
@@ -442,24 +451,222 @@ class Html
 								(isset($field["id"]) ? $field["id"] : "") .
 								'" placeholder="' .
 								(isset($field["placeholder"]) ? $field["placeholder"] : "") .
-								'"';
+								'" onkeypress= "' .
+								(isset($field["onkeypress"]) ? $field["onkeypress"] : "") .
+								'" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required='true'" : "") .
+								">";
 
-							if (isset($field["required"]) && $field["required"] === true) {
-								$formHtml .= " required";
+							$formHtml .= "</div>";
+							break;
+
+						case "date":
+							$formHtml .=
+								'<div class=" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required" : "") .
+								' field">';
+
+							$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
+							$formHtml .=
+								'<input type="' .
+								(isset($field["type"]) ? $field["type"] : "date") .
+								'" name="' .
+								(isset($field["name"]) ? $field["name"] : "") .
+								'"   data-type="' .
+								(isset($field["data-type"]) ? $field["data-type"] : "") .
+								'" id="' .
+								(isset($field["id"]) ? $field["id"] : "") .
+								'" value="' .
+								(isset($field["value"]) ? $field["value"] : "") .
+								'" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required='true'" : "") .
+								">";
+
+							$formHtml .= "</div>";
+							break;
+						case "time":
+							$formHtml .=
+								'<div class=" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required" : "") .
+								' field">';
+
+							$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
+							$formHtml .=
+								'<input type="' .
+								(isset($field["type"]) ? $field["type"] : "time") .
+								'" name="' .
+								(isset($field["name"]) ? $field["name"] : "") .
+								'"   data-type="' .
+								(isset($field["data-type"]) ? $field["data-type"] : "") .
+								'" id="' .
+								(isset($field["id"]) ? $field["id"] : "") .
+								'" value="' .
+								(isset($field["value"]) ? $field["value"] : "") .
+								'" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required='true'" : "") .
+								">";
+
+							$formHtml .= "</div>";
+							break;
+
+						case "range":
+							$formHtml .=
+								'<div class=" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required" : "") .
+								' field">';
+
+							$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
+
+							$formHtml .=
+								'<div  class="' . (isset($field["class"]) ? $field["class"] : "ui range") . '">';
+
+							$formHtml .=
+								'<input type="' .
+								(isset($field["type"]) ? $field["type"] : "range") .
+								'" data-type="' .
+								(isset($field["data-type"]) ? $field["data-type"] : "") .
+								'" id="' .
+								(isset($field["id"]) ? $field["id"] : "") .
+								'" name="' .
+								(isset($field["name"]) ? $field["name"] : "") .
+								'" min="' .
+								(isset($field["min"]) ? $field["min"] : "0") .
+								'" max="' .
+								(isset($field["max"]) ? $field["max"] : "100") .
+								'" step"' .
+								(isset($field["step"]) ? $field["step"] : "1") .
+								'" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required='true'" : "") .
+								">";
+
+							$formHtml .= "</div>";
+							$formHtml .= "</div>";
+							break;
+
+						// case "checkbox":
+						// 	$formHtml .=
+						// 		'<div class="' .
+						// 		(isset($field["required"]) && $field["required"] === true ? "required " : "") .
+						// 		' field">';
+						// 	$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
+						// 	$formHtml .=
+						// 		'<div  data-type= "' .
+						// 		(isset($field["data-type"]) ? $field["data-type"] : "checkbox") .
+						// 		' class="' .
+						// 		(isset($field["class"]) ? $field["class"] : "ui checkbox") .
+						// 		'">';
+						// 	foreach ($field["options"] as $optionValue => $optionLabel) {
+						// 		$isSelected = "";
+						// 		$isDisabled = "";
+						// 		if (
+						// 			isset($field["value"]) &&
+						// 			is_array($field["value"]) &&
+						// 			in_array($optionValue, $field["value"])
+						// 		) {
+						// 			$isSelected = 'checked="true"';
+						// 		}
+						// 		if (isset($optionLabel["disabled"]) && $optionLabel["disabled"] === true) {
+						// 			$isDisabled = "disabled";
+						// 		}
+						// 		$optionLabel = isset($optionLabel["label"]) ? $optionLabel["label"] : $optionLabel;
+						// 		$formHtml .= '<div class="field">';
+						// 		$formHtml .= '<div class="ui checkbox">';
+						// 		$formHtml .=
+						// 			'<input type="checkbox" name="' .
+						// 			(isset($field["id"]) ? $field["id"] : "") .
+						// 			'[]" data-type= "' .
+						// 			(isset($field["data-type"]) ? $field["data-type"] : "checkbox") .
+						// 			'"  value="' .
+						// 			$optionValue .
+						// 			'" id="' .
+						// 			$optionValue .
+						// 			'"' .
+						// 			(isset($field["required"]) && $field["required"] === true
+						// 				? "required='true'"
+						// 				: "") .
+						// 			'"' .
+						// 			$isSelected .
+						// 			$isDisabled .
+						// 			">";
+						// 		$formHtml .= '<label for="' . $optionValue . '">' . $optionLabel . "</label>";
+						// 		$formHtml .= "</div>";
+						// 		$formHtml .= "</div>";
+						// 	}
+						// 	$formHtml .= "</div>";
+						// 	$formHtml .= "</div>";
+						// 	break;
+
+						case "checkbox":
+							$formHtml .=
+								'<div class="' .
+								(isset($field["required"]) && $field["required"] === true ? "required " : "") .
+								' field">';
+							$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
+							$formHtml .=
+								'<div  data-type= "' .
+								(isset($field["data-type"]) ? $field["data-type"] : "checkbox") .
+								' class="' .
+								(isset($field["class"]) ? $field["class"] : "ui checkbox") .
+								'">';
+							foreach ($field["options"] as $optionValue => $optionLabel) {
+								$isSelected = "";
+								$isDisabled = "";
+								if (
+									isset($field["value"]) &&
+									is_array($field["value"]) &&
+									in_array($optionValue, $field["value"])
+								) {
+									$isSelected = 'checked="checked"';
+								}
+								if (isset($optionLabel["disabled"]) && $optionLabel["disabled"] === true) {
+									$isDisabled = "disabled";
+								}
+								$optionLabel = isset($optionLabel["label"]) ? $optionLabel["label"] : $optionLabel;
+								$formHtml .= '<div class="field">';
+								$formHtml .= '<div class="ui checkbox">';
+								$formHtml .=
+									'<input type="checkbox" name="' .
+									(isset($field["id"]) ? $field["id"] : "") .
+									'[]" data-type= "' .
+									(isset($field["data-type"]) ? $field["data-type"] : "checkbox") .
+									'"  value="' .
+									$optionValue .
+									'" id="' .
+									$optionValue .
+									'"' .
+									(isset($field["required"]) && $field["required"] === true
+										? "required='true'"
+										: "") .
+									'"' .
+									$isSelected .
+									$isDisabled .
+									">";
+								$formHtml .= '<label for="' . $optionValue . '">' . $optionLabel . "</label>";
+								$formHtml .= "</div>";
+								$formHtml .= "</div>";
 							}
-
-							if (isset($field["onkeypress"])) {
-								$formHtml .= ' onkeypress="' . $field["onkeypress"] . '"';
-							}
-
-							$formHtml .= ">";
+							$formHtml .= "</div>";
 							$formHtml .= "</div>";
 							break;
 
 						case "select":
-							$formHtml .= '<div class="field">';
-							$formHtml .= "<label>" . $field["label"] . "</label>";
-							$formHtml .= '<select name="' . $field["name"] . '" id="' . $field["name"] . '">';
+							$formHtml .=
+								'<div class=" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required" : "") .
+								' field">';
+							$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
+							$formHtml .=
+								'<select name="' .
+								(isset($field["name"]) ? $field["name"] : "") .
+								'" data-type="' .
+								(isset($field["data-type"]) ? $field["data-type"] : "") .
+								'" type="' .
+								(isset($field["type"]) ? $field["type"] : "") .
+								'" id="' .
+								(isset($field["id"]) ? $field["id"] : "") .
+								'" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required='true'" : "") .
+								">";
 
 							foreach ($field["options"] as $optionValue => $optionLabel) {
 								$isSelected = "";
@@ -507,6 +714,10 @@ class Html
 			$formHtml .=
 				'<div style="margin: 0 0.1em 0 0.1rem;" data-content="' .
 				(isset($button["data-content"]) ? $button["data-content"] : "") .
+				'"  name="' .
+				(isset($button["name"]) ? $button["name"] : "") .
+				'" id="' .
+				(isset($button["id"]) ? $button["id"] : "") .
 				'"  data-position="' .
 				(isset($button["data-position"]) ? $button["data-position"] : "top center") .
 				'"      class="' .
