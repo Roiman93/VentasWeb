@@ -4,6 +4,59 @@
 <div class="ui hidden divider"></div>
 <div class="ui very relax container m-a-70-m-b-70 ">
 
+<div class="ui input">
+  <input type="time" value="">
+</div>
+
+<div class="ui calendar">
+  <div class="ui input left icon">
+   
+    <input type="date" placeholder="Fecha" value="">
+  </div>
+</div>
+
+<label>Rango</label>
+<div class="ui range">
+  <input type="range" min="0" max="100" step="1">
+</div>
+
+
+
+  <div class="grouped fields">
+    <label>Elige un color:</label>
+    <div class="field">
+      <div class="ui radio checkbox">
+        <input type="radio" name="color" value="red">
+        <label>Rojo</label>
+      </div>
+    </div>
+    <div class="field">
+      <div class="ui radio checkbox">
+        <input type="radio" name="color" value="blue">
+        <label>Azul</label>
+      </div>
+    </div>
+    <div class="field">
+      <div class="ui radio checkbox">
+        <input type="radio" name="color" value="green">
+        <label>Verde</label>
+      </div>
+    </div>
+  </div>
+
+
+ 
+  
+
+
+
+
+<div class="ui checkbox">
+  <input type="checkbox" name="example">
+  <label>Seleccionar</label>
+</div>
+
+
   <!-- fILTROS-->
   <?php echo isset($filter) && !empty($filter) ? $filter : "filtro vacio"; ?>
   <!-- MODAL ADD -->
@@ -15,6 +68,12 @@
   <div id="tbl_customer" class="container" style="height: 5000px; overflow: auto;">
     <!-- Tabla ajax -->
   </div>  
+
+
+ 
+
+
+
 
 
   <!-- fin -->
