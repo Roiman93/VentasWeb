@@ -318,11 +318,11 @@ function displayClientResult(data) {
 		});
 	} else {
 		// Data contiene un resultado válido, se encontró el registro
-		$("#id_cliente").val(data.resultado.id_cliente);
-		$("#nom_cliente").val(data.resultado.nombre_1);
-		$("#nom2_cliente").val(data.resultado.nombre_2);
-		$("#ap_cliente").val(data.resultado.apellido_1);
-		$("#ap2_cliente").val(data.resultado.apellido_2);
+		$("#id_cliente").val(data.resultado.id);
+		$("#nom_cliente").val(data.resultado.nombre);
+		$("#nom2_cliente").val(data.resultado.s_nombre);
+		$("#ap_cliente").val(data.resultado.apellido);
+		$("#ap2_cliente").val(data.resultado.s_apellido);
 
 		// OCULTAR BOTON
 		$("#btn_new_cliente, #btn_cancel_cliente").slideUp();

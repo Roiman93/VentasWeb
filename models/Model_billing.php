@@ -16,27 +16,31 @@ class Model_billing extends ActiveRecord
 {
 	// Base de datos
 	protected static $tabla = "fact";
-	protected static $columnasDB = ["id", "prefijo", "numero", "id_cliente", "fecha", "usuario", "total", "estatus"];
+	/* columnas de la tabla  de la BD*/
+	protected static $columnasDB = [];
 
-	public $id;
-	public $prefijo;
-	public $numero;
-	public $id_cliente;
-	public $fecha;
-	public $usuario;
-	public $total;
-	public $estatus;
-
+	/**
+	 * Constructor de la clase Model_billing
+	 *
+	 * @param array $args Un arreglo asociativo de argumentos que se utilizan para inicializar las propiedades del objeto
+	 *
+	 * El constructor de la clase consulta los campos de la tabla y crea las propiedades públicas y el constructor
+	 * para cada una de ellas. Si la propiedad se llama "id", se inicializa con el valor null, de lo contrario,
+	 * se inicializa con el valor del argumento correspondiente. Si el argumento no está definido, se inicializa con
+	 * una cadena vacía.
+	 */
 	public function __construct($args = [])
 	{
-		$this->id = $args["id"] ?? null;
-		$this->prefijo = $args["prefijo"] ?? "";
-		$this->numero = $args["numero"] ?? "";
-		$this->id_cliente = $args["id_cliente"] ?? "";
-		$this->fecha = $args["fecha"] ?? "";
-		$this->usuario = $args["usuario"] ?? "";
-		$this->total = $args["total"] ?? "";
-		$this->estatus = $args["estatus"] ?? "";
+		// Constructor consulta los campos de la tabla
+		self::$columnasDB = self::colum();
+
+		// Iterar sobre las columnas y crear las propiedades públicas y el constructor
+		foreach (self::$columnasDB as $columna) {
+			// Crear propiedad pública con el nombre de la columna
+			// y asignarle un valor inicial de null
+			$propiedad = strtolower($columna);
+			$this->$propiedad = $propiedad === "id" ? null : $args[$propiedad] ?? "";
+		}
 	}
 
 	public function validar()
@@ -44,10 +48,10 @@ class Model_billing extends ActiveRecord
 		if (!$this->prefijo) {
 			self::$alertas["error"][] = "El prefijo es Obligatorio ";
 		}
-		if (!$this->precio) {
+		if (!$this->fecha) {
 			self::$alertas["error"][] = "El Precio del Servicio es Obligatorio";
 		}
-		if (!is_numeric($this->precio)) {
+		if (!is_numeric($this->fecha)) {
 			self::$alertas["error"][] = "El precio no es válido";
 		}
 
@@ -300,9 +304,6 @@ class Model_billing extends ActiveRecord
 			$where = "detalle_tmp_factura.token_user = '" . $token . "'";
 
 			$data = (array) Model_billing_tmp::select($tables, $joins, $fields, "INNER JOIN", $where);
-
-			// var_dump($data);
-			// exit;
 
 			/* calculo del resumen de la factura */
 			$detalle_totales = Process::total_billing($data);

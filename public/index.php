@@ -12,7 +12,6 @@ use Controllers\LoginController;
 use Controllers\ServicioController;
 use Controllers\BillingController;
 use Controllers\CustomerController;
-use Controllers\APICustomerController;
 use Controllers\APIProductController;
 use Controllers\APIBillingConroller;
 use MVC\Router;
@@ -50,49 +49,22 @@ $router->post("/api/eliminar", [APIController::class, "eliminar"]);
 $router->get("/servicios", [ServicioController::class, "index"]);
 $router->get("/servicios/crear", [ServicioController::class, "crear"]);
 $router->post("/servicios/crear", [ServicioController::class, "crear"]);
-$router->get("/servicios/actualizar", [
-    ServicioController::class,
-    "actualizar",
-]);
-$router->post("/servicios/actualizar", [
-    ServicioController::class,
-    "actualizar",
-]);
+$router->get("/servicios/actualizar", [ServicioController::class, "actualizar"]);
+$router->post("/servicios/actualizar", [ServicioController::class, "actualizar"]);
 $router->post("/servicios/eliminar", [ServicioController::class, "eliminar"]);
+
 /* cliente */
-$router->get("/cliente", [CustomerController::class,"index",]);
+$router->get("/cliente", [CustomerController::class, "index"]);
+$router->post("/api/cliente", [CustomerController::class, "get_cliente"]);
 
-
-
-// ventas
+// facturacion
 $router->get("/ventas", [BillingController::class, "index"]);
-$router->post("/api/cliente", [APICustomerController::class, "get_cliente"]);
-
-/* productos */
-$router->post("/api/get_stock_producto", [
-    APIBillingConroller::class,
-    "seach_product",
-]);
-$router->post("/api/get_add_detalle_producto", [
-    APIBillingConroller::class,
-    "add_detalle",
-]);
-$router->post("/api/delete_detalle_producto", [
-    APIBillingConroller::class,
-    "delete_detalle",
-]);
-$router->post("/api/cancel_process", [
-    APIBillingConroller::class,
-    "cancel_billing",
-]);
-$router->post("/api/detalle", [
-    APIBillingConroller::class,
-    "seach_detalle",
-]);
-$router->post("/api/process", [
-    APIBillingConroller::class,
-    "add",
-]);
+$router->post("/api/get_stock_producto", [APIBillingConroller::class, "seach_product"]);
+$router->post("/api/get_add_detalle_producto", [APIBillingConroller::class, "add_detalle"]);
+$router->post("/api/delete_detalle_producto", [APIBillingConroller::class, "delete_detalle"]);
+$router->post("/api/cancel_process", [APIBillingConroller::class, "cancel_billing"]);
+$router->post("/api/detalle", [APIBillingConroller::class, "seach_detalle"]);
+$router->post("/api/process", [APIBillingConroller::class, "add"]);
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();

@@ -5,40 +5,40 @@
 
 namespace Model;
 use Classes\Html;
+use Classes\Cache;
 use Classes\Process;
 
 /* cliente */
 class Model_customer extends ActiveRecord
 {
-	// Base de datos
+	/* tabla de la Base de datos */
 	protected static $tabla = "cliente";
-	protected static $columnasDB = [
-		"id_cliente",
-		"cedula",
-		"nombre_1",
-		"nombre_2",
-		"apellido_1",
-		"apellido_2",
-		"fecha",
-	];
 
-	public $id_cliente;
-	public $cedula;
-	public $nombre_1;
-	public $nombre_2;
-	public $apellido_1;
-	public $apellido_2;
-	public $fecha;
+	/* columnas de la tabla  de la BD*/
+	protected static $columnasDB = [];
 
+	/**
+	 * Constructor de la clase Model_customer
+	 *
+	 * @param array $args Un arreglo asociativo de argumentos que se utilizan para inicializar las propiedades del objeto
+	 *
+	 * El constructor de la clase consulta los campos de la tabla y crea las propiedades públicas y el constructor
+	 * para cada una de ellas. Si la propiedad se llama "id", se inicializa con el valor null, de lo contrario,
+	 * se inicializa con el valor del argumento correspondiente. Si el argumento no está definido, se inicializa con
+	 * una cadena vacía.
+	 */
 	public function __construct($args = [])
 	{
-		$this->id_cliente = $args["id_cliente"] ?? null;
-		$this->cedula = $args["cedula"] ?? null;
-		$this->nombre_1 = $args["nombre_1"] ?? "";
-		$this->nombre_2 = $args["nombre_2"] ?? "";
-		$this->apellido_1 = $args["apellido_1"] ?? "";
-		$this->apellido_2 = $args["apellido_2"] ?? "";
-		$this->fecha = $args["fecha"] ?? "";
+		// Constructor consulta los campos de la tabla
+		self::$columnasDB = self::colum();
+
+		// Iterar sobre las columnas y crear las propiedades públicas y el constructor
+		foreach (self::$columnasDB as $columna) {
+			// Crear propiedad pública con el nombre de la columna
+			// y asignarle un valor inicial de null
+			$propiedad = strtolower($columna);
+			$this->$propiedad = $propiedad === "id" ? null : $args[$propiedad] ?? "";
+		}
 	}
 
 	public function validar()
@@ -65,6 +65,44 @@ class Model_customer extends ActiveRecord
 		return self::$alertas;
 	}
 
+	/* consulta un cliente por el numero de documento */
+	public static function get()
+	{
+		$result = Model_customer::all();
+		return $result;
+	}
+
+	public static function seach()
+	{
+		$fields = [
+			"id",
+			"tipo_doc as Tipo_Documento",
+			"CONCAT(nombre,' ', s_nombre)as Nombres",
+			"CONCAT(apellido,' ', s_apellido)as Apellidos",
+			"sexo as Sexo",
+			"g_sanguineo as G_sanquineo",
+			"edad as Edad",
+			"est_civil as Estado_civil",
+			"ocupacion as Ocupacion",
+		];
+
+		$tables = ["cliente"];
+
+		$where = "";
+		$where = isset($tipo) && !empty($tipo) ? " tipo_doc = '$tipo'" : "";
+		$where .= isset($documento) && !empty($documento) ? " AND documento like %'$tipo'%" : "";
+		$where .= isset($nombres) && !empty($nombres) ? " AND Nombres like  %'$tipo'%" : "";
+		$where .= isset($apellidos) && !empty($apellidos) ? " AND Apellidos like %'$tipo'%" : "";
+		$where .= isset($g_sanguineo) && !empty($g_sanguineo) ? " AND g_sanguineo = '$tipo'" : "";
+
+		$data = (array) Model_customer::select($tables, "", $fields, "", $where);
+
+		$tabla = Html::createTabla($data, ["delete", "update"]);
+
+		return $tabla;
+	}
+
+	/* crea los filtros en la vista  */
 	public static function filter()
 	{
 		$filter = [
@@ -174,10 +212,22 @@ class Model_customer extends ActiveRecord
 				],
 			],
 		];
-		$frm_filter = Html::generateFilters_inline($filter);
-		return $frm_filter;
+
+		$cacheKey = "filter_customer";
+		$cachedData = Cache::get($cacheKey);
+
+		if ($cachedData !== false && !empty($cachedData)) {
+			/*  Los datos se encuentran en el cache */
+			return $cachedData;
+		}
+		$result = Html::generateFilters_inline($filter);
+		/* Guardar los datos en el cache */
+		Cache::set($cacheKey, $result);
+
+		return $result;
 	}
 
+	/* crea los modales para editar y agregar */
 	public static function modal($prm = "")
 	{
 		$modal_edit = [
@@ -576,11 +626,37 @@ class Model_customer extends ActiveRecord
 		];
 
 		if (isset($prm) && $prm == "edit") {
-			$frm_modal_edit = Html::createModal($modal_edit);
-			return $frm_modal_edit;
+			/* Verificar si la información se encuentra en el cache */
+			$cacheKey = "modal_edit";
+			$cachedData = Cache::get($cacheKey);
+
+			// var_dump($cachedData);
+			// exit();
+
+			if ($cachedData !== false && !empty($cachedData)) {
+				/*  Los datos se encuentran en el cache */
+
+				// var_dump($cachedData);
+				return $cachedData;
+			}
+
+			$result = Html::createModal($modal_edit);
+			/* Guardar los datos en el cache */
+			Cache::set($cacheKey, $result);
+			return $result;
 		} else {
-			$frm_modal = Html::createModal($modal);
-			return $frm_modal;
+			$cacheKey = "modal_add";
+			$cachedData = Cache::get($cacheKey);
+
+			if ($cachedData !== false && !empty($cachedData)) {
+				/*  Los datos se encuentran en el cache */
+				return $cachedData;
+			}
+
+			$result = Html::createModal($modal);
+			/* Guardar los datos en el cache */
+			Cache::set($cacheKey, $result);
+			return $result;
 		}
 	}
 }

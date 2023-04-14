@@ -48,20 +48,21 @@ class Html
 				$tabla .= "<td>$valor</td>";
 			}
 			// Agregamos los botones de borrar y actualizar si se especificaron en el parámetro $accion
-			if (in_array("delete", $accion)) {
-				$id = $fila->id; // Suponiendo que el ID de la fila se llama 'id'
-				$tabla .= "<td class='right aligned'><button class='ui button negative icon' data-content='Eliminar' data-position='top center'  onclick='deleteRecord($id, this)'><i class='trash small icon'></i></button></td>";
-			}
+
 			if (in_array("update", $accion)) {
 				$id = $fila->id; // Suponiendo que el ID de la fila se llama 'id'
-				$tabla .= "<td class='right aligned'><button class='ui button negative icon' data-content='Actualizar' data-position='top center' onclick='updateRecord($id, this)'><i class='edit small icon'></i></button></td>";
+				$tabla .= "<td class='right aligned'><button class='ui button negative icon' data-content='Actualizar' data-position='top center' onclick='updateRecord($id, this)'><i class='edit small icon'></i></button>";
 			}
 			if (in_array("status", $accion)) {
 				$id = $fila->id; // Suponiendo que el ID de la fila se llama 'id'
-				$tabla .= "<td class='right aligned'><button class='ui button negative icon' data-content='Estado' data-position='top center'  onclick='status($id, this)'><i class='toggle on small icon'></i></button></td>";
+				$tabla .= "<button class='ui button negative icon' data-content='Estado' data-position='top center'  onclick='status($id, this)'><i class='toggle on small icon'></i></button>";
+			}
+			if (in_array("delete", $accion)) {
+				$id = $fila->id; // Suponiendo que el ID de la fila se llama 'id'
+				$tabla .= "<button class='ui button negative icon' data-content='Eliminar' data-position='top center'  onclick='deleteRecord($id, this)'><i class='trash small icon'></i></button>";
 			}
 
-			$tabla .= "</tr>";
+			$tabla .= "</td></tr>";
 		}
 
 		$tabla .= "</tbody></table>";
@@ -542,59 +543,6 @@ class Html
 							$formHtml .= "</div>";
 							$formHtml .= "</div>";
 							break;
-
-						// case "checkbox":
-						// 	$formHtml .=
-						// 		'<div class="' .
-						// 		(isset($field["required"]) && $field["required"] === true ? "required " : "") .
-						// 		' field">';
-						// 	$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
-						// 	$formHtml .=
-						// 		'<div  data-type= "' .
-						// 		(isset($field["data-type"]) ? $field["data-type"] : "checkbox") .
-						// 		' class="' .
-						// 		(isset($field["class"]) ? $field["class"] : "ui checkbox") .
-						// 		'">';
-						// 	foreach ($field["options"] as $optionValue => $optionLabel) {
-						// 		$isSelected = "";
-						// 		$isDisabled = "";
-						// 		if (
-						// 			isset($field["value"]) &&
-						// 			is_array($field["value"]) &&
-						// 			in_array($optionValue, $field["value"])
-						// 		) {
-						// 			$isSelected = 'checked="true"';
-						// 		}
-						// 		if (isset($optionLabel["disabled"]) && $optionLabel["disabled"] === true) {
-						// 			$isDisabled = "disabled";
-						// 		}
-						// 		$optionLabel = isset($optionLabel["label"]) ? $optionLabel["label"] : $optionLabel;
-						// 		$formHtml .= '<div class="field">';
-						// 		$formHtml .= '<div class="ui checkbox">';
-						// 		$formHtml .=
-						// 			'<input type="checkbox" name="' .
-						// 			(isset($field["id"]) ? $field["id"] : "") .
-						// 			'[]" data-type= "' .
-						// 			(isset($field["data-type"]) ? $field["data-type"] : "checkbox") .
-						// 			'"  value="' .
-						// 			$optionValue .
-						// 			'" id="' .
-						// 			$optionValue .
-						// 			'"' .
-						// 			(isset($field["required"]) && $field["required"] === true
-						// 				? "required='true'"
-						// 				: "") .
-						// 			'"' .
-						// 			$isSelected .
-						// 			$isDisabled .
-						// 			">";
-						// 		$formHtml .= '<label for="' . $optionValue . '">' . $optionLabel . "</label>";
-						// 		$formHtml .= "</div>";
-						// 		$formHtml .= "</div>";
-						// 	}
-						// 	$formHtml .= "</div>";
-						// 	$formHtml .= "</div>";
-						// 	break;
 
 						case "checkbox":
 							$formHtml .=

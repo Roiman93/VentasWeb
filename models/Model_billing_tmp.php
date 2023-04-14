@@ -7,72 +7,70 @@ namespace Model;
 /* facturacion temporal */
 class Model_billing_tmp extends ActiveRecord
 {
-    // Base de datos
-    protected static $tabla = "detalle_tmp_factura";
-    protected static $columnasDB = [
-        "id",
-        "id_producto",
-        "cantidad",
-        "precio_venta",
-        "mesa",
-        "token_user",
-        "Total"
-    ];
+	// Base de datos
+	protected static $tabla = "detalle_tmp_factura";
 
-    /* atributos */
-    public $id;
-    public $id_producto;
-    public $cantidad;
-    public $precio_venta;
-    public $mesa;
-    public $token_user;
-    public $Total;
+	/* columnas de la tabla  de la BD*/
+	protected static $columnasDB = [];
 
-    public function __construct($args = [])
-    {
-        $this->id = $args["id"] ?? null;
-        $this->id_producto = $args["id_producto"] ?? "";
-        $this->cantidad = $args["cantidad"] ?? "";
-        $this->precio_venta = $args["precio_venta"] ?? "";
-        $this->mesa = $args["mesa"] ?? null;
-        $this->token_user = $args["token_user"] ?? "";
-        $this->Total = $args["Total"] ?? "";
-    }
+	/**
+	 * Constructor de la clase Model_billing_tmp
+	 *
+	 * @param array $args Un arreglo asociativo de argumentos que se utilizan para inicializar las propiedades del objeto
+	 *
+	 * El constructor de la clase consulta los campos de la tabla y crea las propiedades públicas y el constructor
+	 * para cada una de ellas. Si la propiedad se llama "id", se inicializa con el valor null, de lo contrario,
+	 * se inicializa con el valor del argumento correspondiente. Si el argumento no está definido, se inicializa con
+	 * una cadena vacía.
+	 */
+	public function __construct($args = [])
+	{
+		// Constructor consulta los campos de la tabla
+		self::$columnasDB = self::colum();
 
-    /*  valida la informacion de los campos  */
-    public function validar()
-    {
-        // if (!$this->id_producto) {
-        //     self::$alertas["error"][] = "El id del producto es Obligatorio";
-        // }
-        if (!$this->cantidad) {
-            self::$alertas["error"][] = "La cantidad debe ser mayor a 0 ";
-        }
-        if (!is_numeric($this->mesa)) {
-            self::$alertas["error"][] = "El numero de la mesa es Obligatorio";
-        }
-        // if (!$this->token_user) {
-        //     self::$alertas["error"][] = "El tiken es Obligatorio";
-        // }
+		// Iterar sobre las columnas y crear las propiedades públicas y el constructor
+		foreach (self::$columnasDB as $columna) {
+			// Crear propiedad pública con el nombre de la columna
+			// y asignarle un valor inicial de null
+			$propiedad = strtolower($columna);
+			$this->$propiedad = $propiedad === "id" ? null : $args[$propiedad] ?? "";
+		}
+	}
 
-        return self::$alertas;
-    }
+	/*  valida la informacion de los campos  */
+	public function validar()
+	{
+		// if (!$this->id_producto) {
+		//     self::$alertas["error"][] = "El id del producto es Obligatorio";
+		// }
+		if (!$this->cantidad) {
+			self::$alertas["error"][] = "La cantidad debe ser mayor a 0 ";
+		}
+		if (!is_numeric($this->mesa)) {
+			self::$alertas["error"][] = "El numero de la mesa es Obligatorio";
+		}
+		// if (!$this->token_user) {
+		//     self::$alertas["error"][] = "El tiken es Obligatorio";
+		// }
 
-    public function add_product()
-    {
-        // Verificar si la matriz de productos ya existe en la sesión
-        if (!isset($_SESSION["productos"])) {
-            $_SESSION["productos"] = [];
-        }
+		return self::$alertas;
+	}
 
-        $producto = [
-            "nombre" => $_POST[""],
-            "precio" => 9.99,
-        ];
+	public function add_product()
+	{
+		// Verificar si la matriz de productos ya existe en la sesión
+		if (!isset($_SESSION["productos"])) {
+			$_SESSION["productos"] = [];
+		}
 
-        array_push($_SESSION["productos"], $producto);
+		$producto = [
+			"nombre" => $_POST[""],
+			"precio" => 9.99,
+		];
 
-        // O usando la sintaxis de corchetes
-        $_SESSION["productos"][] = $producto;
-    }
+		array_push($_SESSION["productos"], $producto);
+
+		// O usando la sintaxis de corchetes
+		$_SESSION["productos"][] = $producto;
+	}
 }
