@@ -328,7 +328,7 @@ class ActiveRecord
 	public static function select($tables, $joins, $fields, $join_type = "INNER JOIN", $where)
 	{
 		$query = "SELECT " . implode(", ", $fields) . " FROM " . $tables[0];
-		if (!empty($join)) {
+		if (!empty($joins)) {
 			foreach ($joins as $key => $join) {
 				$query .= " " . $join_type . " " . $tables[$key + 1] . " ON " . $join;
 			}
