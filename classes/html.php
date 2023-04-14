@@ -51,36 +51,42 @@ class Html
 			/* Agregamos los botones de borrar y actualizar si se especificaron en el parámetro $accion */
 			if (in_array("update", $accion)) {
 				$id = $fila->id; // Suponiendo que el ID de la fila se llama 'id'
-				$updateButton = "<a  style='cursor:pointer; margin: 0 0.5em 1px 0;' style='cursor:pointer;'  onclick='updateRecord($id, this)'>
-									<div class='ui mini blue icon button' data-content='Actualizar' data-position='top center'><i class='edit  icon'></i></div>
+				$updateButton = "<a style='cursor:pointer;'  onclick='updateRecord($id, this)'>
+									<div class='ui icon button' data-content='Actualizar' data-position='top center'><i class='edit blue icon'></i></div>
 								</a>";
 			} else {
 				$updateButton = "";
 			}
 
 			if (in_array("status", $accion)) {
-				$id = $fila->id; // Suponiendo que el ID de la fila se llama 'id'
-				$statusButton = "<a style='cursor:pointer; margin: 0 0.5em 1px 0;'  onclick='status($id, this)'>
-									<div class='ui mini olive icon button' data-content='Estado' data-position='top center'><i class='toggle on icon'></i></div>
-								</a>";
+				$id = $fila->id;
+				$statusButton = '<a style="cursor:pointer;" onclick="status(' . $id . ', this)">';
+				if (isset($fila->status) && $fila->status == 1) {
+					$statusButton .=
+						'<div class="ui icon button" data-content="Activo" data-position="top center"><i class="toggle on olive icon"></i></div>';
+				} else {
+					$statusButton .=
+						'<div class="ui icon button" data-content="Desactivado" data-position="top center"><i class="toggle of olive icon"></i></div>';
+				}
+				$statusButton .= "</a>";
 			} else {
 				$statusButton = "";
 			}
 
 			if (in_array("delete", $accion)) {
 				$id = $fila->id; // Suponiendo que el ID de la fila se llama 'id'
-				$deleteButton = "<a style='cursor:pointer; margin: 0 0.5em 1px 0;' onclick='deleteRecord($id, this)'>
-									<div class='ui mini negative icon button' data-content='Eliminar' data-position='top center'><i class='trash icon'></i></div>
+				$deleteButton = "<a style='cursor:pointer;  onclick='deleteRecord($id, this)'>
+									<div class='ui icon button' data-content='Eliminar' data-position='top center'><i class='trash red icon'></i></div>
 								</a>";
 			} else {
 				$deleteButton = "";
 			}
 
-			$tabla .= "<td class='right aligned'>
+			$tabla .= "<td class='right aligned'> <div class='ui small basic icon buttons'>
              $updateButton
              $statusButton
              $deleteButton
-           </td>";
+			 </div> </td>";
 
 			$tabla .= "</tr>";
 		}
@@ -388,6 +394,7 @@ class Html
 		}
 
 		$output .= "</div>";
+
 		$output .= "</div></div>";
 		return $output;
 	}

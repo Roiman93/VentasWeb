@@ -97,7 +97,7 @@ class Model_customer extends ActiveRecord
 
 		$data = (array) Model_customer::select($tables, "", $fields, "", $where);
 
-		$tabla = Html::createTabla($data, ["delete", "update", "status"]);
+		$tabla = Html::createTabla($data, ["delete", "update"]);
 
 		return $tabla;
 	}
