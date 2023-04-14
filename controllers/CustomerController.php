@@ -21,14 +21,6 @@ class CustomerController
 		$frm_modal_add = Model_customer::modal();
 		$result = Model_customer::seach();
 
-		// Crear una instancia de la clase
-
-		//$customer = new Model_customer();
-
-		// var_dump(get_object_vars($customer));
-
-		// exit();
-
 		$router->render("pages/Customer", [
 			"name" => $_SESSION["nombre"],
 			"page" => "Clientes",
