@@ -51,38 +51,41 @@ class Html
 			/* Agregamos los botones de borrar y actualizar si se especificaron en el parámetro $accion */
 			if (in_array("update", $accion)) {
 				$id = $fila->id; // Suponiendo que el ID de la fila se llama 'id'
-				$updateButton = "<a style='cursor:pointer;'  onclick='updateRecord($id, this)'>
-									<div class='ui icon button' data-content='Actualizar' data-position='top center'><i class='edit blue icon'></i></div>
-								</a>";
+				$updateButton = "<button class='ui icon button' data-content='Actualizar' data-position='top center' onclick='updateRecord($id, this)'>
+									<i class='edit blue icon'></i>
+								</button>";
 			} else {
 				$updateButton = "";
 			}
 
 			if (in_array("status", $accion)) {
+				$statusButton = "";
 				$id = $fila->id;
-				$statusButton = '<a style="cursor:pointer;" onclick="status(' . $id . ', this)">';
 				if (isset($fila->status) && $fila->status == 1) {
 					$statusButton .=
-						'<div class="ui icon button" data-content="Activo" data-position="top center"><i class="toggle on olive icon"></i></div>';
+						'<button class="ui button" data-content="Activo" data-position="top center" onclick="status(' .
+						$id .
+						', this)><i class="toggle on olive icon"></i></button>';
 				} else {
 					$statusButton .=
-						'<div class="ui icon button" data-content="Desactivado" data-position="top center"><i class="toggle of olive icon"></i></div>';
+						'<button class="ui button" data-content="Desactivado" data-position="top center" onclick="status(' .
+						$id .
+						', this)><i class="toggle of olive icon"></i></button>';
 				}
-				$statusButton .= "</a>";
 			} else {
 				$statusButton = "";
 			}
 
 			if (in_array("delete", $accion)) {
 				$id = $fila->id; // Suponiendo que el ID de la fila se llama 'id'
-				$deleteButton = "<a style='cursor:pointer;  onclick='deleteRecord($id, this)'>
-									<div class='ui icon button' data-content='Eliminar' data-position='top center'><i class='trash red icon'></i></div>
-								</a>";
+				$deleteButton = "<button class='ui button' data-content='Eliminar' data-position='top center' onclick='deleteRecord($id, this)'>
+									<i class='trash red icon'></i>
+								</button>";
 			} else {
 				$deleteButton = "";
 			}
 
-			$tabla .= "<td class='right aligned'> <div class='ui small basic icon buttons'>
+			$tabla .= "<td class='right aligned'><div class='ui small basic icon buttons'>
              $updateButton
              $statusButton
              $deleteButton
@@ -296,7 +299,10 @@ class Html
 				} else {
 					switch ($field["type"]) {
 						case "text":
-							$output .= '<div class="field">';
+							$output .=
+								'<div class= " ' .
+								(isset($field["required"]) && $field["required"] === true ? "required" : "") .
+								' field">';
 							$output .= "<label>" . $field["label"] . "</label>";
 							$output .=
 								'<input type="' .
@@ -324,9 +330,19 @@ class Html
 							break;
 
 						case "select":
-							$output .= '<div class="field">';
+							$output .=
+								'<div class="' .
+								(isset($field["required"]) && $field["required"] === true ? "required" : "") .
+								' field">';
 							$output .= "<label>" . $field["label"] . "</label>";
-							$output .= '<select name="' . $field["name"] . '" id="' . $field["name"] . '">';
+							$output .=
+								'<select name="' .
+								$field["name"] .
+								'" id="' .
+								$field["name"] .
+								'"   data-type="' .
+								(isset($field["data-type"]) ? $field["data-type"] : "") .
+								'">';
 
 							foreach ($field["options"] as $optionValue => $optionLabel) {
 								$isSelected = "";
@@ -367,12 +383,11 @@ class Html
 		$output .= "</div>";
 
 		/*  Botones */
-		$output .= '<div class="ui buttons">';
+		$output .= '<div class="ui small stackable buttons">';
 
 		foreach ($btn as $key => $button) {
-			// $output .= '<a class="'. $button['class'] .'" href="'. $button['href'] .'"><i class="' . $button['icon'] . '"></i><label>'.$button['label'].'</label></a>';
 			$output .=
-				'<button style="margin: 0 0.1em 0 0.1rem;" data-content="' .
+				'<button  data-content="' .
 				(isset($button["data-conten"]) ? $button["data-conten"] : "") .
 				'"  name="' .
 				(isset($button["name"]) ? $button["name"] : "") .
@@ -442,9 +457,9 @@ class Html
 			'" class="' .
 			(isset($form["class"]) ? $form["class"] : "ui modal") .
 			'">';
+		$formHtml .= '<h4 class="ui dividing header">' . (isset($form["header"]) ? $form["header"] : "") . "</h4>";
 		$formHtml .= '<div class=" scrolling  content">';
 		$formHtml .= '<div class="ui form">';
-		$formHtml .= '<h4 class="ui dividing header">' . (isset($form["header"]) ? $form["header"] : "") . "</h4>";
 
 		$fieldCounter = 0;
 		$formHtml .= '<div class="equal width fields">';
@@ -682,6 +697,8 @@ class Html
 		$formHtml .= "</div>";
 		$formHtml .= "</div>";
 
+		$formHtml .= "</div>";
+
 		/*   Botones del modal */
 		$formHtml .= '<div class="ui actions">';
 
@@ -708,7 +725,6 @@ class Html
 				"</label></div>";
 		}
 
-		$formHtml .= "</div>";
 		$formHtml .= "</div>";
 		$formHtml .= "</div>";
 

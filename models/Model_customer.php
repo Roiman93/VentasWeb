@@ -77,6 +77,7 @@ class Model_customer extends ActiveRecord
 		$fields = [
 			"id",
 			"tipo_doc as Tipo_Documento",
+			"documento as Documento",
 			"CONCAT(nombre,' ', s_nombre)as Nombres",
 			"CONCAT(apellido,' ', s_apellido)as Apellidos",
 			"sexo as Sexo",
@@ -88,12 +89,23 @@ class Model_customer extends ActiveRecord
 
 		$tables = ["cliente"];
 
-		$where = "";
-		$where = isset($tipo) && !empty($tipo) ? " tipo_doc = '$tipo'" : "";
-		$where .= isset($documento) && !empty($documento) ? " AND documento like %'$tipo'%" : "";
-		$where .= isset($nombres) && !empty($nombres) ? " AND Nombres like  %'$tipo'%" : "";
-		$where .= isset($apellidos) && !empty($apellidos) ? " AND Apellidos like %'$tipo'%" : "";
-		$where .= isset($g_sanguineo) && !empty($g_sanguineo) ? " AND g_sanguineo = '$tipo'" : "";
+		/* variables */
+		$tipo = isset($_POST["tipo_doc"]) ? $_POST["tipo_doc"] : "null";
+		$documento = isset($_POST["documento"]) ? $_POST["documento"] : "null";
+		$nombres = isset($_POST["nombres"]) ? $_POST["nombres"] : "null";
+		$apellidos = isset($_POST["apellidos"]) ? $_POST["apellidos"] : "null";
+		$g_sanguineo = isset($_POST["g_sanguineo"]) ? $_POST["g_sanguineo"] : "null";
+
+		$where_conditions = [
+			!empty($tipo) && $tipo != "null" ? "tipo_doc = '$tipo'" : "",
+			!empty($documento) && $documento != "null" ? "documento like '%{$documento}%'" : "",
+			!empty($nombres) && $nombres != "null" ? "CONCAT(nombre, ' ', s_nombre) like '%{$nombres}%'" : "",
+			!empty($apellidos) && $apellidos != "null" ? "CONCAT(apellido, ' ', s_apellido) like '%{$apellidos}%'" : "",
+			!empty($g_sanguineo) && $g_sanguineo != "null" ? "g_sanguineo = '$g_sanguineo'" : "",
+		];
+
+		$where_conditions = array_filter($where_conditions);
+		$where = count($where_conditions) > 0 ? "" . implode(" AND ", $where_conditions) : "";
 
 		$data = (array) Model_customer::select($tables, "", $fields, "", $where);
 
@@ -102,16 +114,34 @@ class Model_customer extends ActiveRecord
 		return $tabla;
 	}
 
+	public static function delete()
+	{
+		if (isset($_POST["id"]) && !empty($_POST["id"])) {
+			$id = $_POST["id"];
+
+			$_model = new Model_customer();
+			$result = $_model->eliminar("id", $id);
+
+			if ($result == true) {
+				$result = Model_customer::seach($_POST);
+				header("Content-Type: application/json");
+				echo json_encode(["resultado" => $result]);
+				exit();
+			}
+		}
+	}
+
 	/* crea los filtros en la vista  */
 	public static function filter()
 	{
 		$filter = [
 			"id" => "filter_customer",
-			"class" => "ui form",
+			"class" => "ui stackable form",
 			"header" => "Filtros",
 			"fields" => [
 				[
 					"type" => "select",
+					"data-type" => "select",
 					"label" => "Tipo Documento",
 					"id" => "tipo_doc",
 					"name" => "tipo_doc",
@@ -129,33 +159,34 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Numero documento",
 					"id" => "documento",
+					"name" => "documento",
 					"type" => "text",
 					"data-type" => "number",
 					"placeholder" => "Numero de documento",
-					"required" => true,
 					"onkeypress" => "return valideKey(event);",
 				],
 				[
 					"label" => "Nombres",
 					"id" => "nombres",
+					"name" => "nombres",
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Primer Nombre",
-					"required" => true,
 					"onkeypress" => "return lettersOnly(event);",
 				],
 
 				[
 					"label" => "Apellidos",
 					"id" => "apellidos",
+					"name" => "apellidos",
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Apellido",
-					"required" => false,
 					"onkeypress" => "return lettersOnly(event);",
 				],
 				[
 					"type" => "select",
+					"data-type" => "select",
 					"label" => "G sanguineo",
 					"id" => "g_sanguineo",
 					"name" => "g_sanguineo",
@@ -232,7 +263,7 @@ class Model_customer extends ActiveRecord
 	{
 		$modal_edit = [
 			"id" => "modal_edit",
-			"class" => "ui modal",
+			"class" => "ui longer modal",
 			"header" => "Registro de clientes",
 			"fields" => [
 				[

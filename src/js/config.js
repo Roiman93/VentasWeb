@@ -232,26 +232,35 @@ function validateForm(idFormulario) {
 				}
 
 				break;
-
 			case "number":
-				if ($campo.prop("required") && !$campo.val()) {
-					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
-					);
-					isValid = false;
-				} else {
-					const numberPattern = /^\d+$/;
-					if (!value || !numberPattern.test(value)) {
+				if ($campo.prop("required")) {
+					// validar si el campo es requerido
+					if (!$campo.val()) {
+						// El campo requerido está vacío
 						$campo.closest(".field").addClass("error");
 						$campo.after(
-							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Por favor ingrese un número válido</div>'
+							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
 						);
 						isValid = false;
 					} else {
-						$campo.closest(".field").removeClass("error");
-						datos[$campo.attr("name")] = $campo.prop("required") && !$campo.val() ? null : $campo.val();
+						// Validar si el valor es un número válido
+						const numberPattern = /^\d+$/;
+						if (!numberPattern.test(value)) {
+							// El valor no es un número válido
+							$campo.closest(".field").addClass("error");
+							$campo.after(
+								'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Por favor ingrese un número válido</div>'
+							);
+							isValid = false;
+						} else {
+							// El valor es un número válido
+							$campo.closest(".field").removeClass("error");
+							datos[$campo.attr("name")] = $campo.prop("required") && !$campo.val() ? null : $campo.val();
+						}
 					}
+				} else {
+					// El campo no es requerido, no se realiza la validación
+					$campo.closest(".field").removeClass("error");
 				}
 
 				break;
@@ -336,6 +345,232 @@ function validateForm(idFormulario) {
 		return datos;
 	} else {
 		return isValid;
+	}
+}
+
+/**
+ * Función que valida un formulario y devuelve true si todos los campos requeridos están completos
+ * @param {HTMLFormElement} form - El formulario a validar
+ * @returns {boolean} - True si el formulario es válido, false si no lo es
+ * @returns {objet} - devuelve en objeto con los datos del formulario si es true
+ * @throws {TypeError} - Si el parámetro form no es de tipo HTMLFormElement
+ *
+ * Soporte para los siguientes tipos de campo:
+ * - text
+ * - password
+ * - email
+ * - number
+ * - checkbox
+ * - radio
+ * - select-one
+ * - select-multiple
+ *
+ * Si un campo tiene el atributo "required" y está vacío, se considera inválido.
+ */
+function obtain(idFormulario) {
+	// Obtenemos los campos del formulario
+	var $campos = $("#" + idFormulario + ' input[type!="hidden"], #' + idFormulario + " select");
+
+	// Eliminamos mensajes y clases de error anteriores
+	$("#" + idFormulario + " .field").removeClass("error");
+	$("#" + idFormulario + " .ui.visible.attached.message").remove();
+	var messageShown = false;
+
+	var isValid = true; // Variable para indicar si el formulario es válido o no
+	var datos = {};
+
+	// Recorremos los campos y validamos su contenido
+	$campos.each(function () {
+		var $campo = $(this);
+		var nombreCampo = $campo.prev("label").text().replace(":", ""); // Obtenemos el nombre del campo
+		var value = $campo.val(); // Obtenemos el valor del campo
+
+		switch ($campo.data("type")) {
+			case "text":
+				datos[$campo.attr("name")] = !$campo.val() ? null : $campo.val();
+
+				break;
+
+			case "address":
+				datos[$campo.attr("name")] = !$campo.val() ? null : $campo.val();
+				break;
+
+			case "select":
+				datos[$campo.attr("name")] = !$campo.val() ? null : $campo.val();
+				break;
+
+			case "checkbox":
+				var $checkboxes = $("input[type='checkbox'][name='" + $campo.attr("name") + "']");
+
+				// Verificamos que al menos uno esté seleccionado
+				var isChecked = $checkboxes.is(":checked");
+
+				if ($campo.prop("required") && !isChecked) {
+					$campo.closest(".field").addClass("error");
+
+					if (!messageShown) {
+						$campo.after(
+							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
+						);
+						messageShown = true;
+					}
+
+					isValid = false;
+				} else {
+					$campo.closest(".field").removeClass("error");
+					var selectedOptions = [];
+					$checkboxes.each(function () {
+						if (this.checked) {
+							selectedOptions.push($(this).val());
+						}
+					});
+
+					datos[$campo.attr("name")] = selectedOptions;
+				}
+				break;
+
+			case "range":
+				datos[$campo.attr("name")] = !$campo.val() ? null : $campo.val();
+				break;
+
+			case "radio":
+				datos[$campo.attr("name")] = !$campo.val() ? null : $campo.val();
+				break;
+
+			case "email":
+				datos[$campo.attr("name")] = !$campo.val() ? null : $campo.val();
+				break;
+			case "number":
+				if ($campo.prop("required")) {
+					// validar si el campo es requerido
+					if (!$campo.val()) {
+						// El campo requerido está vacío
+						$campo.closest(".field").addClass("error");
+						$campo.after(
+							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
+						);
+						isValid = false;
+					} else {
+						// Validar si el valor es un número válido
+						const numberPattern = /^\d+$/;
+						if (!numberPattern.test(value)) {
+							// El valor no es un número válido
+							$campo.closest(".field").addClass("error");
+							$campo.after(
+								'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Por favor ingrese un número válido</div>'
+							);
+							isValid = false;
+						} else {
+							// El valor es un número válido
+							$campo.closest(".field").removeClass("error");
+							datos[$campo.attr("name")] = $campo.prop("required") && !$campo.val() ? null : $campo.val();
+						}
+					}
+				} else {
+					// El campo no es requerido, no se realiza la validación
+					$campo.closest(".field").removeClass("error");
+					datos[$campo.attr("name")] = !$campo.val() ? null : $campo.val();
+				}
+
+				break;
+
+			case "tel":
+				if ($campo.prop("required") && !$campo.val()) {
+					$campo.closest(".field").addClass("error");
+					$campo.after(
+						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
+					);
+					isValid = false;
+				} else {
+					const phonePattern = /^\d{10}$/;
+					if (!value || !phonePattern.test(value)) {
+						$campo.closest(".field").addClass("error");
+						$campo.after(
+							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Por favor ingrese un número de teléfono válido</div>'
+						);
+						isValid = false;
+					} else {
+						$campo.closest(".field").removeClass("error");
+						datos[$campo.attr("name")] = $campo.prop("required") && !$campo.val() ? null : $campo.val();
+					}
+					datos[$campo.attr("name")] = !$campo.val() ? null : $campo.val();
+				}
+
+				break;
+
+			case "date":
+				datos[$campo.attr("name")] = !$campo.val() ? null : $campo.val();
+
+				break;
+
+			case "time":
+				$hora = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test($campo.val());
+				if ($campo.prop("required") && !$campo.val() && !$campo.prop("disabled")) {
+					$campo.closest(".field").addClass("error");
+					$campo.after(
+						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio </div>'
+					);
+					isValid = false;
+				} else {
+					var parsedDate = Date.parse("01/01/1970 " + $campo.val()); // Intentamos parsear la hora
+					if (isNaN(parsedDate)) {
+						// Si el resultado es NaN, la hora no es válida
+						$campo.closest(".field").addClass("error");
+						$campo.after(
+							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">La hora seleccionada no es válida</div>'
+						);
+						isValid = false;
+					} else {
+						$campo.closest(".field").removeClass("error");
+						datos[$campo.attr("name")] = $campo.prop("required") && !$campo.val() ? null : $campo.val();
+					}
+
+					datos[$campo.attr("name")] = !$campo.val() ? null : $campo.val();
+				}
+				break;
+		}
+	});
+
+	$(".message .close").on("click", function () {
+		$(this).closest(".message").transition("fade");
+	});
+	/* si el formularo pasa la validacion se envian los datos */
+	if (isValid == true) {
+		return datos;
+	} else {
+		return isValid;
+	}
+}
+
+function fillForm(formData) {
+	const form = document.querySelector("form");
+	const elements = form.elements;
+
+	for (let i = 0; i < elements.length; i++) {
+		const element = elements[i];
+		const name = element.name;
+		const value = formData[name];
+
+		if (typeof value !== "undefined") {
+			if (element.type === "select-one") {
+				for (let j = 0; j < element.options.length; j++) {
+					const option = element.options[j];
+					if (option.value === value) {
+						option.selected = true;
+					} else {
+						option.selected = false;
+					}
+				}
+			} else if (element.type === "checkbox") {
+				if (value) {
+					element.checked = true;
+				} else {
+					element.checked = false;
+				}
+			} else {
+				element.value = value;
+			}
+		}
 	}
 }
 

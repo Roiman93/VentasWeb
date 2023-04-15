@@ -35,26 +35,18 @@ class CustomerController
 	/* se realiza una consulta mediante los fltros*/
 	public static function seach_filter()
 	{
-		/* consulta el cliente con el numero de documento */
+		/* consulta el cliente dependiendo del filtro */
+		$date = Model_customer::seach($_POST);
 
-		/*   Validamos si contiene solo numeros */
-		if (isset($_POST["date"]) && is_numeric($_POST["date"])) {
-			$value = $_POST["date"];
+		/*   Validamos */
+		if (!empty($date)) {
+			$result = $date;
 		} else {
-			// $_POST["date"] no contiene solo números
-			echo json_encode([
-				"error" => "Solo se permiten numeros en el campo cedula.",
-			]);
-			exit();
+			$result = true;
 		}
 
-		$resp_c = Model_customer::where([
-			"documento" => $value,
-		]);
-
-		$resultado = Process::validar_ar($resp_c);
 		header("Content-Type: application/json");
-		echo json_encode(["resultado" => $resultado]);
+		echo json_encode(["resultado" => $result]);
 		exit();
 	}
 	/* se busca el cliente por cedula */
@@ -80,6 +72,18 @@ class CustomerController
 		$resultado = Process::validar_ar($resp_c);
 		header("Content-Type: application/json");
 		echo json_encode(["resultado" => $resultado]);
+		exit();
+	}
+
+	/* consulto los clientes por id */
+	public static function find()
+	{
+		$id = $_POST["id"];
+
+		// debuguear($id);
+		$_result = Model_customer::find($id);
+		header("Content-Type: application/json");
+		echo json_encode(["resultado" => $_result]);
 		exit();
 	}
 	/* se agrega un registro ala BD */
@@ -111,11 +115,6 @@ class CustomerController
 	/* elimina un registro de la BD */
 	public static function eliminar()
 	{
-		if ($_SERVER["REQUEST_METHOD"] === "POST") {
-			$id = $_POST["id"];
-			$cita = Cita::find($id);
-			$cita->eliminar();
-			header("Location:" . $_SERVER["HTTP_REFERER"]);
-		}
+		Model_customer::delete();
 	}
 }

@@ -201,7 +201,6 @@ class ActiveRecord
 	}
 
 	/* Consulta SQL para crear un objeto en Memoria */
-
 	public static function consultarSQL($query)
 	{
 		// Validar que la consulta no esté vacía
