@@ -6,8 +6,6 @@ window.addEventListener("load", function () {
 });
 
 async function seach() {
-	/*variabes*/
-
 	$filter = obtain("filter_customer");
 
 	const datos = new FormData();
@@ -15,8 +13,6 @@ async function seach() {
 		// console.log(prop + ": " + $filter[prop]);
 		datos.append(prop, $filter[prop]);
 	}
-
-	console.log(datos);
 
 	try {
 		/* Petición hacia la api */
@@ -32,7 +28,6 @@ async function seach() {
 }
 
 async function updateRecord(id) {
-	/*variabes*/
 	const datos = new FormData();
 	datos.append("id", id);
 	try {
@@ -45,10 +40,10 @@ async function updateRecord(id) {
 		data = await respuesta.json();
 
 		$("#modal_edit").modal("show");
-		console.log(data);
-		fillForm("modal_edit", data);
+		obtain("modal_edit", data.resultado);
 	} catch (error) {}
 }
+
 /**
  * Elimina un cliente  mediante una petición a la API.
  * @async
