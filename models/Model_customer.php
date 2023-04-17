@@ -267,9 +267,11 @@ class Model_customer extends ActiveRecord
 			"header" => "Registro de clientes",
 			"fields" => [
 				[
-					"type" => "select",
 					"label" => "Tipo Documento",
+					"id" => "tipo_doc",
 					"name" => "tipo_doc",
+					"type" => "select",
+					"data-type" => "select",
 					"required" => true,
 					"options" => [
 						"OT" => [
@@ -283,8 +285,26 @@ class Model_customer extends ActiveRecord
 					"value" => "OT",
 				],
 				[
+					"type" => "checkbox",
+					"data-type" => "checkbox",
+					"id" => "ch_doc",
+					"name" => "ch_doc",
+					"label" => "Seleccione una de las opciones",
+					"required" => true,
+					"options" => [
+						"OT" => [
+							"label" => "--Seleccione--",
+							"disabled" => true,
+						],
+						"si" => "si",
+						"no" => "no",
+						"nose" => "nose",
+					],
+				],
+				[
 					"label" => "Numero documento",
 					"id" => "documento",
+					"name" => "documento",
 					"type" => "text",
 					"data-type" => "number",
 					"placeholder" => "Numero de documento",
@@ -294,6 +314,7 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Nombre",
 					"id" => "nombre",
+					"name" => "nombre",
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Primer Nombre",
@@ -303,6 +324,7 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Segundo Nombre",
 					"id" => "s_nombre",
+					"name" => "s_nombre",
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Segundo Nombre",
@@ -312,6 +334,7 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Apellido",
 					"id" => "apellido",
+					"name" => "apellido",
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Apellido",
@@ -321,6 +344,7 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Segundo Apellido",
 					"id" => "s_apellido",
+					"name" => "s_apellido",
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Apellido",
@@ -331,6 +355,7 @@ class Model_customer extends ActiveRecord
 					"label" => "Sexo",
 					"id" => "sexo",
 					"type" => "select",
+					"data-type" => "select",
 					"name" => "sexo",
 					"required" => true,
 					"options" => [
@@ -338,15 +363,16 @@ class Model_customer extends ActiveRecord
 							"label" => "--Selecione--",
 							"disabled" => true,
 						],
-						"M" => "Masculino",
-						"F" => "Femenino",
-						"O" => "No binario",
+						"m" => "Masculino",
+						"f" => "Femenino",
+						"o" => "No binario",
 					],
 					"value" => "OT",
 				],
 				[
 					"label" => "Edad",
 					"id" => "edad",
+					"name" => "edad",
 					"type" => "text",
 					"data-type" => "number",
 					"placeholder" => "Primer Nombre",
@@ -357,6 +383,7 @@ class Model_customer extends ActiveRecord
 					"label" => "Estado civil",
 					"id" => "est_civil",
 					"type" => "select",
+					"data-type" => "select",
 					"name" => "est_civil",
 					"options" => [
 						"OT" => [
@@ -384,6 +411,7 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Direcciòn",
 					"id" => "direccion",
+					"name" => "direccion",
 					"type" => "text",
 					"data-type" => "text",
 					"name" => "direccion",
@@ -393,8 +421,9 @@ class Model_customer extends ActiveRecord
 				[
 					"label" => "Telefono",
 					"id" => "telefono",
+					"name" => "telefono",
 					"type" => "text",
-					"data-type" => "number",
+					"data-type" => "tel",
 					"name" => "telefono",
 					"placeholder" => "Telefono",
 					"onkeypress" => "return valideKey(event);",

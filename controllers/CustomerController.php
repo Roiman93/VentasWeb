@@ -86,6 +86,7 @@ class CustomerController
 		echo json_encode(["resultado" => $_result]);
 		exit();
 	}
+
 	/* se agrega un registro ala BD */
 	public static function add_customer()
 	{

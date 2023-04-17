@@ -12,7 +12,7 @@
   <?php echo isset($modal_edit) && !empty($modal_edit) ? $modal_edit : ""; ?>
   <!-- tabla -->
 
-  <!-- detalle de factura -->
+  <!--  Registros -->
   <div id="registros_customer" class="container" style="height: 500px; overflow: auto;">
   <!-- Tabla ajax -->
   </div>
