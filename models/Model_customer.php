@@ -457,7 +457,7 @@ class Model_customer extends ActiveRecord
 					"id" => "direccion",
 					"name" => "direccion",
 					"type" => "text",
-					"data-type" => "text",
+					"data-type" => "address",
 					"name" => "direccion",
 					"placeholder" => "direccion ",
 					"required" => true,
