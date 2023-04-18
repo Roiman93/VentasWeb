@@ -469,6 +469,8 @@ class ActiveRecord
 		$query .= " WHERE id = '" . self::$db->escape_string($this->id) . "' ";
 		$query .= " LIMIT 1 ";
 
+		// debuguear($query);
+
 		$resultado = self::getResults($query);
 		return $resultado;
 	}
@@ -510,6 +512,7 @@ class ActiveRecord
 
 		if (!is_null($this->id)) {
 			// actualizar
+
 			$resultado = $this->actualizar();
 		} else {
 			// debuguear($_POST);

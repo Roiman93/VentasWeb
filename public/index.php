@@ -58,6 +58,7 @@ $router->get("/cliente", [CustomerController::class, "index"]);
 $router->post("/cliente/seach", [CustomerController::class, "seach_filter"]);
 $router->post("/api/cliente", [CustomerController::class, "get_cliente"]);
 $router->post("/get_cliente", [CustomerController::class, "find"]);
+$router->post("/upd_cliente", [CustomerController::class, "upd_customer"]);
 $router->post("/api/cliente_delete", [CustomerController::class, "eliminar"]);
 
 // facturacion

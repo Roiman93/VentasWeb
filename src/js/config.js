@@ -76,11 +76,13 @@ function myFunction(x) {
  */
 function validateForm(idFormulario) {
 	// Obtenemos los campos del formulario
-	var $campos = $("#" + idFormulario + ' input[type!="hidden"], #' + idFormulario + " select");
+	//var $campos = $("#" + idFormulario + ' input[type!="hidden"], #' + idFormulario + " select");
+	var $campos = $("#" + idFormulario + " input, #" + idFormulario + " select");
 
 	// Eliminamos mensajes y clases de error anteriores
 	$("#" + idFormulario + " .field").removeClass("error");
 	$("#" + idFormulario + " .ui.visible.attached.message").remove();
+
 	var messageShown = false;
 
 	var isValid = true; // Variable para indicar si el formulario es válido o no
@@ -153,32 +155,29 @@ function validateForm(idFormulario) {
 				break;
 
 			case "checkbox":
-				var $checkboxes = $("input[type='checkbox'][name='" + $campo.attr("name") + "']");
+				var radios = $("input[type='radio'][name='" + $campo.attr("name") + "']");
 
-				// Verificamos que al menos uno esté seleccionado
-				var isChecked = $checkboxes.is(":checked");
+				// Verificamos que solo una opción esté seleccionada
+				var isChecked = radios.filter(":checked").length === 1;
 
 				if ($campo.prop("required") && !isChecked) {
 					$campo.closest(".field").addClass("error");
 
 					if (!messageShown) {
-						$campo.after(
-							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
-						);
+						$campo
+							.last()
+							.parent()
+							.after(
+								'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
+							);
 						messageShown = true;
 					}
 
 					isValid = false;
 				} else {
 					$campo.closest(".field").removeClass("error");
-					var selectedOptions = [];
-					$checkboxes.each(function () {
-						if (this.checked) {
-							selectedOptions.push($(this).val());
-						}
-					});
-
-					datos[$campo.attr("name")] = selectedOptions;
+					var selectedOption = radios.filter(":checked").val();
+					datos[$campo.attr("name")] = $campo.prop("required") && !selectedOption ? null : selectedOption;
 				}
 				break;
 
@@ -368,18 +367,25 @@ function validateForm(idFormulario) {
  */
 function obtain(idFormulario, obj) {
 	/*  Obtenemos los campos del formulario */
-	var $campos = $("#" + idFormulario + ' input[type!="hidden"], #' + idFormulario + " select");
+	//var $campos = $("#" + idFormulario + ' input[type !="submit"], #' + idFormulario + " select");
+	var $campos = $("#" + idFormulario + " input, #" + idFormulario + " select");
+	// var $campos = $("#" + idFormulario + ' input[type!="submit"], select, input[type="hidden"]');
+
+	//var $campos = $("#" + idFormulario + ' input[type!="submit"], input[type="hidden"], #' + idFormulario + " select");
+
+	//console.log($campos);
 
 	if (typeof obj !== "undefined" && obj !== null) {
 		/* Recorremos los campos y validamos su contenido */
 		$campos.each(function () {
 			var $campo = $(this);
 			const clave = $campo.attr("name").replace(/\[\]/g, "");
+			// console.log($campo.attr("name"));
 
 			if (obj.hasOwnProperty(clave)) {
 				const valor = obj[clave];
 				/* Resto del código que utiliza la variable valor */
-				// console.log("la clave existe y tiene valor " + valor);
+				//console.log("la clave existe y tiene valor " + valor);
 
 				switch ($campo.data("type")) {
 					case "radio":

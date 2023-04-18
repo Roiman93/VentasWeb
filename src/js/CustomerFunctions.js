@@ -40,8 +40,32 @@ async function updateRecord(id) {
 		data = await respuesta.json();
 
 		$("#modal_edit").modal("show");
+		// console.log(data.resultado);
 		obtain("modal_edit", data.resultado);
 	} catch (error) {}
+}
+async function update() {
+	result = validateForm("modal_edit");
+
+	if (result != false) {
+		const datos = new FormData();
+		for (let prop in result) {
+			console.log(prop + ": " + result[prop]);
+			datos.append(prop, result[prop]);
+		}
+
+		try {
+			/* Petición hacia la api */
+			const url = "http://localhost:8888/upd_cliente";
+			const respuesta = await fetch(url, {
+				method: "POST",
+				body: datos,
+			});
+			data = await respuesta.json();
+			$("#modal_edit").modal("hide");
+			displayResult(data);
+		} catch (error) {}
+	}
 }
 
 /**
@@ -161,6 +185,13 @@ $("#search").click(function (e) {
 */
 $("#add").click(function (e) {
 	$("#modal_add").modal("show");
+});
+/**
+* Función que se ejecuta al hacer clic en el botón "Buscar .
+@param {object} e - Evento del botón "Agregar".
+*/
+$("#update").click(function (e) {
+	update();
 });
 
 /**

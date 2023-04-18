@@ -41,27 +41,36 @@ class Model_customer extends ActiveRecord
 		}
 	}
 
+	private static $reglasValidacion = [
+		"tipo_doc" => ["required"],
+		"ch_doc" => ["required"],
+		"documento" => ["required"],
+		"nombre" => ["required"],
+		"s_nombre" => ["required"],
+		"apellido" => ["required"],
+		"s_apellido" => ["required"],
+		"sexo" => ["required"],
+		"edad" => ["required"],
+		"est_civil" => ["required"],
+		"ocupacion" => ["required"],
+		"direccion" => ["required"],
+		"telefono" => ["required"],
+	];
+
 	public function validar()
 	{
-		if (!$this->cedula) {
-			self::$alertas["error"][] = "El numero de documento  es Obligatorio";
+		foreach (self::$reglasValidacion as $propiedad => $reglas) {
+			foreach ($reglas as $regla) {
+				switch ($regla) {
+					case "required":
+						if (!$this->$propiedad) {
+							self::$alertas["error"][] = "El campo {$propiedad} es obligatorio";
+						}
+						break;
+					// Otras reglas de validación aquí
+				}
+			}
 		}
-		if (!$this->nombre_1) {
-			self::$alertas["error"][] = "El Nombre  es Obligatorio";
-		}
-		if (!$this->nombre_2) {
-			self::$alertas["error"][] = "El Nombre  es Obligatorio";
-		}
-		if (!$this->apellido_1) {
-			self::$alertas["error"][] = "El Nombre  es Obligatorio";
-		}
-		if (!$this->apellido_2) {
-			self::$alertas["error"][] = "El apellido  es Obligatorio";
-		}
-		if (!$this->fecha) {
-			self::$alertas["error"][] = "la fecha es Obligatoria";
-		}
-
 		return self::$alertas;
 	}
 
@@ -114,6 +123,32 @@ class Model_customer extends ActiveRecord
 		return $tabla;
 	}
 
+	public static function update()
+	{
+		// debuguear($_POST);
+		if (isset($_POST["id"]) && !empty($_POST["id"])) {
+			$_customer = Model_customer::find($_POST["id"]);
+
+			/*  variables  */
+			$alertas = [];
+
+			$_customer->sincronizar($_POST);
+
+			$alertas = $_customer->validar();
+
+			if (empty($alertas)) {
+				// debuguear($_customer);
+				$rsp = $_customer->guardar();
+			}
+
+			if ($rsp == true) {
+				$result = Model_customer::seach($_POST);
+				header("Content-Type: application/json");
+				echo json_encode(["resultado" => $result]);
+				exit();
+			}
+		}
+	}
 	public static function delete()
 	{
 		if (isset($_POST["id"]) && !empty($_POST["id"])) {
@@ -266,6 +301,15 @@ class Model_customer extends ActiveRecord
 			"class" => "ui longer modal",
 			"header" => "Registro de clientes",
 			"fields" => [
+				[
+					"label" => "",
+					"id" => "id",
+					"name" => "id",
+					"type" => "hidden",
+					"data-type" => "number",
+					"placeholder" => "",
+					"required" => true,
+				],
 				[
 					"label" => "Tipo Documento",
 					"id" => "tipo_doc",
@@ -441,9 +485,9 @@ class Model_customer extends ActiveRecord
 						],
 						[
 							"class" => "ui positive right labeled icon button",
+							"id" => "update",
 							"label" => "Guardar",
 							"icon" => "checkmark icon",
-							"onclick" => "add();",
 						],
 					],
 				],

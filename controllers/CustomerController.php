@@ -113,6 +113,11 @@ class CustomerController
 		exit();
 	}
 
+	public static function upd_customer()
+	{
+		Model_customer::update();
+	}
+
 	/* elimina un registro de la BD */
 	public static function eliminar()
 	{

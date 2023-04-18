@@ -287,7 +287,7 @@ class Html
 			'<h4 class="ui dividing header">' .
 			(isset($filterFields["header"]) ? $filterFields["header"] : "") .
 			"</h4>";
-		$output .= '<input type="hidden" id="idcliente" placeholder="id">';
+		// $output .= '<input type="hidden" id="idcliente" placeholder="id">';
 		$output .= '<div class="equal width fields">';
 
 		if (isset($filterFields["fields"])) {
@@ -503,6 +503,49 @@ class Html
 							$formHtml .= "</div>";
 							break;
 
+						case "hidden":
+							$formHtml .=
+								'<input type="' .
+								(isset($field["type"]) ? $field["type"] : "date") .
+								'" name="' .
+								(isset($field["name"]) ? $field["name"] : "") .
+								'"   data-type="' .
+								(isset($field["data-type"]) ? $field["data-type"] : "") .
+								'" id="' .
+								(isset($field["id"]) ? $field["id"] : "") .
+								'" value="' .
+								(isset($field["value"]) ? $field["value"] : "") .
+								'" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required='true'" : "") .
+								">";
+
+							break;
+
+						case "number":
+							$formHtml .=
+								'<div class=" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required" : "") .
+								' field">';
+
+							$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
+							$formHtml .=
+								'<input type="' .
+								(isset($field["type"]) ? $field["type"] : "date") .
+								'" name="' .
+								(isset($field["name"]) ? $field["name"] : "") .
+								'"   data-type="' .
+								(isset($field["data-type"]) ? $field["data-type"] : "") .
+								'" id="' .
+								(isset($field["id"]) ? $field["id"] : "") .
+								'" value="' .
+								(isset($field["value"]) ? $field["value"] : "") .
+								'" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required='true'" : "") .
+								">";
+
+							$formHtml .= "</div>";
+							break;
+
 						case "date":
 							$formHtml .=
 								'<div class=" ' .
@@ -527,6 +570,7 @@ class Html
 
 							$formHtml .= "</div>";
 							break;
+
 						case "time":
 							$formHtml .=
 								'<div class=" ' .
@@ -614,23 +658,22 @@ class Html
 								$optionLabel = isset($optionLabel["label"]) ? $optionLabel["label"] : $optionLabel;
 								$formHtml .= '<div class="field">';
 								$formHtml .= '<div class="ui checkbox">';
+
 								$formHtml .=
-									'<input type="checkbox" name="' .
+									'<input type="radio" name="' .
 									(isset($field["id"]) ? $field["id"] : "") .
-									'[]" data-type= "' .
-									(isset($field["data-type"]) ? $field["data-type"] : "checkbox") .
-									'"  value="' .
+									'" data-type="' .
+									(isset($field["data-type"]) ? $field["data-type"] : "radio") .
+									'" value="' .
 									$optionValue .
 									'" id="' .
 									$optionValue .
-									'"' .
-									(isset($field["required"]) && $field["required"] === true
-										? "required='true'"
-										: "") .
-									'"' .
+									'" ' .
+									(isset($field["required"]) && $field["required"] === true ? "required" : "") .
 									$isSelected .
 									$isDisabled .
 									">";
+
 								$formHtml .= '<label for="' . $optionValue . '">' . $optionLabel . "</label>";
 								$formHtml .= "</div>";
 								$formHtml .= "</div>";
