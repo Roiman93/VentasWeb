@@ -5,6 +5,7 @@
 
 namespace Model;
 use Classes\Html;
+use Classes\Cache;
 use Classes\Process;
 use Model\Model_stock;
 use Model\Model_dt_billing;
@@ -368,5 +369,102 @@ class Model_billing extends ActiveRecord
 
 			exit();
 		}
+	}
+
+	/* crea los filtros en la vista  */
+	public static function filter()
+	{
+		$filter = [
+			"id" => "filter_billing",
+			"class" => "ui stackable form",
+			"header" => "Filtros",
+			"fields" => [
+				[
+					"label" => "Numero Factura",
+					"id" => "numero",
+					"name" => "numero",
+					"type" => "text",
+					"data-type" => "number",
+					"placeholder" => "Numero de factura",
+					"onkeypress" => "return valideKey(event);",
+				],
+				[
+					"label" => "Cliente",
+					"id" => "cliente",
+					"name" => "cliente",
+					"type" => "text",
+					"data-type" => "text",
+					"placeholder" => "nombre ",
+					"onkeypress" => "return lettersOnly(event);",
+				],
+
+				[
+					"label" => "fecha",
+					"id" => "fecha",
+					"name" => "fecha",
+					"type" => "date",
+					"data-type" => "date",
+				],
+				[
+					"type" => "select",
+					"data-type" => "select",
+					"label" => "Estado",
+					"id" => "est",
+					"name" => "est",
+					"options" => [
+						"1" => "Activa",
+						"0" => "Inactiva",
+					],
+				],
+				[
+					"label" => "Botones",
+					"type" => "buttons",
+					"buttons" => [
+						[
+							"class" => "ui primary button",
+							"label" => "Buscar",
+							"id" => "search",
+							"name" => "search",
+							"icon" => "search icon",
+							"data-conten" => "buscar",
+							"type" => "submit",
+						],
+						[
+							"class" => "ui green   button",
+							"label" => "Agregar",
+							"id" => "add",
+							"name" => "add",
+							"icon" => "plus square outline icon",
+							"type" => "button",
+							"data-conten" => "Agregar",
+							"onclick" => "add();",
+						],
+						[
+							"class" => "ui red  button",
+							"id" => "recharge",
+							"name" => "recharge",
+							"label" => "Recargar",
+							"icon" => "cancel icon",
+							"type" => "button",
+							"onclick" => "cancel()",
+							"data-conten" => "Recargar Pagina",
+						],
+					],
+				],
+			],
+		];
+
+		$cacheKey = "filter_billing";
+		$cachedData = Cache::get($cacheKey);
+
+		if ($cachedData !== false && !empty($cachedData)) {
+			/*  Los datos se encuentran en el cache */
+			return $cachedData;
+		}
+		$result = Html::generateFilters_inline($filter);
+		/* Guardar los datos en el cache */
+		Cache::set($cacheKey, $result);
+
+		return $result;
 	}
 }

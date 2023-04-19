@@ -6,7 +6,6 @@
 namespace Model;
 use Classes\Html;
 use Classes\Cache;
-use Classes\Process;
 
 /* cliente */
 class Model_customer extends ActiveRecord
@@ -460,9 +459,9 @@ class Model_customer extends ActiveRecord
 							"label" => "--Selecione--",
 							"disabled" => true,
 						],
-						"m" => "Masculino",
-						"f" => "Femenino",
-						"o" => "No binario",
+						"M" => "Masculino",
+						"F" => "Femenino",
+						"O" => "No binario",
 					],
 					"value" => "OT",
 				],
@@ -657,9 +656,9 @@ class Model_customer extends ActiveRecord
 							"label" => "--Selecione--",
 							"disabled" => true,
 						],
-						"m" => "Masculino",
-						"f" => "Femenino",
-						"o" => "No binario",
+						"M" => "Masculino",
+						"F" => "Femenino",
+						"O" => "No binario",
 					],
 					"value" => "OT",
 				],
