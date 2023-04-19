@@ -152,16 +152,16 @@ class Model_customer extends ActiveRecord
 				exit();
 			}
 		} else {
-			$mensajes = "";
+			$msg = "";
 			foreach ($alertas as $key => $mensajes) {
 				foreach ($mensajes as $mensaje) {
-					$mensajes .= "<div class='ui inverted red segment'" . $key . ">";
-					$mensajes .= "<p>" . $mensaje . "</p> </div>";
+					$msg .= $key . " ";
+					$msg .= "<p>" . $mensaje . "</p> </div>";
 				}
 			}
 
 			header("Content-Type: application/json");
-			echo json_encode(["error" => $mensajes]);
+			echo json_encode(["error" => $msg]);
 			exit();
 		}
 	}
