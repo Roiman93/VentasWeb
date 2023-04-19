@@ -90,27 +90,7 @@ class CustomerController
 	/* se agrega un registro ala BD */
 	public static function add_customer()
 	{
-		/* consulta el cliente con el numero de documento */
-
-		/*   Validamos si contiene solo numeros */
-		if (isset($_POST["date"]) && is_numeric($_POST["date"])) {
-			$value = $_POST["date"];
-		} else {
-			// $_POST["date"] no contiene solo números
-			echo json_encode([
-				"error" => "Solo se permiten numeros en el campo cedula.",
-			]);
-			exit();
-		}
-
-		$resp_c = Model_customer::where([
-			"documento" => $value,
-		]);
-
-		$resultado = Process::validar_ar($resp_c);
-		header("Content-Type: application/json");
-		echo json_encode(["resultado" => $resultado]);
-		exit();
+		Model_customer::add();
 	}
 
 	public static function upd_customer()

@@ -43,16 +43,16 @@ class Model_customer extends ActiveRecord
 
 	private static $reglasValidacion = [
 		"tipo_doc" => ["required"],
-		"ch_doc" => ["required"],
 		"documento" => ["required"],
 		"nombre" => ["required"],
 		"s_nombre" => ["required"],
 		"apellido" => ["required"],
 		"s_apellido" => ["required"],
 		"sexo" => ["required"],
+		"g_sanguineo" => ["required"],
 		"edad" => ["required"],
-		"est_civil" => ["required"],
-		"ocupacion" => ["required"],
+		// "est_civil" => ["required"],
+		// "ocupacion" => ["required"],
 		"direccion" => ["required"],
 		"telefono" => ["required"],
 	];
@@ -106,11 +106,13 @@ class Model_customer extends ActiveRecord
 		$g_sanguineo = isset($_POST["g_sanguineo"]) ? $_POST["g_sanguineo"] : "null";
 
 		$where_conditions = [
-			!empty($tipo) && $tipo != "null" ? "tipo_doc = '$tipo'" : "",
+			!empty($tipo) && $tipo != "null" && $tipo != "all" ? "tipo_doc = '$tipo'" : "",
 			!empty($documento) && $documento != "null" ? "documento like '%{$documento}%'" : "",
 			!empty($nombres) && $nombres != "null" ? "CONCAT(nombre, ' ', s_nombre) like '%{$nombres}%'" : "",
 			!empty($apellidos) && $apellidos != "null" ? "CONCAT(apellido, ' ', s_apellido) like '%{$apellidos}%'" : "",
-			!empty($g_sanguineo) && $g_sanguineo != "null" ? "g_sanguineo = '$g_sanguineo'" : "",
+			!empty($g_sanguineo) && $g_sanguineo != "null" && $g_sanguineo != "all"
+				? "g_sanguineo = '$g_sanguineo'"
+				: "",
 		];
 
 		$where_conditions = array_filter($where_conditions);
@@ -121,6 +123,47 @@ class Model_customer extends ActiveRecord
 		$tabla = Html::createTabla($data, ["delete", "update"]);
 
 		return $tabla;
+	}
+
+	public static function add()
+	{
+		$_customer = new Model_customer();
+		$alertas = [];
+
+		$_customer->sincronizar($_POST);
+		//debuguear($_customer);
+
+		$alertas = $_customer->validar();
+
+		if (empty($alertas)) {
+			$rsp = $_customer->guardar();
+
+			if ($rsp == true) {
+				/* eliminamos las variables */
+				unset($_customer);
+				unset($_POST);
+				$result = self::seach();
+
+				header("Content-Type: application/json");
+				echo json_encode([
+					"resultado" => $result,
+					"rsp" => $rsp,
+				]);
+				exit();
+			}
+		} else {
+			$mensajes = "";
+			foreach ($alertas as $key => $mensajes) {
+				foreach ($mensajes as $mensaje) {
+					$mensajes .= "<div class='ui inverted red segment'" . $key . ">";
+					$mensajes .= "<p>" . $mensaje . "</p> </div>";
+				}
+			}
+
+			header("Content-Type: application/json");
+			echo json_encode(["error" => $mensajes]);
+			exit();
+		}
 	}
 
 	public static function update()
@@ -138,17 +181,38 @@ class Model_customer extends ActiveRecord
 
 			if (empty($alertas)) {
 				// debuguear($_customer);
-				$rsp = $_customer->guardar();
-			}
 
-			if ($rsp == true) {
-				$result = Model_customer::seach($_POST);
+				$rsp = $_customer->guardar();
+
+				if ($rsp == true) {
+					/* eliminamos las variables */
+					unset($_customer);
+					unset($_POST);
+					$result = self::seach();
+
+					header("Content-Type: application/json");
+					echo json_encode([
+						"resultado" => $result,
+						"rsp" => $rsp,
+					]);
+					exit();
+				}
+			} else {
+				$mensajes = "";
+				foreach ($alertas as $key => $mensajes) {
+					foreach ($mensajes as $mensaje) {
+						$mensajes .= "<div class='ui inverted red segment'" . $key . ">";
+						$mensajes .= "<p>" . $mensaje . "</p> </div>";
+					}
+				}
+
 				header("Content-Type: application/json");
-				echo json_encode(["resultado" => $result]);
+				echo json_encode(["error" => $mensajes]);
 				exit();
 			}
 		}
 	}
+
 	public static function delete()
 	{
 		if (isset($_POST["id"]) && !empty($_POST["id"])) {
@@ -158,7 +222,11 @@ class Model_customer extends ActiveRecord
 			$result = $_model->eliminar("id", $id);
 
 			if ($result == true) {
-				$result = Model_customer::seach($_POST);
+				/* eliminamos las variables */
+				unset($_model);
+				unset($_POST);
+				$result = self::seach();
+
 				header("Content-Type: application/json");
 				echo json_encode(["resultado" => $result]);
 				exit();
@@ -188,6 +256,7 @@ class Model_customer extends ActiveRecord
 						"CC" => "Cedula",
 						"TI" => "Tarejeta de identidad",
 						"RI" => "Registro civil",
+						"all" => "Todos",
 					],
 					"value" => "OT",
 				],
@@ -238,6 +307,7 @@ class Model_customer extends ActiveRecord
 						"B1" => "B+",
 						"AB" => "AB-",
 						"AB1" => "AB+",
+						"all" => "Todos",
 					],
 					"value" => "OT",
 				],
@@ -329,21 +399,201 @@ class Model_customer extends ActiveRecord
 					"value" => "OT",
 				],
 				[
-					"type" => "checkbox",
-					"data-type" => "checkbox",
-					"id" => "ch_doc",
-					"name" => "ch_doc",
-					"label" => "Seleccione una de las opciones",
+					"label" => "Numero documento",
+					"id" => "documento",
+					"name" => "documento",
+					"type" => "text",
+					"data-type" => "number",
+					"placeholder" => "Numero de documento",
+					"required" => true,
+					"onkeypress" => "return valideKey(event);",
+				],
+				[
+					"label" => "Nombre",
+					"id" => "nombre",
+					"name" => "nombre",
+					"type" => "text",
+					"data-type" => "text",
+					"placeholder" => "Primer Nombre",
+					"required" => true,
+					"onkeypress" => "return lettersOnly(event);",
+				],
+				[
+					"label" => "Segundo Nombre",
+					"id" => "s_nombre",
+					"name" => "s_nombre",
+					"type" => "text",
+					"data-type" => "text",
+					"placeholder" => "Segundo Nombre",
+
+					"onkeypress" => "return lettersOnly(event);",
+				],
+				[
+					"label" => "Apellido",
+					"id" => "apellido",
+					"name" => "apellido",
+					"type" => "text",
+					"data-type" => "text",
+					"placeholder" => "Apellido",
+					"required" => true,
+					"onkeypress" => "return lettersOnly(event);",
+				],
+				[
+					"label" => "Segundo Apellido",
+					"id" => "s_apellido",
+					"name" => "s_apellido",
+					"type" => "text",
+					"data-type" => "text",
+					"placeholder" => "Apellido",
+					"required" => true,
+					"onkeypress" => "return lettersOnly(event);",
+				],
+				[
+					"label" => "Sexo",
+					"id" => "sexo",
+					"type" => "select",
+					"data-type" => "select",
+					"name" => "sexo",
 					"required" => true,
 					"options" => [
 						"OT" => [
-							"label" => "--Seleccione--",
+							"label" => "--Selecione--",
 							"disabled" => true,
 						],
-						"si" => "si",
-						"no" => "no",
-						"nose" => "nose",
+						"m" => "Masculino",
+						"f" => "Femenino",
+						"o" => "No binario",
 					],
+					"value" => "OT",
+				],
+				[
+					"type" => "select",
+					"data-type" => "select",
+					"label" => "G sanguineo",
+					"id" => "g_sanguineo",
+					"name" => "g_sanguineo",
+					"required" => true,
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+						"O-" => "O-",
+						"O+" => "O+",
+						"A-" => "A-",
+						"A+" => "A+",
+						"B-" => "B-",
+						"B+" => "B+",
+						"AB-" => "AB-",
+						"AB+" => "AB+",
+					],
+					"value" => "OT",
+				],
+				[
+					"label" => "Edad",
+					"id" => "edad",
+					"name" => "edad",
+					"type" => "text",
+					"data-type" => "number",
+					"placeholder" => "Primer Nombre",
+					"required" => true,
+					"onkeypress" => "return valideKey(event);",
+				],
+				[
+					"label" => "Estado civil",
+					"id" => "est_civil",
+					"type" => "select",
+					"data-type" => "select",
+					"name" => "est_civil",
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+						"SO" => "Soltero(a)",
+						"CA" => "Casado(a)",
+						"UN" => "Conviviente civil",
+						"SP" => "Separado(a) judicialmente",
+						"DV" => "Divorciado(a)",
+						"VD" => "Viudo(a)",
+					],
+				],
+				[
+					"label" => "Ocupaciòn",
+					"id" => "ocupacion",
+					"type" => "text",
+					"data-type" => "text",
+					"name" => "ocupacion",
+					"placeholder" => "ocupacion",
+					"onkeypress" => "return lettersOnly(event);",
+				],
+				[
+					"label" => "Direcciòn",
+					"id" => "direccion",
+					"name" => "direccion",
+					"type" => "text",
+					"data-type" => "address",
+					"name" => "direccion",
+					"placeholder" => "direccion ",
+					"required" => true,
+				],
+				[
+					"label" => "Telefono",
+					"id" => "telefono",
+					"name" => "telefono",
+					"type" => "text",
+					"data-type" => "tel",
+					"name" => "telefono",
+					"placeholder" => "Telefono",
+					"onkeypress" => "return valideKey(event);",
+					"required" => true,
+				],
+
+				[
+					"label" => "Botones",
+					"type" => "buttons",
+					"buttons" => [
+						[
+							"class" => "ui positive right floated labeled icon button",
+							"id" => "update",
+							"label" => "Guardar",
+							"icon" => "checkmark icon",
+						],
+						[
+							"class" => "ui black right floated  deny button",
+							"id" => "cancel_edit",
+							"onclick" => "cleanForm('modal_edit');
+							$('#modal_edit').modal('hide'); ",
+							"label" => "Cancelar",
+							"icon" => "cancel icon",
+						],
+					],
+				],
+			],
+		];
+
+		$modal_add = [
+			"id" => "modal_add",
+			"class" => "ui longer modal",
+			"header" => "Registro de clientes",
+			"fields" => [
+				[
+					"label" => "Tipo Documento",
+					"id" => "tipo_doc",
+					"name" => "tipo_doc",
+					"type" => "select",
+					"data-type" => "select",
+					"required" => true,
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+						"CC" => "Cedula",
+						"TI" => "Tarejeta de identidad",
+						"RI" => "Registro civil",
+					],
+					"value" => "OT",
 				],
 				[
 					"label" => "Numero documento",
@@ -414,6 +664,29 @@ class Model_customer extends ActiveRecord
 					"value" => "OT",
 				],
 				[
+					"type" => "select",
+					"data-type" => "select",
+					"label" => "G sanguineo",
+					"id" => "g_sanguineo",
+					"name" => "g_sanguineo",
+					"required" => true,
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+						"O-" => "O-",
+						"O+" => "O+",
+						"A-" => "A-",
+						"A+" => "A+",
+						"B-" => "B-",
+						"B+" => "B+",
+						"AB-" => "AB-",
+						"AB+" => "AB+",
+					],
+					"value" => "OT",
+				],
+				[
 					"label" => "Edad",
 					"id" => "edad",
 					"name" => "edad",
@@ -479,15 +752,18 @@ class Model_customer extends ActiveRecord
 					"type" => "buttons",
 					"buttons" => [
 						[
-							"class" => "ui black deny button",
-							"label" => "Cancelar",
-							"icon" => "cancel icon",
-						],
-						[
-							"class" => "ui positive right labeled icon button",
-							"id" => "update",
+							"class" => "ui positive right floated labeled icon button",
+							"id" => "add_record",
 							"label" => "Guardar",
 							"icon" => "checkmark icon",
+						],
+						[
+							"class" => "ui black right floated  deny button",
+							"id" => "cancel_add",
+							"onclick" => "cleanForm('modal_add');
+							$('#modal_add').modal('hide'); ",
+							"label" => "Cancelar",
+							"icon" => "cancel icon",
 						],
 					],
 				],
@@ -757,7 +1033,7 @@ class Model_customer extends ActiveRecord
 				return $cachedData;
 			}
 
-			$result = Html::createModal($modal);
+			$result = Html::createModal($modal_add);
 			/* Guardar los datos en el cache */
 			Cache::set($cacheKey, $result);
 			return $result;

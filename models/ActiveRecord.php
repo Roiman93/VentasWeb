@@ -271,7 +271,7 @@ class ActiveRecord
 	{
 		foreach ($args as $key => $value) {
 			if (property_exists($this, $key) && !is_null($value)) {
-				$this->$key = $value;
+				$this->$key = trim($value);
 			}
 		}
 	}
@@ -406,8 +406,6 @@ class ActiveRecord
 	/* crea un nuevo registro */
 	public function crear()
 	{
-		$interfaz = "";
-
 		// Sanitizar los datos
 		$atributos = $this->sanitizarAtributos($_POST);
 
@@ -432,23 +430,8 @@ class ActiveRecord
 		$query .= " ') ";
 
 		/*   Resultado de la consulta */
-		$resultado = self::getResults($query);
-		$insert_id = $resultado["insert_id"];
-		return [
-			"resultado" => $resultado["resultado"],
-			"id" => $resultado["insert_id"],
-		];
-
-		//  if (isset($this->interfaz) && $this->interfaz == "config") {
-		//      $resultado = self::$db_conf->query($query);
-		//
-		//  } else {
-		//      $resultado = self::$db->query($query);
-		//      return [
-		//          "resultado" => $resultado,
-		//          "id" => self::$db->insert_id,
-		//      ];
-		//  }
+		$resultado = self::consultarSQL($query);
+		return $resultado;
 	}
 
 	// Actualizar el registro
@@ -471,7 +454,8 @@ class ActiveRecord
 
 		// debuguear($query);
 
-		$resultado = self::getResults($query);
+		/*   Resultado de la consulta */
+		$resultado = self::consultarSQL($query);
 		return $resultado;
 	}
 

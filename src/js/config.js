@@ -231,6 +231,7 @@ function validateForm(idFormulario) {
 				}
 
 				break;
+
 			case "number":
 				if ($campo.prop("required")) {
 					// validar si el campo es requerido
@@ -406,17 +407,19 @@ function obtain(idFormulario, obj) {
 						break;
 
 					case "checkbox":
-						const $checkboxes = $("input[type='checkbox'][name='" + $campo.attr("name") + "']");
+						const $checkboxes = $("input[type='radio'][name='" + $campo.attr("name") + "']");
+
+						/* console.log("nombre del campo: " + clave); */
 						if (Array.isArray(obj[clave])) {
 							/* Si es un array, recorrer los valores y marcar los checkboxes correspondientes */
 							obj[clave].forEach(function (valor) {
 								$checkboxes.filter("[value='" + valor + "']").prop("checked", true);
-								// console.log($campo.attr("name") + ": " + valor);
+								/* console.log($campo.attr("name") + ": " + valor); */
 							});
 						} else {
 							/* Si no es un array, simplemente marcar el checkbox correspondiente */
 							$checkboxes.filter("[value='" + obj[clave] + "']").prop("checked", true);
-							//console.log($campo.attr("name") + ": " + valor);
+							/* console.log($campo.attr("name") + ": " + obj[clave]); */
 						}
 
 						break;
@@ -482,6 +485,61 @@ function obtain(idFormulario, obj) {
 		});
 
 		return datos;
+	}
+}
+
+function cleanForm(idFormulario) {
+	var $campos = $("#" + idFormulario + " input, #" + idFormulario + " select");
+	var limpiado = false;
+
+	$campos.each(function () {
+		var $campo = $(this);
+
+		switch ($campo.data("type")) {
+			case "radio":
+			case "email":
+			case "number":
+			case "tel":
+			case "time":
+			case "range":
+			case "address":
+			case "text":
+			case "select":
+				if ($campo.prop("readonly") || $campo.prop("disabled")) {
+					break;
+				}
+
+				if ($campo.prop("tagName") == "SELECT") {
+					var firstOption = $campo.children().first();
+					if (firstOption.val() != "") {
+						firstOption.prop("selected", true);
+						limpiado = true;
+					} else {
+						$campo.val("");
+						limpiado = true;
+					}
+				} else {
+					$campo.val("");
+					limpiado = true;
+				}
+				break;
+
+			case "checkbox":
+				if ($campo.prop("checked")) {
+					$campo.prop("checked", false);
+					limpiado = true;
+				}
+				break;
+		}
+
+		if ($campo.prop("required") && $campo.closest(".field").hasClass("error")) {
+			$campo.closest(".field").removeClass("error");
+			$campo.siblings(".visible.message").remove();
+		}
+	});
+
+	if (limpiado) {
+		return true;
 	}
 }
 

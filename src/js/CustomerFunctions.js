@@ -44,13 +44,14 @@ async function updateRecord(id) {
 		obtain("modal_edit", data.resultado);
 	} catch (error) {}
 }
+
 async function update() {
 	result = validateForm("modal_edit");
 
 	if (result != false) {
 		const datos = new FormData();
 		for (let prop in result) {
-			console.log(prop + ": " + result[prop]);
+			// console.log(prop + ": " + result[prop]);
 			datos.append(prop, result[prop]);
 		}
 
@@ -62,8 +63,56 @@ async function update() {
 				body: datos,
 			});
 			data = await respuesta.json();
-			$("#modal_edit").modal("hide");
-			displayResult(data);
+
+			if (datos.rsp !== true) {
+				swal("Registro Actualizado", {
+					icon: "success",
+				});
+				cleanForm("modal_edit");
+				$("#modal_edit").modal("hide");
+				displayResult(data);
+			} else {
+				swal("Error", {
+					icon: "warning",
+				});
+				displayResult(data);
+			}
+		} catch (error) {}
+	}
+}
+
+async function add() {
+	result = validateForm("modal_add");
+
+	if (result != false) {
+		const datos = new FormData();
+		for (let prop in result) {
+			console.log(prop + ": " + result[prop]);
+			datos.append(prop, result[prop]);
+		}
+
+		try {
+			/* Petición hacia la api */
+			const url = "http://localhost:8888/add_cliente";
+			const respuesta = await fetch(url, {
+				method: "POST",
+				body: datos,
+			});
+			data = await respuesta.json();
+
+			if (datos.rsp !== true) {
+				swal("Registro Almacenado", {
+					icon: "success",
+				});
+				cleanForm("modal_add");
+				$("#modal_add").modal("hide");
+				displayResult(data);
+			} else {
+				swal("Error", {
+					icon: "warning",
+				});
+				displayResult(data);
+			}
 		} catch (error) {}
 	}
 }
@@ -153,7 +202,6 @@ function displayResult(data) {
  * @returns {void}
  */
 function displayResultfind(data) {
-	console.log(data);
 	if (data.error) {
 		swal({
 			title: "Error",
@@ -190,6 +238,13 @@ $("#add").click(function (e) {
 * Función que se ejecuta al hacer clic en el botón "Buscar .
 @param {object} e - Evento del botón "Agregar".
 */
+$("#add_record").click(function (e) {
+	add();
+});
+/**
+* Función que se ejecuta al hacer clic en el botón "Buscar .
+@param {object} e - Evento del botón "Agregar".
+*/
 $("#update").click(function (e) {
 	update();
 });
@@ -201,10 +256,3 @@ $("#update").click(function (e) {
 $("#recharge").click(function (e) {
 	location.reload(true);
 });
-
-// if (validateForm("modal_add")) {
-// }
-
-/* llamamos al modal edit */
-// $("#modal_edit").modal("show");
-// $("#modal_add").modal("show");

@@ -743,11 +743,11 @@ class Html
 		$formHtml .= "</div>";
 
 		/*   Botones del modal */
-		$formHtml .= '<div class="ui actions">';
+		$formHtml .= '<div class="ui">';
 
 		foreach ($btn as $key => $button) {
 			$formHtml .=
-				'<div style="margin: 0 0.1em 0 0.1rem;" data-content="' .
+				'<button style="margin: 0 0.1em 0 0.1rem;" data-content="' .
 				(isset($button["data-content"]) ? $button["data-content"] : "") .
 				'"  name="' .
 				(isset($button["name"]) ? $button["name"] : "") .
@@ -765,7 +765,7 @@ class Html
 				(isset($button["icon"]) ? '<i class="' . $button["icon"] . '"></i>' : "") .
 				"<label>" .
 				(isset($button["label"]) ? $button["label"] : "") .
-				"</label></div>";
+				"</label></button>";
 		}
 
 		$formHtml .= "</div>";
