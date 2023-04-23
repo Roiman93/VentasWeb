@@ -337,6 +337,8 @@ class ActiveRecord
 			$query .= " WHERE " . $where;
 		}
 
+		//debuguear($query);
+
 		$resultado = self::consultSQL_AR($query);
 
 		/* validamos si la consulta esta vacia */

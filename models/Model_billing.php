@@ -44,19 +44,71 @@ class Model_billing extends ActiveRecord
 		}
 	}
 
+	private static $reglasValidacion = [
+		"prefijo" => ["required"],
+		"numero" => ["required"],
+		"id_cliente" => ["required"],
+		"usuario" => ["required"],
+		"total" => ["required"],
+		"status" => ["required"],
+		"fecha" => ["required"],
+	];
+
 	public function validar()
 	{
-		if (!$this->prefijo) {
-			self::$alertas["error"][] = "El prefijo es Obligatorio ";
+		foreach (self::$reglasValidacion as $propiedad => $reglas) {
+			foreach ($reglas as $regla) {
+				switch ($regla) {
+					case "required":
+						if ($this->$propiedad = "") {
+							self::$alertas["error"][] = "El campo {$propiedad} es obligatorio";
+						}
+						break;
+					// Otras reglas de validación aquí
+				}
+			}
 		}
-		if (!$this->fecha) {
-			self::$alertas["error"][] = "El Precio del Servicio es Obligatorio";
-		}
-		if (!is_numeric($this->fecha)) {
-			self::$alertas["error"][] = "El precio no es válido";
-		}
-
 		return self::$alertas;
+	}
+
+	/* consulta las factura con los filtros */
+	public static function seach()
+	{
+		$fields = [
+			"f.id",
+			"CONCAT(f.prefijo,' ',f.numero) as Numero",
+			"CONCAT(nombre,' ',s_nombre,' ',apellido,' ',s_apellido) as Nombre",
+			"f.fecha",
+			"f.status",
+		];
+
+		$tables = ["fact f", "cliente"];
+
+		/* variables */
+		$numero = isset($_POST["numero"]) ? $_POST["numero"] : "null";
+		$cliente = isset($_POST["cliente"]) ? $_POST["cliente"] : "null";
+		$fecha = isset($_POST["fecha"]) ? $_POST["fecha"] : "null";
+		$status = isset($_POST["est"]) ? $_POST["est"] : "null";
+
+		$joins = ["f.id_cliente = cliente.id"];
+
+		$where_conditions = [
+			!empty($numero) && $numero != "null" ? " f.numero = '$numero'" : "",
+			!empty($cliente) && $cliente != "null"
+				? " CONCAT(nombre,' ',s_nombre,' ',apellido,' ',s_apellido) like '%{$cliente}%'"
+				: "",
+			!empty($fecha) && $fecha != "null" ? " CAST(f.`fecha` AS CHAR) LIKE '%{$fecha}%'" : "",
+			$status != "null" && $status != "all" ? " f.status = '$status'" : "",
+		];
+
+		$where_conditions = array_filter($where_conditions);
+		$where = count($where_conditions) > 0 ? "" . implode(" AND ", $where_conditions) : "";
+
+		$data = (array) Model_billing_tmp::select($tables, $joins, $fields, "INNER JOIN", $where);
+
+		$tabla = Html::createTabla($data, ["status", "disabled_status"]);
+
+		return $tabla;
 	}
 
 	/* se consulta un producto  por codigo y su stock */
@@ -371,6 +423,42 @@ class Model_billing extends ActiveRecord
 		}
 	}
 
+	public static function delete()
+	{
+		if (isset($_POST["id"]) && !empty($_POST["id"])) {
+			$_billing = Model_billing::find($_POST["id"]);
+
+			$_billing->status = 0;
+			$rsp = $_billing->guardar();
+
+			if ($rsp == true) {
+				$query = "UPDATE `dt_fact` SET `estatus`='0' WHERE  `id_fact`= '" . $_billing->id . "'";
+				$dt_billing = Model_dt_billing::SQL($query);
+				if ($dt_billing == true) {
+					/* eliminamos las variables */
+					unset($_billing);
+					unset($dt_billing);
+					unset($_POST);
+					$result = self::seach();
+
+					header("Content-Type: application/json");
+					echo json_encode([
+						"resultado" => $result,
+						"rsp" => true,
+					]);
+					exit();
+				}
+			}
+		} else {
+			header("Content-Type: application/json");
+			echo json_encode([
+				"error" => "No se seleciono ningun registro",
+				"rsp" => false,
+			]);
+			exit();
+		}
+	}
+
 	/* crea los filtros en la vista  */
 	public static function filter()
 	{
@@ -394,7 +482,7 @@ class Model_billing extends ActiveRecord
 					"name" => "cliente",
 					"type" => "text",
 					"data-type" => "text",
-					"placeholder" => "nombre ",
+					"placeholder" => "Nombre",
 					"onkeypress" => "return lettersOnly(event);",
 				],
 
@@ -414,6 +502,7 @@ class Model_billing extends ActiveRecord
 					"options" => [
 						"1" => "Activa",
 						"0" => "Inactiva",
+						"all" => "Todos",
 					],
 				],
 				[

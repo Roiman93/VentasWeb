@@ -17,9 +17,7 @@
         <a class="ui logo icon image">
             <i class="shield alternate icon"></i>
         </a>
-        <a><?php isset($_SESSION["admin"]) && $_SESSION["admin"] == 1
-            ? print "Administrador"
-            : print "Vendedor"; ?></a>
+        <a><?php isset($_SESSION["admin"]) && $_SESSION["admin"] == 1 ? print "Administrador" : print "Vendedor"; ?></a>
 
     </div>
 
@@ -31,7 +29,7 @@
             <a class="item" href="/cliente"><i class="id badge icon"></i><label>Registro de
                     Clientes</label> </a>
             <!-- <a class="ui item"href="?opcion=List_Cliente"><i class="file alternate icon"></i><label>Listado de Clientes</label></a> -->
-            <a class="item" href=""><i class="file alternate icon"></i><label>Listado de
+            <a class="item" href="/List_ventas"><i class="file alternate icon"></i><label>Listado de
                     Ventas</label></a>
 
         </div>
@@ -53,7 +51,7 @@
         <div class="header">Modulo inventario</div>
         <div class="menu">
 
-            <a class="ui item" href=""><i class="tags  icon"></i><label>Productos</label> </a>
+            <a class="ui item" href="/productos"><i class="tags  icon"></i><label>Productos</label> </a>
             <a class="ui item" href=""><i class="boxes icon"></i><label>Inventario</label></a>
 
 
@@ -116,17 +114,13 @@
                 <div class="item">
 
                     <b>
-                        <i class="user icon"></i> <?php isset($name)
-                            ? print $name
-                            : print ""; ?>
+                        <i class="user icon"></i> <?php isset($name) ? print $name : print ""; ?>
 
                     </b>
                     <b>&nbsp &nbsp
-                        <i class="shield alternate icon"></i> <?php isset(
-                            $_SESSION["admin"]
-                        ) && $_SESSION["admin"] == 1
-                            ? print "Administrador"
-                            : print "Vendedor"; ?>
+                        <i class="shield alternate icon"></i> <?php isset($_SESSION["admin"]) && $_SESSION["admin"] == 1
+                        	? print "Administrador"
+                        	: print "Vendedor"; ?>
                     </b>
                 </div>
 

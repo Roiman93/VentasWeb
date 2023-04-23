@@ -30,7 +30,9 @@ class Html
 		// $tabla .= "<table class='ui very compact small table'> ";
 		$tabla .= "<thead class='sticky'><tr class=' ui inverted table' >";
 		foreach ($propiedades as $propiedad => $valor) {
-			$tabla .= "<th>$propiedad</th>";
+			if ($propiedad != "status" && $propiedad != "id") {
+				$tabla .= "<th>$propiedad</th>";
+			}
 		}
 
 		// Agregamos las opciones de acciones (borrar y actualizar) si se especificaron en el parámetro $accion
@@ -44,8 +46,11 @@ class Html
 		$tabla .= "<tbody>";
 		foreach ($objeto as $fila) {
 			$tabla .= "<tr>";
-			foreach ($fila as $valor) {
-				$tabla .= "<td>$valor</td>";
+
+			foreach ($fila as $key => $valor) {
+				if ($key != "status" && $key != "id") {
+					$tabla .= "<td>$valor</td>";
+				}
 			}
 
 			/* Agregamos los botones de borrar y actualizar si se especificaron en el parámetro $accion */
@@ -59,18 +64,21 @@ class Html
 			}
 
 			if (in_array("status", $accion)) {
-				$statusButton = "";
 				$id = $fila->id;
 				if (isset($fila->status) && $fila->status == 1) {
-					$statusButton .=
-						'<button class="ui button" data-content="Activo" data-position="top center" onclick="status(' .
-						$id .
-						', this)><i class="toggle on olive icon"></i></button>';
+					$statusButton = "<button class='ui button' data-content='Activo' data-position='top center' onclick='status($id, this)'>
+										<i class='toggle on olive icon'></i>
+									</button>";
 				} else {
-					$statusButton .=
-						'<button class="ui button" data-content="Desactivado" data-position="top center" onclick="status(' .
-						$id .
-						', this)><i class="toggle of olive icon"></i></button>';
+					if (in_array("disabled_status", $accion)) {
+						$statusButton = "<button class='ui button' data-content='Desactivado' data-position='top center'>
+											<i class='toggle off  icon'></i>
+										</button>";
+					} else {
+						$statusButton = "<button class='ui button' data-content='Desactivado' data-position='top center' onclick='status($id, this)'>
+										<i class='toggle off  icon'></i>
+									</button>";
+					}
 				}
 			} else {
 				$statusButton = "";
@@ -299,6 +307,37 @@ class Html
 				} else {
 					switch ($field["type"]) {
 						case "text":
+							$output .=
+								'<div class= " ' .
+								(isset($field["required"]) && $field["required"] === true ? "required" : "") .
+								' field">';
+							$output .= "<label>" . $field["label"] . "</label>";
+							$output .=
+								'<input type="' .
+								(isset($field["type"]) ? $field["type"] : "") .
+								'" name="' .
+								(isset($field["name"]) ? $field["name"] : "") .
+								'"   data-type="' .
+								(isset($field["data-type"]) ? $field["data-type"] : "") .
+								'" id="' .
+								(isset($field["id"]) ? $field["id"] : "") .
+								'" placeholder="' .
+								(isset($field["placeholder"]) ? $field["placeholder"] : "") .
+								'"';
+
+							if (isset($field["required"]) && $field["required"] === true) {
+								$output .= " required= true";
+							}
+
+							if (isset($field["onkeypress"])) {
+								$output .= ' onkeypress="' . $field["onkeypress"] . '"';
+							}
+
+							$output .= ">";
+							$output .= "</div>";
+							break;
+
+						case "date":
 							$output .=
 								'<div class= " ' .
 								(isset($field["required"]) && $field["required"] === true ? "required" : "") .

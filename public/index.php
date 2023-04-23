@@ -12,7 +12,7 @@ use Controllers\LoginController;
 use Controllers\ServicioController;
 use Controllers\BillingController;
 use Controllers\CustomerController;
-use Controllers\APIProductController;
+use Controllers\ProductController;
 use Controllers\APIBillingConroller;
 use MVC\Router;
 $router = new Router();
@@ -62,8 +62,14 @@ $router->post("/add_cliente", [CustomerController::class, "add_customer"]);
 $router->post("/upd_cliente", [CustomerController::class, "upd_customer"]);
 $router->post("/api/cliente_delete", [CustomerController::class, "eliminar"]);
 
+/* productos */
+$router->get("/productos", [ProductController::class, "index"]);
+
 // facturacion
 $router->get("/ventas", [BillingController::class, "index"]);
+$router->get("/List_ventas", [BillingController::class, "index_lst"]);
+$router->post("/ventas/seach", [BillingController::class, "billing"]);
+$router->post("/ventas/delete", [BillingController::class, "del_billing"]);
 $router->post("/api/get_stock_producto", [APIBillingConroller::class, "seach_product"]);
 $router->post("/api/get_add_detalle_producto", [APIBillingConroller::class, "add_detalle"]);
 $router->post("/api/delete_detalle_producto", [APIBillingConroller::class, "delete_detalle"]);

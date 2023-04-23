@@ -5,7 +5,7 @@
 
 namespace Controllers;
 header("Access-Control-Allow-Origin: *");
-use Model\AdminCita;
+use Model\Model_billing;
 use Model\Model_prefixes;
 use MVC\Router;
 use Classes\Process;
@@ -54,5 +54,37 @@ class BillingController
 			"prefj" => $resultado,
 			"script" => '<script type="text/javascript" src="build/js/InvoiceFunctions.js"></script>',
 		]);
+	}
+	public static function index_lst(Router $router)
+	{
+		session_start();
+
+		isAdmin();
+
+		/* creamos los filtros  */
+		$frm_filter = Model_billing::filter();
+
+		$router->render("pages/List_Billing", [
+			"name" => $_SESSION["nombre"],
+			"page" => "listado Ventas",
+			"filter" => $frm_filter,
+			"script" => '<script type="text/javascript" src="build/js/List_InvoiceFunctions.js"></script>',
+		]);
+	}
+
+	public static function billing()
+	{
+		$result = Model_billing::seach();
+		header("Content-Type: application/json");
+		/*  Resultado en formato JSON */
+		echo $result = json_encode([
+			"resultado" => $result,
+		]);
+		exit();
+	}
+
+	public static function del_billing()
+	{
+		Model_billing::delete();
 	}
 }

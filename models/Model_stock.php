@@ -8,66 +8,56 @@ namespace Model;
 /* existencia */
 class Model_stock extends ActiveRecord
 {
-    /*  declaracias de variables */
-    public $id_producto;
-    public $codigo;
-    public $nombre;
-    public $precio_venta;
-    public $entradas;
-    public $salidas;
-    public $stock;
+	/*  declaracias de variables */
+	public $id_producto;
+	public $codigo;
+	public $nombre;
+	public $precio_venta;
+	public $entradas;
+	public $salidas;
+	public $stock;
 
-    /* Base de datos */
-    protected static $tabla = "stock";
-    protected static $columnasDB = [
-        "id_producto",
-        "codigo",
-        "nombre",
-        "precio_venta",
-        "entradas",
-        "salidas",
-        "stock",
-    ];
+	/* Base de datos */
+	protected static $tabla = "stock";
 
-    public function __construct($args = [])
-    {
-       
-        $this->id_producto = $args["id_producto"] ?? null;
-        $this->codigo = $args["codigo"] ?? "";
-        $this->nombre = $args["nombre"] ?? null;
-        $this->precio_venta = $args["precio_venta"] ?? "";
-        $this->entradas = $args["entradas"] ?? "";
-        $this->salidas = $args["salidas"] ?? "";
-        $this->stock = $args["stock"] ?? "";
-    }
+	public function __construct($args = [])
+	{
+		// Constructor consulta los campos de la tabla
+		self::$columnasDB = self::colum();
 
+		// Iterar sobre las columnas y crear las propiedades públicas y el constructor
+		foreach (self::$columnasDB as $columna) {
+			// Crear propiedad pública con el nombre de la columna
+			// y asignarle un valor inicial de null
+			$propiedad = strtolower($columna);
+			$this->$propiedad = $propiedad === "id" ? null : $args[$propiedad] ?? "";
+		}
+	}
 
-    public function validar()
-    {
-        if (!$this->id_producto) {
-            self::$alertas["error"][] = "El id del producto es Obligatorio";
-        }
-        if (!$this->codigo) {
-            self::$alertas["error"][] = "El codigo del producto es Obligatorio";
-        }
-        if (!$this->nombre) {
-            self::$alertas["error"][] = "El Nombre del producto es Obligatorio";
-        }
-        if (!$this->precio_venta) {
-            self::$alertas["error"][] = "El precio de venta es Obligatorio";
-        }
-        if (!$this->entradas) {
-            self::$alertas["error"][] = "El valor tiene que ser numerico";
-        }
-        if (!$this->salidas) {
-            self::$alertas["error"][] = "El valor tiene que ser numerico";
-        }
-        if (!$this->stock) {
-            self::$alertas["error"][] = "El valor tiene que ser numerico";
-        }
+	private static $reglasValidacion = [
+		"id_producto" => ["required"],
+		"codigo" => ["required"],
+		"nombre" => ["required"],
+		"precio_venta" => ["required"],
+		"entradas" => ["required"],
+		"salidas" => ["required"],
+		"stock" => ["required"],
+	];
 
-        return self::$alertas;
-    }
-
-     
+	public function validar()
+	{
+		foreach (self::$reglasValidacion as $propiedad => $reglas) {
+			foreach ($reglas as $regla) {
+				switch ($regla) {
+					case "required":
+						if (!$this->$propiedad) {
+							self::$alertas["error"][] = "El campo {$propiedad} es obligatorio";
+						}
+						break;
+					// Otras reglas de validación aquí
+				}
+			}
+		}
+		return self::$alertas;
+	}
 }
