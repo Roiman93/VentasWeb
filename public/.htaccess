@@ -1,0 +1,10 @@
+RewriteEngine On
+# RewriteBase /VentasWeb/
+# Si la solicitud es un archivo o un directorio existente, no reescriba la URL
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# Redirigir todas las solicitudes a index.php con la ruta como parametro
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+
+

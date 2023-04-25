@@ -10,7 +10,7 @@
     <script src="build/js/jquery_3_1_1.js"></script>
     <!--framework semantic-->    
     <link rel="stylesheet" href="build/css/Semantic/semantic.min.css">
-    <script src="build/css/Semantic/semantic.min.js"></script>
+    <script src="  build/css/Semantic/semantic.min.js"></script>
     <!--fin-->
     <title>Sistema Ventas</title>
 
@@ -20,10 +20,10 @@
 
 </head>
 
-<body style="">
+<body>
 
     <?php if (isset($_SESSION["admin"])) {
-        include_once __DIR__ . "/templates/menu/menu_admin.php";
+    	include_once __DIR__ . "/templates/menu/menu_admin.php";
     } ?>
 
 

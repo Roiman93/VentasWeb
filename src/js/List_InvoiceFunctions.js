@@ -16,7 +16,7 @@ async function seach() {
 
 	try {
 		/* Petición hacia la api */
-		const url = "http://localhost:8888/ventas/seach";
+		const url = "http://ventasweb.local/ventas/seach";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
@@ -39,7 +39,7 @@ async function deletebilling(id) {
 	datos.append("id", id);
 	try {
 		/* Petición hacia la api */
-		const url = "http://localhost:8888/ventas/delete";
+		const url = "http://ventasweb.local/ventas/delete";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,

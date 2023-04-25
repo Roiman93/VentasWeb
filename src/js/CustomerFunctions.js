@@ -16,7 +16,7 @@ async function seach() {
 
 	try {
 		/* Petición hacia la api */
-		const url = "http://localhost:8888/cliente/seach";
+		const url = "http://ventasweb.local/cliente/seach";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
@@ -32,7 +32,7 @@ async function updateRecord(id) {
 	datos.append("id", id);
 	try {
 		/* Petición hacia la api */
-		const url = "http://localhost:8888/get_cliente";
+		const url = "http://ventasweb.local/get_cliente";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
@@ -57,7 +57,7 @@ async function update() {
 
 		try {
 			/* Petición hacia la api */
-			const url = "http://localhost:8888/upd_cliente";
+			const url = "http://ventasweb.local/upd_cliente";
 			const respuesta = await fetch(url, {
 				method: "POST",
 				body: datos,
@@ -93,7 +93,7 @@ async function add() {
 
 		try {
 			/* Petición hacia la api */
-			const url = "http://localhost:8888/add_cliente";
+			const url = "http://ventasweb.local/add_cliente";
 			const respuesta = await fetch(url, {
 				method: "POST",
 				body: datos,
@@ -129,7 +129,7 @@ async function deleteCustomer(id) {
 	datos.append("id", id);
 	try {
 		/* Petición hacia la api */
-		const url = "http://localhost:8888/api/cliente_delete";
+		const url = "http://ventasweb.local/api/cliente_delete";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,

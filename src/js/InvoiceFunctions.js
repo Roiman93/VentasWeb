@@ -247,7 +247,7 @@ async function consultApiClients() {
 
 	try {
 		/* Petición hacia la api */
-		const url = "http://localhost:8888/api/cliente";
+		const url = "http://ventasweb.local/api/cliente";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
@@ -353,7 +353,7 @@ async function consultApiProducts() {
 
 	try {
 		/* Petición hacia la api */
-		const url = "http://localhost:8888/api/get_stock_producto";
+		const url = "http://ventasweb.local/api/get_stock_producto";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
@@ -458,7 +458,7 @@ async function addProductToListDetails() {
 
 		try {
 			/* Petición hacia la api */
-			const url = "http://localhost:8888/api/get_add_detalle_producto";
+			const url = "http://ventasweb.local/api/get_add_detalle_producto";
 			const respuesta = await fetch(url, {
 				method: "POST",
 				body: datos,
@@ -486,7 +486,7 @@ async function deleteProductAPI(id) {
 
 	try {
 		/* Petición hacia la api */
-		const url = "http://localhost:8888/api/delete_detalle_producto";
+		const url = "http://ventasweb.local/api/delete_detalle_producto";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
@@ -514,7 +514,7 @@ async function invoiceDetails() {
 
 	try {
 		/* Petición hacia la api */
-		const url = "http://localhost:8888/api/detalle";
+		const url = "http://ventasweb.local/api/detalle";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
@@ -615,7 +615,7 @@ async function saveInvoice() {
 
 		try {
 			/* Petición hacia la api */
-			const url = "http://localhost:8888/api/process";
+			const url = "http://ventasweb.local/api/process";
 			const respuesta = await fetch(url, {
 				method: "POST",
 				body: datos,
@@ -677,7 +677,7 @@ async function saveInvoice() {
  * @description
  * Esta función se encarga de cancelar una factura en el sistema, haciendo una petición a la API a través de un método POST. Para ello,
  * valida la tabla de la factura y recoge el token del usuario desde el campo "txt_token". Luego, crea un objeto FormData que incluye el
- * token del usuario y lo envía al servidor a través de la URL "http://localhost:8888/api/cancel_process".
+ * token del usuario y lo envía al servidor a través de la URL "http://ventasweb.local/api/cancel_process".
  * Si la petición al servidor es exitosa, la función muestra una ventana modal de éxito con un mensaje de "Factura cancelada". Si la petición
  * al servidor falla, la función muestra una ventana modal de error con el mensaje de error recibido desde el servidor.
  * Si la validación de la tabla falla, se limpian los campos de cliente, producto y resumen de factura.
@@ -695,7 +695,7 @@ async function cancelInvoice() {
 
 		try {
 			/* Petición hacia la api */
-			const url = "http://localhost:8888/api/cancel_process";
+			const url = "http://ventasweb.local/api/cancel_process";
 			const respuesta = await fetch(url, {
 				method: "POST",
 				body: datos,

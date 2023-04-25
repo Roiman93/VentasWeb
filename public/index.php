@@ -1,7 +1,4 @@
 <?php
-/**
- * @format
- */
 
 require_once __DIR__ . "/../includes/app.php";
 
@@ -17,6 +14,10 @@ use Controllers\APIBillingConroller;
 use MVC\Router;
 $router = new Router();
 
+// echo $_SERVER["DOCUMENT_ROOT"];
+// echo $_GET["url"];
+//debuguear($_GET["url"]);
+// exit();
 // Iniciar Sesión
 $router->get("/", [LoginController::class, "login"]);
 $router->post("/", [LoginController::class, "login"]);
