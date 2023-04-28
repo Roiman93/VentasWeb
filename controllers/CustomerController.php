@@ -19,13 +19,11 @@ class CustomerController
 		$frm_filter = Model_customer::filter();
 		$frm_modal_edit = Model_customer::modal("edit");
 		$frm_modal_add = Model_customer::modal();
-		$result = Model_customer::seach();
 
 		$router->render("pages/Customer", [
 			"name" => $_SESSION["nombre"],
 			"page" => "Clientes",
 			"filter" => $frm_filter,
-			"table" => $result,
 			"modal_add" => $frm_modal_add,
 			"modal_edit" => $frm_modal_edit,
 			"script" => '<script type="text/javascript" src="build/js/CustomerFunctions.js"></script>',

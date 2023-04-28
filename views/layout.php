@@ -33,8 +33,12 @@
         </div>
     </div>
 
-    <?php echo $script ?? ""; ?>
+     
 
+    <?php echo isset($script) ? $script : ""; ?>
+    <?php echo isset($script_es) ? $script_es : ""; ?>
+    <?php echo isset($script_2) ? $script_2 : ""; ?>
+  
 </body>
 
 <script type="text/javascript" src="build/js/config.js"></script>

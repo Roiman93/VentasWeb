@@ -1,1 +1,0 @@
-php -S ventasweb.local:8888 -t public/

@@ -11,6 +11,8 @@ use Controllers\BillingController;
 use Controllers\CustomerController;
 use Controllers\ProductController;
 use Controllers\APIBillingConroller;
+use Controllers\CalendarController;
+use Controllers\CategoriProcedController;
 use MVC\Router;
 $router = new Router();
 
@@ -62,6 +64,18 @@ $router->post("/get_cliente", [CustomerController::class, "find"]);
 $router->post("/add_cliente", [CustomerController::class, "add_customer"]);
 $router->post("/upd_cliente", [CustomerController::class, "upd_customer"]);
 $router->post("/api/cliente_delete", [CustomerController::class, "eliminar"]);
+
+/* categorias procedimientos */
+$router->get("/categorias_precedimientos", [CategoriProcedController::class, "index"]);
+$router->post("/api/sh_cat_proced", [CategoriProcedController::class, "seach"]);
+$router->post("/api/get_cat_proced", [CategoriProcedController::class, "find"]);
+$router->post("/api/cat_proced_ad", [CategoriProcedController::class, "add_cat_proced"]);
+$router->post("/api/cat_proced_up", [CategoriProcedController::class, "update_cat_proced"]);
+$router->post("/api/cat_proced_dl", [CategoriProcedController::class, "delete_cat_proced"]);
+
+/* calendario */
+$router->get("/agenda", [CalendarController::class, "index"]);
+$router->post("/api/get_calendar", [CalendarController::class, "seach"]);
 
 /* productos */
 $router->get("/productos", [ProductController::class, "index"]);

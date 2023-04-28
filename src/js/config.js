@@ -77,7 +77,8 @@ function myFunction(x) {
 function validateForm(idFormulario) {
 	// Obtenemos los campos del formulario
 	//var $campos = $("#" + idFormulario + ' input[type!="hidden"], #' + idFormulario + " select");
-	var $campos = $("#" + idFormulario + " input, #" + idFormulario + " select");
+	//var $campos = $("#" + idFormulario + " input, #" + idFormulario + " select");
+	var $campos = $("#" + idFormulario + " input, #" + idFormulario + " select, #" + idFormulario + " textarea");
 
 	// Eliminamos mensajes y clases de error anteriores
 	$("#" + idFormulario + " .field").removeClass("error");
@@ -90,6 +91,7 @@ function validateForm(idFormulario) {
 
 	// Recorremos los campos y validamos su contenido
 	$campos.each(function () {
+		// console.log($campo.data("type"));
 		var $campo = $(this);
 		var nombreCampo = $campo.prev("label").text().replace(":", ""); // Obtenemos el nombre del campo
 		var value = $campo.val(); // Obtenemos el valor del campo
@@ -99,20 +101,37 @@ function validateForm(idFormulario) {
 				const namePattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+)*$/;
 				if ((!value || !namePattern.test(value)) && $campo.prop("required") && !$campo.val()) {
 					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">El campo es requerido y solo se permite texto</div>'
-					);
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">El campo es requerido y solo se permite texto</div>');
 					isValid = false;
 				} else if ($campo.prop("required") && (!value || !namePattern.test(value))) {
 					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Solo se permite texto</div>'
-					);
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Solo se permite texto</div>');
 					isValid = false;
 				} else {
 					$campo.closest(".field").removeClass("error");
 					datos[$campo.attr("name")] = $campo.prop("required") && !$campo.val() ? null : $campo.val();
 				}
+				break;
+
+			case "textarea":
+				const paramet = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+)*$/;
+				const textarea = $campo.find("textarea");
+				const textValue = $campo.val().trim();
+				// console.log(textValue);
+
+				if ((!value || !paramet.test(textValue)) && $campo.prop("required") && !textValue) {
+					$campo.closest(".field").addClass("error");
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">El campo es requerido  2y solo se permite texto</div>');
+					isValid = false;
+				} else if ($campo.prop("required") && (!textValue || !paramet.test(textValue))) {
+					$campo.closest(".field").addClass("error");
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Solo se  2 permite texto</div>');
+					isValid = false;
+				} else {
+					$campo.closest(".field").removeClass("error");
+					datos[$campo.attr("name")] = $campo.prop("required") && !textValue ? null : textValue;
+				}
+
 				break;
 
 			case "address":
@@ -131,9 +150,7 @@ function validateForm(idFormulario) {
 					isValid = false;
 				} else if ($campo.prop("required") && !$campo.val()) {
 					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es requerido</div>'
-					);
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es requerido</div>');
 					isValid = false;
 				} else {
 					$campo.closest(".field").removeClass("error");
@@ -144,9 +161,7 @@ function validateForm(idFormulario) {
 			case "select":
 				if ($campo.prop("required") && !$campo.val() && !$campo.prop("disabled")) {
 					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
-					);
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>');
 					isValid = false;
 				} else {
 					$campo.closest(".field").removeClass("error");
@@ -164,12 +179,7 @@ function validateForm(idFormulario) {
 					$campo.closest(".field").addClass("error");
 
 					if (!messageShown) {
-						$campo
-							.last()
-							.parent()
-							.after(
-								'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
-							);
+						$campo.last().parent().after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>');
 						messageShown = true;
 					}
 
@@ -185,9 +195,7 @@ function validateForm(idFormulario) {
 				// console.log($campo.is(":checked"));
 				if ($campo.prop("required") && $campo.val() == 0 && !$campo.prop("disabled")) {
 					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio </div>'
-					);
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio </div>');
 					isValid = false;
 				} else {
 					$campo.closest(".field").removeClass("error");
@@ -199,9 +207,7 @@ function validateForm(idFormulario) {
 				const $radios = $campo.closest(".field").find('input[type="radio"]');
 				if ($campo.prop("required") && !$radios.is(":checked") && !$campo.prop("disabled")) {
 					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
-					);
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>');
 					isValid = false;
 				} else {
 					$campo.closest(".field").removeClass("error");
@@ -212,17 +218,13 @@ function validateForm(idFormulario) {
 			case "email":
 				if ($campo.prop("required") && !$campo.val()) {
 					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
-					);
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>');
 					isValid = false;
 				} else {
 					const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 					if (!value || !emailPattern.test(value)) {
 						$campo.closest(".field").addClass("error");
-						$campo.after(
-							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Por favor ingrese un correo electrónico válido</div>'
-						);
+						$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Por favor ingrese un correo electrónico válido</div>');
 						isValid = false;
 					} else {
 						$campo.closest(".field").removeClass("error");
@@ -238,9 +240,7 @@ function validateForm(idFormulario) {
 					if (!$campo.val()) {
 						// El campo requerido está vacío
 						$campo.closest(".field").addClass("error");
-						$campo.after(
-							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
-						);
+						$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>');
 						isValid = false;
 					} else {
 						// Validar si el valor es un número válido
@@ -248,9 +248,7 @@ function validateForm(idFormulario) {
 						if (!numberPattern.test(value)) {
 							// El valor no es un número válido
 							$campo.closest(".field").addClass("error");
-							$campo.after(
-								'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Por favor ingrese un número válido</div>'
-							);
+							$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Por favor ingrese un número válido</div>');
 							isValid = false;
 						} else {
 							// El valor es un número válido
@@ -268,17 +266,13 @@ function validateForm(idFormulario) {
 			case "tel":
 				if ($campo.prop("required") && !$campo.val()) {
 					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
-					);
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>');
 					isValid = false;
 				} else {
 					const phonePattern = /^\d{10}$/;
 					if (!value || !phonePattern.test(value)) {
 						$campo.closest(".field").addClass("error");
-						$campo.after(
-							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Por favor ingrese un número de teléfono válido</div>'
-						);
+						$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Por favor ingrese un número de teléfono válido</div>');
 						isValid = false;
 					} else {
 						$campo.closest(".field").removeClass("error");
@@ -291,9 +285,7 @@ function validateForm(idFormulario) {
 			case "date":
 				if ($campo.prop("required") && !$campo.val()) {
 					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
-					);
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>');
 					isValid = false;
 				} else {
 					const datePattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -315,18 +307,14 @@ function validateForm(idFormulario) {
 				$hora = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test($campo.val());
 				if ($campo.prop("required") && !$campo.val() && !$campo.prop("disabled")) {
 					$campo.closest(".field").addClass("error");
-					$campo.after(
-						'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio </div>'
-					);
+					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio </div>');
 					isValid = false;
 				} else {
 					var parsedDate = Date.parse("01/01/1970 " + $campo.val()); // Intentamos parsear la hora
 					if (isNaN(parsedDate)) {
 						// Si el resultado es NaN, la hora no es válida
 						$campo.closest(".field").addClass("error");
-						$campo.after(
-							'<div class="ui visible attached message"><i class="close icon"></i><div class="header">La hora seleccionada no es válida</div>'
-						);
+						$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">La hora seleccionada no es válida</div>');
 						isValid = false;
 					} else {
 						$campo.closest(".field").removeClass("error");
@@ -340,6 +328,7 @@ function validateForm(idFormulario) {
 	$(".message .close").on("click", function () {
 		$(this).closest(".message").transition("fade");
 	});
+
 	/* si el formularo pasa la validacion se envian los datos */
 	if (isValid == true) {
 		return datos;
@@ -462,9 +451,7 @@ function obtain(idFormulario, obj) {
 						$campo.closest(".field").addClass("error");
 
 						if (!messageShown) {
-							$campo.after(
-								'<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>'
-							);
+							$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">Este campo es obligatorio</div>');
 							messageShown = true;
 						}
 
@@ -708,17 +695,5 @@ function generarPDF(cliente, factura) {
 	var y = parseInt(window.screen.height / 2 - alto / 2);
 
 	$url = "factura/generaFactura.php?cl=" + cliente + "&f=" + factura;
-	window.open(
-		$url,
-		"factura",
-		"left" +
-			x +
-			",top=" +
-			y +
-			",height=" +
-			alto +
-			",width=" +
-			ancho +
-			",scrolbar=si,location=no,resizable=si,menubar=no"
-	);
+	window.open($url, "factura", "left" + x + ",top=" + y + ",height=" + alto + ",width=" + ancho + ",scrolbar=si,location=no,resizable=si,menubar=no");
 }

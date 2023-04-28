@@ -46,10 +46,7 @@ class ActiveRecord
 	public static function tableExistsInDatabase($table)
 	{
 		try {
-			$query =
-				"SELECT COUNT(*) as count FROM information_schema.tables WHERE table_schema = 'sistem_confg' AND table_name = '" .
-				$table .
-				"'";
+			$query = "SELECT COUNT(*) as count FROM information_schema.tables WHERE table_schema = 'sistem_confg' AND table_name = '" . $table . "'";
 
 			$result = self::$db_conf->query($query);
 
