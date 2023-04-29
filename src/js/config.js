@@ -6,7 +6,7 @@ window.addEventListener("load", function () {
 	var x = window.matchMedia("(max-width: 768px)");
 	myFunction(x); // Llamar a la función de escucha en tiempo de ejecución
 	x.addListener(myFunction); // Adjunte la función de escucha en los cambios de estado
-	$(".ui.button").popup();
+	// $(".ui.button").popup();
 	$(".message .close").on("click", function () {
 		$(this).closest(".message").transition("fade");
 	});
@@ -98,7 +98,8 @@ function validateForm(idFormulario) {
 
 		switch ($campo.data("type")) {
 			case "text":
-				const namePattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+)*$/;
+				// const namePattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+)*$/;
+				const namePattern = /^[\p{L}\s]+$/u;
 				if ((!value || !namePattern.test(value)) && $campo.prop("required") && !$campo.val()) {
 					$campo.closest(".field").addClass("error");
 					$campo.after('<div class="ui visible attached message"><i class="close icon"></i><div class="header">El campo es requerido y solo se permite texto</div>');

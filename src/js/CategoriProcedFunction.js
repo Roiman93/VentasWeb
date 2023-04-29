@@ -182,6 +182,7 @@ function displayResult(data) {
 	} else {
 		if (data.resultado) {
 			$("#registros").html(data.resultado);
+			$(".ui.button").popup();
 		} else {
 			console.log("no han resultados");
 			$("#registros").html("-");
