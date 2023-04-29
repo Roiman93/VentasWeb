@@ -308,7 +308,7 @@ class Model__cat_proced extends ActiveRecord
 					"data-type" => "text",
 					"placeholder" => "Nombre de la categoria",
 					"required" => true,
-					"onkeypress" => "return lettersOnly(event);",
+					"onkeypress" => "return letters_espace_Only(event);",
 				],
 				[
 					"label" => "Descripción",
@@ -320,7 +320,7 @@ class Model__cat_proced extends ActiveRecord
 					"rows" => "4",
 					"required" => true,
 					"placeholder" => "Descripción de la categoria",
-					"onkeypress" => "return lettersOnly(event);",
+					"onkeypress" => "",
 				],
 				[
 					"label" => "Botones",
@@ -358,7 +358,7 @@ class Model__cat_proced extends ActiveRecord
 					"data-type" => "text",
 					"placeholder" => "Primer Nombre",
 					"required" => true,
-					"onkeypress" => "return lettersOnly(event);",
+					"onkeypress" => "return letters_espace_Only(event);",
 				],
 				[
 					"label" => "Descripción",
@@ -370,7 +370,7 @@ class Model__cat_proced extends ActiveRecord
 					"rows" => "4",
 					"required" => true,
 					"placeholder" => "Descripción de la categoria",
-					"onkeypress" => "return lettersOnly(event);",
+					"onkeypress" => "",
 				],
 				[
 					"label" => "Botones",

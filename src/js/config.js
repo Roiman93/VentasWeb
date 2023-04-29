@@ -357,11 +357,8 @@ function validateForm(idFormulario) {
  */
 function obtain(idFormulario, obj) {
 	/*  Obtenemos los campos del formulario */
-	//var $campos = $("#" + idFormulario + ' input[type !="submit"], #' + idFormulario + " select");
-	var $campos = $("#" + idFormulario + " input, #" + idFormulario + " select");
-	// var $campos = $("#" + idFormulario + ' input[type!="submit"], select, input[type="hidden"]');
-
-	//var $campos = $("#" + idFormulario + ' input[type!="submit"], input[type="hidden"], #' + idFormulario + " select");
+	/* 	var $campos = $("#" + idFormulario + " input, #" + idFormulario + " select"); */
+	var $campos = $("#" + idFormulario + " input, #" + idFormulario + " select, #" + idFormulario + " textarea");
 
 	//console.log($campos);
 
@@ -387,6 +384,11 @@ function obtain(idFormulario, obj) {
 					case "address":
 					case "text":
 						$campo.val(valor);
+
+						break;
+					case "textarea":
+						// $campo.val(valor);
+						$campo.val(valor).trim();
 
 						break;
 
@@ -611,6 +613,21 @@ function lettersOnly(evt) {
 	var charCode = evt.charCode ? evt.charCode : evt.keyCode ? evt.keyCode : evt.which ? evt.which : 0;
 	if (charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)) {
 		//  alert("Enter letters only.");
+		return false;
+	}
+	return true;
+}
+
+/*
+ * Con este cambio, la función permitirá la entrada de letras y espacios en blanco, pero restringirá cualquier otro
+ * carácter que no cumpla con esas condiciones. Si se desea permitir otros caracteres especiales, se pueden agregar sus
+ * códigos de caracteres correspondientes a la lista de excepciones en el "if" statement.
+ */
+function letters_espace_Only(evt) {
+	evt = evt ? evt : event;
+	var charCode = evt.charCode ? evt.charCode : evt.keyCode ? evt.keyCode : evt.which ? evt.which : 0;
+	if (charCode != 32 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)) {
+		//  alert("Enter letters and spaces only.");
 		return false;
 	}
 	return true;

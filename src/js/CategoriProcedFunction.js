@@ -33,7 +33,7 @@ async function updateRecord(id) {
 	datos.append("id", id);
 	try {
 		/* Petición hacia la api */
-		const url = "http://ventasweb.local/get_cat_proced";
+		const url = "http://ventasweb.local/api/get_cat_proced";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
