@@ -13,6 +13,7 @@ use Controllers\ProductController;
 use Controllers\APIBillingConroller;
 use Controllers\CalendarController;
 use Controllers\CategoriProcedController;
+use Controllers\ProcedController;
 use MVC\Router;
 $router = new Router();
 
@@ -72,6 +73,14 @@ $router->post("/api/get_cat_proced", [CategoriProcedController::class, "find"]);
 $router->post("/api/cat_proced_ad", [CategoriProcedController::class, "add_cat_proced"]);
 $router->post("/api/cat_proced_up", [CategoriProcedController::class, "update_cat_proced"]);
 $router->post("/api/cat_proced_dl", [CategoriProcedController::class, "delete_cat_proced"]);
+
+/*  procedimientos */
+$router->get("/precedimientos", [ProcedController::class, "index"]);
+$router->post("/api/sh_proced", [ProcedController::class, "seach"]);
+$router->post("/api/get_proced", [ProcedController::class, "find"]);
+$router->post("/api/proced_ad", [ProcedController::class, "add_cat_proced"]);
+$router->post("/api/proced_up", [ProcedController::class, "update_cat_proced"]);
+$router->post("/api/proced_dl", [ProcedController::class, "delete_cat_proced"]);
 
 /* calendario */
 $router->get("/agenda", [CalendarController::class, "index"]);

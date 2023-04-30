@@ -5,13 +5,15 @@
 
 namespace Model;
 use Classes\Html;
+use Classes\Process;
 use Classes\Cache;
+use Model\Model__cat_proced;
 
 /* categoria procedimientos */
-class Model__cat_proced extends ActiveRecord
+class Model_proced extends ActiveRecord
 {
 	/* tabla de la Base de datos */
-	protected static $tabla = "cat_proced";
+	protected static $tabla = "proced";
 
 	/* columnas de la tabla  de la BD*/
 	protected static $columnasDB = [];
@@ -42,7 +44,10 @@ class Model__cat_proced extends ActiveRecord
 
 	private static $reglasValidacion = [
 		"nombre" => ["required"],
+		"id_categoria" => ["required"],
 		"descripcion" => ["required"],
+		"valor" => ["required"],
+		"codigo" => ["required"],
 	];
 
 	public function validar()
@@ -60,6 +65,13 @@ class Model__cat_proced extends ActiveRecord
 			}
 		}
 		return self::$alertas;
+	}
+
+	/* consulta todos los procedimientos*/
+	public static function all()
+	{
+		$result = self::all();
+		return $result;
 	}
 
 	public static function seach()
@@ -89,20 +101,20 @@ class Model__cat_proced extends ActiveRecord
 
 	public static function add()
 	{
-		$_cat_proced = new Model__cat_proced();
+		$proced = new Model_proced();
 		$alertas = [];
 
-		$_cat_proced->sincronizar($_POST);
-		//debuguear($_cat_proced);
+		$proced->sincronizar($_POST);
+		//debuguear($proced);
 
-		$alertas = $_cat_proced->validar();
+		$alertas = $proced->validar();
 
 		if (empty($alertas)) {
-			$rsp = $_cat_proced->guardar();
+			$rsp = $proced->guardar();
 
 			if ($rsp == true) {
 				/* eliminamos las variables */
-				unset($_cat_proced);
+				unset($proced);
 				unset($_POST);
 				$result = self::seach();
 
@@ -132,23 +144,23 @@ class Model__cat_proced extends ActiveRecord
 	{
 		// debuguear($_POST);
 		if (isset($_POST["id"]) && !empty($_POST["id"])) {
-			$_cat_proced = Model__cat_proced::find($_POST["id"]);
+			$proced = Model_proced::find($_POST["id"]);
 
 			/*  variables  */
 			$alertas = [];
 
-			$_cat_proced->sincronizar($_POST);
+			$proced->sincronizar($_POST);
 
-			$alertas = $_cat_proced->validar();
+			$alertas = $proced->validar();
 
 			if (empty($alertas)) {
-				// debuguear($_cat_proced);
+				// debuguear($proced);
 
-				$rsp = $_cat_proced->guardar();
+				$rsp = $proced->guardar();
 
 				if ($rsp == true) {
 					/* eliminamos las variables */
-					unset($_cat_proced);
+					unset($proced);
 					unset($_POST);
 					$result = self::seach();
 
@@ -180,7 +192,7 @@ class Model__cat_proced extends ActiveRecord
 		if (isset($_POST["id"]) && !empty($_POST["id"])) {
 			$id = $_POST["id"];
 
-			$_model = new Model__cat_proced();
+			$_model = new Model_proced();
 			$rsp = $_model->eliminar("id", $id);
 
 			if ($rsp == true) {
@@ -202,10 +214,19 @@ class Model__cat_proced extends ActiveRecord
 	public static function filter()
 	{
 		$filter = [
-			"id" => "filter_cat_proced",
+			"id" => "filter_proced",
 			"class" => "ui stackable form",
 			"header" => "Filtros",
 			"fields" => [
+				[
+					"label" => "Codigo",
+					"id" => "codigo",
+					"name" => "codigo",
+					"type" => "text",
+					"data-type" => "number",
+					"placeholder" => "Ingrese el codigo",
+					"onkeypress" => "return valideKey(event);",
+				],
 				[
 					"label" => "Nombre",
 					"id" => "nombre",
@@ -213,7 +234,21 @@ class Model__cat_proced extends ActiveRecord
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "Ingrese el nombre",
-					"onkeypress" => "return lettersOnly(event);",
+					"onkeypress" => "return letters_espace_Only(event);",
+				],
+				[
+					"type" => "select",
+					"data-type" => "select",
+					"label" => "Categoria",
+					"id" => "id_categoria",
+					"name" => "id_categoria",
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+					],
+					"value" => "OT",
 				],
 				[
 					"label" => "Descripción",
@@ -222,7 +257,16 @@ class Model__cat_proced extends ActiveRecord
 					"type" => "text",
 					"data-type" => "text",
 					"placeholder" => "",
-					"onkeypress" => "return lettersOnly(event);",
+					"onkeypress" => "return letters_espace_Only(event);",
+				],
+				[
+					"label" => "Valor",
+					"id" => "valor",
+					"name" => "valor",
+					"type" => "text",
+					"data-type" => "number",
+					"placeholder" => "",
+					"onkeypress" => "return valideKey(event);",
 				],
 				[
 					"label" => "Botones",
@@ -262,7 +306,7 @@ class Model__cat_proced extends ActiveRecord
 			],
 		];
 
-		$cacheKey = "filter_cat_proced";
+		$cacheKey = "filter_proced";
 		$cachedData = Cache::get($cacheKey);
 
 		if ($cachedData !== false && !empty($cachedData)) {
@@ -280,7 +324,7 @@ class Model__cat_proced extends ActiveRecord
 	public static function modal($prm = "")
 	{
 		$modal_edit = [
-			"id" => "modal_edit",
+			"id" => "modal_edit_proced",
 			"class" => "ui longer modal",
 			"header" => "Registro de Categotias Procedimientos",
 			"fields" => [
@@ -294,6 +338,16 @@ class Model__cat_proced extends ActiveRecord
 					"required" => true,
 				],
 				[
+					"label" => "Codigo ",
+					"id" => "codigo",
+					"name" => "codigo",
+					"type" => "text",
+					"data-type" => "number",
+					"placeholder" => "Codigo de la categoria",
+					"required" => true,
+					"onkeypress" => "return valideKey(event);",
+				],
+				[
 					"label" => "Nombre",
 					"id" => "nombre",
 					"name" => "nombre",
@@ -302,6 +356,15 @@ class Model__cat_proced extends ActiveRecord
 					"placeholder" => "Nombre de la categoria",
 					"required" => true,
 					"onkeypress" => "return letters_espace_Only(event);",
+				],
+				[
+					"type" => "select",
+					"data-type" => "select",
+					"label" => "Categoria",
+					"id" => "id_categoria",
+					"name" => "id_categoria",
+					"options" => debuguear(Model__cat_proced::all()),
+					"value" => "OT",
 				],
 				[
 					"label" => "Descripción",
@@ -314,6 +377,16 @@ class Model__cat_proced extends ActiveRecord
 					"required" => true,
 					"placeholder" => "Descripción de la categoria",
 					"onkeypress" => "",
+				],
+				[
+					"label" => "Precio",
+					"id" => "valor",
+					"name" => "valor",
+					"type" => "text",
+					"data-type" => "number",
+					"placeholder" => "Ingrese el precio del procedimiento",
+					"required" => true,
+					"onkeypress" => "return valideKey(event);",
 				],
 				[
 					"label" => "Botones",
@@ -339,19 +412,38 @@ class Model__cat_proced extends ActiveRecord
 		];
 
 		$modal_add = [
-			"id" => "modal_add",
+			"id" => "modal_add_proced",
 			"class" => "ui longer modal",
 			"header" => "Registro de clientes",
 			"fields" => [
+				[
+					"label" => "Codigo ",
+					"id" => "codigo",
+					"name" => "codigo",
+					"type" => "text",
+					"data-type" => "number",
+					"placeholder" => "Codigo de la categoria",
+					"required" => true,
+					"onkeypress" => "return valideKey(event);",
+				],
 				[
 					"label" => "Nombre",
 					"id" => "nombre",
 					"name" => "nombre",
 					"type" => "text",
 					"data-type" => "text",
-					"placeholder" => "Primer Nombre",
+					"placeholder" => "Nombre de la categoria",
 					"required" => true,
 					"onkeypress" => "return letters_espace_Only(event);",
+				],
+				[
+					"type" => "select",
+					"data-type" => "select",
+					"label" => "Categoria",
+					"id" => "id_categoria",
+					"name" => "id_categoria",
+					"options" => debuguear(Model__cat_proced::all()),
+					"value" => "OT",
 				],
 				[
 					"label" => "Descripción",
@@ -364,6 +456,16 @@ class Model__cat_proced extends ActiveRecord
 					"required" => true,
 					"placeholder" => "Descripción de la categoria",
 					"onkeypress" => "",
+				],
+				[
+					"label" => "Precio",
+					"id" => "valor",
+					"name" => "valor",
+					"type" => "text",
+					"data-type" => "number",
+					"placeholder" => "Ingrese el precio del procedimiento",
+					"required" => true,
+					"onkeypress" => "return valideKey(event);",
 				],
 				[
 					"label" => "Botones",
@@ -390,7 +492,7 @@ class Model__cat_proced extends ActiveRecord
 
 		if (isset($prm) && $prm == "edit") {
 			/* Verificar si la información se encuentra en el cache */
-			$cacheKey = "modal_edit";
+			$cacheKey = "modal_edit_proced";
 			$cachedData = Cache::get($cacheKey);
 
 			// var_dump($cachedData);
@@ -408,7 +510,7 @@ class Model__cat_proced extends ActiveRecord
 			Cache::set($cacheKey, $result);
 			return $result;
 		} else {
-			$cacheKey = "modal_add";
+			$cacheKey = "modal_add_proced";
 			$cachedData = Cache::get($cacheKey);
 
 			if ($cachedData !== false && !empty($cachedData)) {
