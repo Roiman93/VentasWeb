@@ -298,7 +298,7 @@ $("#recharge").click(function (e) {
  * @param {Object} e - El evento generado al presionar la tecla
  * @returns {void}
  */
-var txt_name = document.getElementById("nombre");
+var txt_name = document.getElementById("flt_nombre");
 txt_name.onkeyup = function (e) {
 	if (e.keyCode == 13) {
 		seach();
@@ -313,7 +313,35 @@ txt_name.onkeyup = function (e) {
  * @param {Object} e - El evento generado al presionar la tecla
  * @returns {void}
  */
-var txt_last_name = document.getElementById("descripcion");
+var txt_last_name = document.getElementById("flt_descripcion");
+txt_last_name.onkeyup = function (e) {
+	if (e.keyCode == 13) {
+		seach();
+	}
+};
+/**
+ * Función: seach
+ * Descripción: Función que consulta la API de clientes cuando se presiona la tecla Enter en el
+ * campo de entrada de código de producto.
+ * @function
+ * @param {Object} e - El evento generado al presionar la tecla
+ * @returns {void}
+ */
+var txt_last_name = document.getElementById("flt_codigo");
+txt_last_name.onkeyup = function (e) {
+	if (e.keyCode == 13) {
+		seach();
+	}
+};
+/**
+ * Función: seach
+ * Descripción: Función que consulta la API de clientes cuando se presiona la tecla Enter en el
+ * campo de entrada de código de producto.
+ * @function
+ * @param {Object} e - El evento generado al presionar la tecla
+ * @returns {void}
+ */
+var txt_last_name = document.getElementById("flt_valor");
 txt_last_name.onkeyup = function (e) {
 	if (e.keyCode == 13) {
 		seach();

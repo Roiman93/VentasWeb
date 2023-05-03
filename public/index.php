@@ -76,7 +76,7 @@ $router->post("/api/cat_proced_up", [CategoriProcedController::class, "update_ca
 $router->post("/api/cat_proced_dl", [CategoriProcedController::class, "delete_cat_proced"]);
 
 /*  procedimientos */
-$router->get("/precedimientos", [ProcedController::class, "index"]);
+$router->get("/procedimientos", [ProcedController::class, "index"]);
 $router->post("/api/sh_proced", [ProcedController::class, "seach"]);
 $router->post("/api/get_proced", [ProcedController::class, "find"]);
 $router->post("/api/proced_ad", [ProcedController::class, "add_proced"]);

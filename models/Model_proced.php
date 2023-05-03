@@ -227,7 +227,7 @@ class Model_proced extends ActiveRecord
 			"fields" => [
 				[
 					"label" => "Codigo",
-					"id" => "codigo",
+					"id" => "flt_codigo",
 					"name" => "codigo",
 					"type" => "text",
 					"data-type" => "number",
@@ -236,7 +236,7 @@ class Model_proced extends ActiveRecord
 				],
 				[
 					"label" => "Nombre",
-					"id" => "nombre",
+					"id" => "flt_nombre",
 					"name" => "nombre",
 					"type" => "text",
 					"data-type" => "text",
@@ -259,7 +259,7 @@ class Model_proced extends ActiveRecord
 				],
 				[
 					"label" => "Descripción",
-					"id" => "descripcion",
+					"id" => "flt_descripcion",
 					"name" => "descripcion",
 					"type" => "text",
 					"data-type" => "text",
@@ -268,7 +268,7 @@ class Model_proced extends ActiveRecord
 				],
 				[
 					"label" => "Valor",
-					"id" => "valor",
+					"id" => "flt_valor",
 					"name" => "valor",
 					"type" => "text",
 					"data-type" => "number",
