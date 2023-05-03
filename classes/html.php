@@ -727,6 +727,7 @@ class Html
 							break;
 
 						case "select_seach":
+							$formHtml .= '<div class="field">';
 							$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
 							$formHtml .= '<div class=" ' . (isset($field["required"]) && $field["required"] === true ? "required" : "") . ' ui fluid search selection dropdown">';
 
@@ -741,7 +742,7 @@ class Html
 								(isset($field["required"]) && $field["required"] === true ? "required='true'" : "") .
 								">";
 							$formHtml .= "<i class='dropdown icon'></i>";
-							$formHtml .= "<div class='menu'";
+							$formHtml .= "<div class='menu'>";
 
 							foreach ($field["options"] as $optionValue => $optionLabel) {
 								$isSelected = "";
@@ -756,7 +757,7 @@ class Html
 								}
 
 								$formHtml .=
-									'<div class="itme" data-value="' .
+									'<div class="item" data-value="' .
 									$optionValue .
 									'" ' .
 									$isSelected .
@@ -769,7 +770,7 @@ class Html
 
 							$formHtml .= "</div>";
 							$formHtml .= "</div>";
-							// $formHtml .= "</div>";
+							$formHtml .= "</div>";
 							break;
 					}
 				}
