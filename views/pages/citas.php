@@ -17,21 +17,3 @@
 
   <div class="ui divider"></div>
 </div>
-
-
-<!-- <div class="ui fluid search selection dropdown">
-  <input type="hidden" name="gender">
-  <i class="dropdown icon"></i>
-  <div class="default text">Género</div>
-  <div class="menu">
-    <div class="item" data-value="1">Masculino</div>
-    <div class="item" data-value="2">Femenino</div>
-    <div class="item" data-value="3">Otro</div>
-  </div>
-</div>
-
-<script>
-  $('.ui.dropdown').dropdown({
-    search: true
-  });
-</script> -->

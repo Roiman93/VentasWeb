@@ -725,6 +725,52 @@ class Html
 							$formHtml .= "</select>";
 							$formHtml .= "</div>";
 							break;
+
+						case "select_seach":
+							$formHtml .= "<label>" . (isset($field["label"]) ? $field["label"] : "") . "</label>";
+							$formHtml .= '<div class=" ' . (isset($field["required"]) && $field["required"] === true ? "required" : "") . ' ui fluid search selection dropdown">';
+
+							$formHtml .=
+								'<input  name="' .
+								(isset($field["name"]) ? $field["name"] : "") .
+								'" data-type="' .
+								(isset($field["data-type"]) ? $field["data-type"] : "") .
+								'" type= "hidden" id="' .
+								(isset($field["id"]) ? $field["id"] : "") .
+								'" ' .
+								(isset($field["required"]) && $field["required"] === true ? "required='true'" : "") .
+								">";
+							$formHtml .= "<i class='dropdown icon'></i>";
+							$formHtml .= "<div class='menu'";
+
+							foreach ($field["options"] as $optionValue => $optionLabel) {
+								$isSelected = "";
+								$isDisabled = "";
+
+								if (isset($field["value"]) && $field["value"] == $optionValue) {
+									$isSelected = "selected";
+								}
+
+								if (isset($optionLabel["disabled"]) && $optionLabel["disabled"] === true) {
+									$isDisabled = "disabled";
+								}
+
+								$formHtml .=
+									'<div class="itme" data-value="' .
+									$optionValue .
+									'" ' .
+									$isSelected .
+									" " .
+									($isDisabled ? "disabled" : "") .
+									">" .
+									($optionLabel ? (is_array($optionLabel) ? $optionLabel["label"] : $optionLabel) : "") .
+									"</div>";
+							}
+
+							$formHtml .= "</div>";
+							$formHtml .= "</div>";
+							// $formHtml .= "</div>";
+							break;
 					}
 				}
 			}

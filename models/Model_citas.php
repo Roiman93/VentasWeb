@@ -66,43 +66,48 @@ class Model_citas extends ActiveRecord
 
 	public static function seach()
 	{
-		$fields = ["id", "nombre as Nombre", "descripcion as Descripcion"];
+		$fields = ["id", "CONCAT(ci.nombre,' ', ci.s_nombre)as Nombres", "CONCAT(ci.apellido,' ', ci.s_apellido)as Apellidos", "fecha", "hora", "p.nombre as Procedimiento"];
 
-		$tables = ["cat_proced"];
+		$tables = ["citas c", "proced p", "clientes ci"];
+		$joins = ["c.id_proced = p.id", "c.id_cliente = ci.id"];
 
 		/* variables */
-		$nombre = isset($_POST["nombre"]) ? $_POST["nombre"] : "null";
-		$descripcion = isset($_POST["descripcion"]) ? $_POST["descripcion"] : "null";
+		$paciente = isset($_POST["nombre"]) ? $_POST["nombre"] : "null";
+		$fecha = isset($_POST["fecha"]) ? $_POST["fecha"] : "null";
+		$hora = isset($_POST["hora"]) ? $_POST["hora"] : "null";
+		$proced = isset($_POST["id_proced"]) ? $_POST["id_proced"] : "null";
 
 		$where_conditions = [
-			!empty($nombre) && $nombre != "null" ? " nombre like '%{$nombre}%'" : "",
-			!empty($descripcion) && $descripcion != "null" ? " descripcion like '%{$descripcion}%'" : "",
+			!empty($paciente) && $paciente != "null" ? " CONCAT(ci.nombre,' ',ci.s_nombre,' ',ci.apellido,' ',ci.s_apellido) like '%{$paciente}%'" : "",
+			!empty($fecha) && $fecha != "null" ? " CAST(f.`fecha` AS CHAR) LIKE '%{$fecha}%'" : "",
+			!empty($hora) && $hora != "null" ? " CAST(f.`hora` AS CHAR) LIKE '%{$hora}%'" : "",
+			!empty($proced) && $proced != "null" && $proced != "all" ? "id_proced = '$proced'" : "",
 		];
 
 		$where_conditions = array_filter($where_conditions);
 		$where = count($where_conditions) > 0 ? "" . implode(" AND ", $where_conditions) : "";
 
-		$data = (array) self::select($tables, "", $fields, "", $where);
+		$data = (array) self::select($tables, $joins, $fields, "INNER JOIN", $where);
 
 		return $data;
 	}
 
 	public static function add()
 	{
-		$_cat_proced = new Model__cat_proced();
+		$_citas = new Model__cat_proced();
 		$alertas = [];
 
-		$_cat_proced->sincronizar($_POST);
-		//debuguear($_cat_proced);
+		$_citas->sincronizar($_POST);
+		//debuguear($_citas);
 
-		$alertas = $_cat_proced->validar();
+		$alertas = $_citas->validar();
 
 		if (empty($alertas)) {
-			$rsp = $_cat_proced->guardar();
+			$rsp = $_citas->guardar();
 
 			if ($rsp == true) {
 				/* eliminamos las variables */
-				unset($_cat_proced);
+				unset($_citas);
 				unset($_POST);
 				$data = self::seach();
 				$result = Html::createTabla($data, ["delete", "update"]);
@@ -133,23 +138,23 @@ class Model_citas extends ActiveRecord
 	{
 		// debuguear($_POST);
 		if (isset($_POST["id"]) && !empty($_POST["id"])) {
-			$_cat_proced = Model__cat_proced::find($_POST["id"]);
+			$_citas = Model__cat_proced::find($_POST["id"]);
 
 			/*  variables  */
 			$alertas = [];
 
-			$_cat_proced->sincronizar($_POST);
+			$_citas->sincronizar($_POST);
 
-			$alertas = $_cat_proced->validar();
+			$alertas = $_citas->validar();
 
 			if (empty($alertas)) {
-				// debuguear($_cat_proced);
+				// debuguear($_citas);
 
-				$rsp = $_cat_proced->guardar();
+				$rsp = $_citas->guardar();
 
 				if ($rsp == true) {
 					/* eliminamos las variables */
-					unset($_cat_proced);
+					unset($_citas);
 					unset($_POST);
 					$data = self::seach();
 					$result = Html::createTabla($data, ["delete", "update"]);
@@ -182,12 +187,12 @@ class Model_citas extends ActiveRecord
 		if (isset($_POST["id"]) && !empty($_POST["id"])) {
 			$id = $_POST["id"];
 
-			$_model = new Model__cat_proced();
-			$rsp = $_model->eliminar("id", $id);
+			$_citas = new Model__cat_proced();
+			$rsp = $_citas->eliminar("id", $id);
 
 			if ($rsp == true) {
 				/* eliminamos las variables */
-				unset($_model);
+				unset($_citas);
 				unset($_POST);
 				$data = self::seach();
 				$result = Html::createTabla($data, ["delete", "update"]);
@@ -205,13 +210,13 @@ class Model_citas extends ActiveRecord
 	public static function filter()
 	{
 		$filter = [
-			"id" => "filter_cat_proced",
+			"id" => "filter_citas",
 			"class" => "ui stackable form",
 			"header" => "Filtros",
 			"fields" => [
 				[
-					"label" => "Nombre",
-					"id" => "nombre",
+					"label" => "Paciente",
+					"id" => "flt_nombre",
 					"name" => "nombre",
 					"type" => "text",
 					"data-type" => "text",
@@ -219,14 +224,34 @@ class Model_citas extends ActiveRecord
 					"onkeypress" => "return lettersOnly(event);",
 				],
 				[
-					"label" => "Descripción",
-					"id" => "descripcion",
-					"name" => "descripcion",
-					"type" => "text",
-					"data-type" => "text",
-					"placeholder" => "",
-					"onkeypress" => "return lettersOnly(event);",
+					"label" => "Fecha",
+					"id" => "flt_fecha",
+					"name" => "fecha",
+					"type" => "date",
+					"data-type" => "date",
 				],
+				[
+					"label" => "Hora",
+					"id" => "flt_hora",
+					"name" => "hora",
+					"type" => "time",
+					"data-type" => "time",
+				],
+				[
+					"type" => "select",
+					"data-type" => "select",
+					"label" => "Procedimientos",
+					"id" => "flt_id_proced",
+					"name" => "id_proced",
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+					],
+					"value" => "OT",
+				],
+
 				[
 					"label" => "Botones",
 					"type" => "buttons",
@@ -265,7 +290,7 @@ class Model_citas extends ActiveRecord
 			],
 		];
 
-		$cacheKey = "filter_cat_proced";
+		$cacheKey = "filter_citas";
 		$cachedData = Cache::get($cacheKey);
 
 		if ($cachedData !== false && !empty($cachedData)) {
@@ -283,7 +308,7 @@ class Model_citas extends ActiveRecord
 	public static function modal($prm = "")
 	{
 		$modal_edit = [
-			"id" => "modal_edit_cat_proced",
+			"id" => "modal_edit_citas",
 			"class" => "ui longer modal",
 			"header" => "Registro de Categotias Procedimientos",
 			"fields" => [
@@ -297,26 +322,60 @@ class Model_citas extends ActiveRecord
 					"required" => true,
 				],
 				[
-					"label" => "Nombre",
-					"id" => "nombre",
-					"name" => "nombre",
-					"type" => "text",
-					"data-type" => "text",
-					"placeholder" => "Nombre de la categoria",
+					"type" => "select_seach",
+					"data-type" => "select",
+					"label" => "Paciente",
+					"id" => "id_cliente",
+					"name" => "id_cliente",
 					"required" => true,
-					"onkeypress" => "return letters_espace_Only(event);",
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+					],
+					"value" => "OT",
 				],
 				[
-					"label" => "Descripción",
-					"id" => "descripcion",
-					"name" => "descripcion",
+					"label" => "Fecha",
+					"id" => "fecha",
+					"name" => "fecha",
+					"type" => "date",
+					"data-type" => "date",
+					"required" => true,
+				],
+				[
+					"label" => "Hora",
+					"id" => "hora",
+					"name" => "hora",
+					"type" => "time",
+					"data-type" => "time",
+					"required" => true,
+				],
+				[
+					"type" => "select_seach",
+					"data-type" => "select",
+					"label" => "Procedimiento",
+					"id" => "id_proced",
+					"name" => "id_proced",
+					"required" => true,
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+					],
+					"value" => "OT",
+				],
+				[
+					"label" => "Observacion",
+					"id" => "observacion",
+					"name" => "observacion",
 					"type" => "textarea",
 					"data-type" => "textarea",
 					"maxlength" => "100",
 					"rows" => "4",
 					"required" => true,
-					"placeholder" => "Descripción de la categoria",
-					"onkeypress" => "",
 				],
 				[
 					"label" => "Botones",
@@ -331,8 +390,8 @@ class Model_citas extends ActiveRecord
 						[
 							"class" => "ui black right floated  deny button",
 							"id" => "cancel_edit",
-							"onclick" => "cleanForm('modal_edit');
-							$('#modal_edit').modal('hide'); ",
+							"onclick" => "cleanForm('modal_edit_citas');
+							$('#modal_edit_citas').modal('hide'); ",
 							"label" => "Cancelar",
 							"icon" => "cancel icon",
 						],
@@ -342,31 +401,65 @@ class Model_citas extends ActiveRecord
 		];
 
 		$modal_add = [
-			"id" => "modal_add_cat_proced",
+			"id" => "modal_add_citas",
 			"class" => "ui longer modal",
 			"header" => "Registro de clientes",
 			"fields" => [
 				[
-					"label" => "Nombre",
-					"id" => "nombre",
-					"name" => "nombre",
-					"type" => "text",
-					"data-type" => "text",
-					"placeholder" => "Primer Nombre",
+					"type" => "select_seach",
+					"data-type" => "select",
+					"label" => "Paciente",
+					"id" => "id_cliente",
+					"name" => "id_cliente",
 					"required" => true,
-					"onkeypress" => "return letters_espace_Only(event);",
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+					],
+					"value" => "OT",
 				],
 				[
-					"label" => "Descripción",
-					"id" => "descripcion",
-					"name" => "descripcion",
+					"label" => "Fecha",
+					"id" => "fecha",
+					"name" => "fecha",
+					"type" => "date",
+					"data-type" => "date",
+					"required" => true,
+				],
+				[
+					"label" => "Hora",
+					"id" => "hora",
+					"name" => "hora",
+					"type" => "time",
+					"data-type" => "time",
+					"required" => true,
+				],
+				[
+					"type" => "select_seach",
+					"data-type" => "select",
+					"label" => "Procedimiento",
+					"id" => "id_proced",
+					"name" => "id_proced",
+					"required" => true,
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+					],
+					"value" => "OT",
+				],
+				[
+					"label" => "Observacion",
+					"id" => "observacion",
+					"name" => "observacion",
 					"type" => "textarea",
 					"data-type" => "textarea",
 					"maxlength" => "100",
 					"rows" => "4",
 					"required" => true,
-					"placeholder" => "Descripción de la categoria",
-					"onkeypress" => "",
 				],
 				[
 					"label" => "Botones",
@@ -381,8 +474,8 @@ class Model_citas extends ActiveRecord
 						[
 							"class" => "ui black right floated  deny button",
 							"id" => "cancel_add",
-							"onclick" => "cleanForm('modal_add');
-							$('#modal_add').modal('hide'); ",
+							"onclick" => "cleanForm('modal_add_citas');
+							$('#modal_add_citas').modal('hide'); ",
 							"label" => "Cancelar",
 							"icon" => "cancel icon",
 						],
@@ -393,7 +486,7 @@ class Model_citas extends ActiveRecord
 
 		if (isset($prm) && $prm == "edit") {
 			/* Verificar si la información se encuentra en el cache */
-			$cacheKey = "modal_edit_cat_proced";
+			$cacheKey = "modal_edit_citas";
 			$cachedData = Cache::get($cacheKey);
 
 			// var_dump($cachedData);
@@ -411,7 +504,7 @@ class Model_citas extends ActiveRecord
 			Cache::set($cacheKey, $result);
 			return $result;
 		} else {
-			$cacheKey = "modal_add_cat_proced";
+			$cacheKey = "modal_add_citas";
 			$cachedData = Cache::get($cacheKey);
 
 			if ($cachedData !== false && !empty($cachedData)) {
