@@ -5,6 +5,7 @@ namespace Controllers;
 header("Access-Control-Allow-Origin: *");
 use MVC\Router;
 use Model\Model_proced;
+use Classes\Html;
 /* Categoria procedimientos */
 class ProcedController
 {
@@ -14,23 +15,23 @@ class ProcedController
 		isAdmin();
 
 		$frm_filter = Model_proced::filter();
-		// $frm_modal_edit = Model_proced::modal("edit");
-		// $frm_modal_add = Model_proced::modal();
+		$frm_modal_edit = Model_proced::modal("edit");
+		$frm_modal_add = Model_proced::modal();
 
 		$router->render("config/proced", [
 			"name" => $_SESSION["nombre"],
 			"page" => "Procedimientos",
 			"filter" => $frm_filter,
-			// "modal_add" => $frm_modal_add,
-			// "modal_edit" => $frm_modal_edit,
+			"modal_add" => $frm_modal_add,
+			"modal_edit" => $frm_modal_edit,
 			"script" => "<script src='build/js/ProcedFunction.js'></script>",
 		]);
 	}
 
 	public static function seach()
 	{
-		$result = Model_proced::seach();
-
+		$data = Model_proced::seach();
+		$result = Html::createTabla($data, ["delete", "update"]);
 		header("Content-Type: application/json");
 		echo json_encode(["resultado" => $result]);
 		exit();
@@ -46,17 +47,17 @@ class ProcedController
 		exit();
 	}
 
-	public static function add_cat_proced()
+	public static function add_proced()
 	{
 		Model_proced::add();
 	}
 
-	public static function update_cat_proced()
+	public static function update_proced()
 	{
 		Model_proced::update();
 	}
 
-	public static function delete_cat_proced()
+	public static function delete_proced()
 	{
 		Model_proced::delete();
 	}

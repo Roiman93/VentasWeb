@@ -4,10 +4,11 @@
  */
 window.addEventListener("load", function () {
 	seach();
+	cargar_categorias();
 });
 
 async function seach() {
-	$filter = obtain("filter_cat_proced");
+	$filter = obtain("filter_proced");
 
 	const datos = new FormData();
 	for (let prop in $filter) {
@@ -17,7 +18,7 @@ async function seach() {
 
 	try {
 		/* Petición hacia la api */
-		const url = "http://ventasweb.local/api/sh_cat_proced";
+		const url = "http://ventasweb.local/api/sh_proced";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
@@ -27,27 +28,56 @@ async function seach() {
 		displayResult(data);
 	} catch (error) {}
 }
+/* cargamos los select categorias */
+async function cargar_categorias() {
+	const datos = new FormData();
+	for (let prop in $filter) {
+		// console.log(prop + ": " + $filter[prop]);
+		datos.append(prop, $filter[prop]);
+	}
 
+	try {
+		/* Petición hacia la api */
+		const url = "http://ventasweb.local/api/cat_proceds";
+		const respuesta = await fetch(url, {
+			method: "POST",
+			body: datos,
+		});
+		data = await respuesta.json();
+		if (data.error) {
+			alertify.error(data.error);
+		} else if (data.resultado.length > 0) {
+			$("#id_categoria").append("<option value='all'> Todos </option>");
+			$.each(data.resultado, function (key, registro) {
+				$("#id_categoria_edit").append("<option value=" + registro.id + ">" + registro.Nombre + "</option>");
+				$("#id_categoria_add").append("<option value=" + registro.id + ">" + registro.Nombre + "</option>");
+				$("#id_categoria").append("<option value=" + registro.id + ">" + registro.Nombre + "</option>");
+			});
+		}
+	} catch (error) {}
+}
+/*  actualiza los registros en la bd */
 async function updateRecord(id) {
 	const datos = new FormData();
 	datos.append("id", id);
 	try {
 		/* Petición hacia la api */
-		const url = "http://ventasweb.local/api/get_cat_proced";
+		const url = "http://ventasweb.local/api/get_proced";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
 		});
 		data = await respuesta.json();
 
-		$("#modal_edit").modal("show");
-		// console.log(data.resultado);
-		obtain("modal_edit", data.resultado);
+		$("#modal_edit_proced").modal("show");
+		console.log(data.resultado);
+
+		obtain("modal_edit_proced", data.resultado);
 	} catch (error) {}
 }
 
 async function update() {
-	result = validateForm("modal_edit");
+	result = validateForm("modal_edit_proced");
 
 	if (result != false) {
 		const datos = new FormData();
@@ -58,7 +88,7 @@ async function update() {
 
 		try {
 			/* Petición hacia la api */
-			const url = "http://ventasweb.local/api/cat_proced_up";
+			const url = "http://ventasweb.local/api/proced_up";
 			const respuesta = await fetch(url, {
 				method: "POST",
 				body: datos,
@@ -69,8 +99,8 @@ async function update() {
 				swal("Registro Actualizado", {
 					icon: "success",
 				});
-				cleanForm("modal_edit");
-				$("#modal_edit").modal("hide");
+				cleanForm("modal_edit_proced");
+				$("#modal_edit_proced").modal("hide");
 				displayResult(data);
 			} else {
 				swal("Error", {
@@ -84,7 +114,7 @@ async function update() {
 
 /* se almacena el registro en la bd */
 async function add() {
-	result = validateForm("modal_add");
+	result = validateForm("modal_add_proced");
 
 	if (result != false) {
 		const datos = new FormData();
@@ -95,7 +125,7 @@ async function add() {
 
 		try {
 			/* Petición hacia la api */
-			const url = "http://ventasweb.local/api/cat_proced_ad";
+			const url = "http://ventasweb.local/api/proced_ad";
 			const respuesta = await fetch(url, {
 				method: "POST",
 				body: datos,
@@ -106,8 +136,8 @@ async function add() {
 				swal("Registro Almacenado", {
 					icon: "success",
 				});
-				cleanForm("modal_add");
-				$("#modal_add").modal("hide");
+				cleanForm("modal_add_proced");
+				$("#modal_add_proced").modal("hide");
 				displayResult(data);
 			} else {
 				swal("Error", {
@@ -131,7 +161,7 @@ async function deleteCustomer(id) {
 	datos.append("id", id);
 	try {
 		/* Petición hacia la api */
-		const url = "http://ventasweb.local/api/cat_proced_dl";
+		const url = "http://ventasweb.local/api/proced_dl";
 		const respuesta = await fetch(url, {
 			method: "POST",
 			body: datos,
@@ -235,7 +265,7 @@ $("#search").click(function (e) {
 @param {object} e - Evento del botón "Agregar".
 */
 $("#add").click(function (e) {
-	$("#modal_add").modal("show");
+	$("#modal_add_proced").modal("show");
 });
 /**
 * Función que se ejecuta al hacer clic en el botón "Buscar .

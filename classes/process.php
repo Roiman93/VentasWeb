@@ -152,45 +152,17 @@ class Process
 
 	public static function generarOpcionesSelect($resultadosConsulta, $value = "id", $label = "nombre")
 	{
-		$opcionesSelect = [];
-
-		// Agregar opción de selección vacía
-		$opcionesSelect["OT"] = [
-			"label" => "--Seleccione--",
-			"disabled" => true,
+		$opcionesSelect = [
+			"OT" => [
+				"label" => "--Seleccione--",
+				"disabled" => true,
+			],
 		];
 
-		// Agregar opciones de la consulta
 		foreach ($resultadosConsulta as $resultado) {
-			$opcionesSelect[$resultado->{$value}] = [
-				"label" => $resultado->{$label},
-				"value" => $resultado->{$value},
-			];
+			$opcionesSelect[$resultado->{$value}] = $resultado->{$label};
 		}
 
-		// Devolver array completo
-		return [$opcionesSelect, "value" => "OT"];
+		return $opcionesSelect;
 	}
-
-	// public static function generarOpcionesSelect($resultadosConsulta, $value = "id", $label = "nombre")
-	// {
-	// 	$opcionesSelect = [];
-
-	// 	// Agregar opción de selección vacía
-	// 	$opcionesSelect["OT"] = [
-	// 		"label" => "--Selecione--",
-	// 		"disabled" => true,
-	// 	];
-
-	// 	// Agregar opciones de la consulta
-	// 	foreach ($resultadosConsulta as $resultado) {
-	// 		$opcionesSelect[$resultado["$value"]] = $resultado["$label"];
-	// 	}
-
-	// 	// Devolver array completo
-	// 	return [
-	// 		"options" => $opcionesSelect,
-	// 		"value" => "OT",
-	// 	];
-	// }
 }

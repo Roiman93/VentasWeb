@@ -76,17 +76,23 @@ class Model_proced extends ActiveRecord
 
 	public static function seach()
 	{
-		$fields = ["id", "nombre as Nombre", "descripcion as Descripcion"];
+		$fields = ["id", "nombre as Nombre", "id_categoria", "descripcion as Descripcion", "valor as Valor", "codigo as Codigo"];
 
-		$tables = ["cat_proced"];
+		$tables = ["proced"];
 
 		/* variables */
 		$nombre = isset($_POST["nombre"]) ? $_POST["nombre"] : "null";
+		$id_cat = isset($_POST["id_categoria"]) ? $_POST["id_categoria"] : "null";
 		$descripcion = isset($_POST["descripcion"]) ? $_POST["descripcion"] : "null";
+		$valor = isset($_POST["valor"]) ? $_POST["valor"] : "null";
+		$codigo = isset($_POST["codigo"]) ? $_POST["codigo"] : "null";
 
 		$where_conditions = [
 			!empty($nombre) && $nombre != "null" ? " nombre like '%{$nombre}%'" : "",
+			!empty($id_cat) && $id_cat != "null" && $id_cat != "all" ? "id_categoria = '$id_cat'" : "",
 			!empty($descripcion) && $descripcion != "null" ? " descripcion like '%{$descripcion}%'" : "",
+			!empty($valor) && $valor != "null" ? " valor like '%{$valor}%'" : "",
+			!empty($codigo) && $codigo != "null" ? " codigo like '%{$codigo}%'" : "",
 		];
 
 		$where_conditions = array_filter($where_conditions);
@@ -94,9 +100,7 @@ class Model_proced extends ActiveRecord
 
 		$data = (array) self::select($tables, "", $fields, "", $where);
 
-		$tabla = Html::createTabla($data, ["delete", "update"]);
-
-		return $tabla;
+		return $data;
 	}
 
 	public static function add()
@@ -116,7 +120,8 @@ class Model_proced extends ActiveRecord
 				/* eliminamos las variables */
 				unset($proced);
 				unset($_POST);
-				$result = self::seach();
+				$data = self::seach();
+				$result = Html::createTabla($data, ["delete", "update"]);
 
 				header("Content-Type: application/json");
 				echo json_encode([
@@ -162,7 +167,8 @@ class Model_proced extends ActiveRecord
 					/* eliminamos las variables */
 					unset($proced);
 					unset($_POST);
-					$result = self::seach();
+					$data = self::seach();
+					$result = Html::createTabla($data, ["delete", "update"]);
 
 					header("Content-Type: application/json");
 					echo json_encode([
@@ -199,7 +205,8 @@ class Model_proced extends ActiveRecord
 				/* eliminamos las variables */
 				unset($_model);
 				unset($_POST);
-				$result = self::seach();
+				$data = self::seach();
+				$result = Html::createTabla($data, ["delete", "update"]);
 
 				echo json_encode([
 					"resultado" => $result,
@@ -361,9 +368,15 @@ class Model_proced extends ActiveRecord
 					"type" => "select",
 					"data-type" => "select",
 					"label" => "Categoria",
-					"id" => "id_categoria",
+					"id" => "id_categoria_edit",
 					"name" => "id_categoria",
-					"options" => debuguear(Model__cat_proced::all()),
+					"required" => true,
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+					],
 					"value" => "OT",
 				],
 				[
@@ -401,8 +414,8 @@ class Model_proced extends ActiveRecord
 						[
 							"class" => "ui black right floated  deny button",
 							"id" => "cancel_edit",
-							"onclick" => "cleanForm('modal_edit');
-							$('#modal_edit').modal('hide'); ",
+							"onclick" => "cleanForm('modal_edit_proced');
+							$('#modal_edit_proced').modal('hide'); ",
 							"label" => "Cancelar",
 							"icon" => "cancel icon",
 						],
@@ -440,9 +453,15 @@ class Model_proced extends ActiveRecord
 					"type" => "select",
 					"data-type" => "select",
 					"label" => "Categoria",
-					"id" => "id_categoria",
+					"id" => "id_categoria_add",
 					"name" => "id_categoria",
-					"options" => debuguear(Model__cat_proced::all()),
+					"required" => true,
+					"options" => [
+						"OT" => [
+							"label" => "--Selecione--",
+							"disabled" => true,
+						],
+					],
 					"value" => "OT",
 				],
 				[
@@ -480,8 +499,8 @@ class Model_proced extends ActiveRecord
 						[
 							"class" => "ui black right floated  deny button",
 							"id" => "cancel_add",
-							"onclick" => "cleanForm('modal_add');
-							$('#modal_add').modal('hide'); ",
+							"onclick" => "cleanForm('modal_add_proced');
+							$('#modal_add_proced').modal('hide'); ",
 							"label" => "Cancelar",
 							"icon" => "cancel icon",
 						],

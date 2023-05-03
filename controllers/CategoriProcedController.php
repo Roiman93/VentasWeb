@@ -4,6 +4,7 @@ namespace Controllers;
 
 header("Access-Control-Allow-Origin: *");
 use MVC\Router;
+use Classes\Html;
 use Model\Model__cat_proced;
 /* Categoria procedimientos */
 class CategoriProcedController
@@ -27,9 +28,18 @@ class CategoriProcedController
 		]);
 	}
 
-	public static function seach()
+	public static function all()
 	{
 		$result = Model__cat_proced::seach();
+		header("Content-Type: application/json");
+		echo json_encode(["resultado" => $result]);
+		exit();
+	}
+
+	public static function seach()
+	{
+		$data = Model__cat_proced::seach();
+		$result = Html::createTabla($data, ["delete", "update"]);
 
 		header("Content-Type: application/json");
 		echo json_encode(["resultado" => $result]);

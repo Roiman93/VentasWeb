@@ -82,9 +82,7 @@ class Model__cat_proced extends ActiveRecord
 
 		$data = (array) self::select($tables, "", $fields, "", $where);
 
-		$tabla = Html::createTabla($data, ["delete", "update"]);
-
-		return $tabla;
+		return $data;
 	}
 
 	public static function add()
@@ -104,7 +102,8 @@ class Model__cat_proced extends ActiveRecord
 				/* eliminamos las variables */
 				unset($_cat_proced);
 				unset($_POST);
-				$result = self::seach();
+				$data = self::seach();
+				$result = Html::createTabla($data, ["delete", "update"]);
 
 				header("Content-Type: application/json");
 				echo json_encode([
@@ -150,7 +149,8 @@ class Model__cat_proced extends ActiveRecord
 					/* eliminamos las variables */
 					unset($_cat_proced);
 					unset($_POST);
-					$result = self::seach();
+					$data = self::seach();
+					$result = Html::createTabla($data, ["delete", "update"]);
 
 					header("Content-Type: application/json");
 					echo json_encode([
@@ -187,7 +187,8 @@ class Model__cat_proced extends ActiveRecord
 				/* eliminamos las variables */
 				unset($_model);
 				unset($_POST);
-				$result = self::seach();
+				$data = self::seach();
+				$result = Html::createTabla($data, ["delete", "update"]);
 
 				echo json_encode([
 					"resultado" => $result,

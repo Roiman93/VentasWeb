@@ -394,6 +394,7 @@ function obtain(idFormulario, obj) {
 						break;
 
 					case "select":
+						console.log(valor);
 						$campo.find(`option[value="${valor}"]`).prop("selected", true);
 
 						break;

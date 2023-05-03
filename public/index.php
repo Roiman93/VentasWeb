@@ -69,6 +69,7 @@ $router->post("/api/cliente_delete", [CustomerController::class, "eliminar"]);
 /* categorias procedimientos */
 $router->get("/categorias_precedimientos", [CategoriProcedController::class, "index"]);
 $router->post("/api/sh_cat_proced", [CategoriProcedController::class, "seach"]);
+$router->post("/api/cat_proceds", [CategoriProcedController::class, "all"]);
 $router->post("/api/get_cat_proced", [CategoriProcedController::class, "find"]);
 $router->post("/api/cat_proced_ad", [CategoriProcedController::class, "add_cat_proced"]);
 $router->post("/api/cat_proced_up", [CategoriProcedController::class, "update_cat_proced"]);
@@ -78,9 +79,9 @@ $router->post("/api/cat_proced_dl", [CategoriProcedController::class, "delete_ca
 $router->get("/precedimientos", [ProcedController::class, "index"]);
 $router->post("/api/sh_proced", [ProcedController::class, "seach"]);
 $router->post("/api/get_proced", [ProcedController::class, "find"]);
-$router->post("/api/proced_ad", [ProcedController::class, "add_cat_proced"]);
-$router->post("/api/proced_up", [ProcedController::class, "update_cat_proced"]);
-$router->post("/api/proced_dl", [ProcedController::class, "delete_cat_proced"]);
+$router->post("/api/proced_ad", [ProcedController::class, "add_proced"]);
+$router->post("/api/proced_up", [ProcedController::class, "update_proced"]);
+$router->post("/api/proced_dl", [ProcedController::class, "delete_proced"]);
 
 /* calendario */
 $router->get("/agenda", [CalendarController::class, "index"]);
