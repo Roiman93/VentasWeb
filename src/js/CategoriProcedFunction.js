@@ -40,14 +40,14 @@ async function updateRecord(id) {
 		});
 		data = await respuesta.json();
 
-		$("#modal_edit").modal("show");
+		$("#modal_edit_cat_proced").modal("show");
 		// console.log(data.resultado);
-		obtain("modal_edit", data.resultado);
+		obtain("modal_edit_cat_proced", data.resultado);
 	} catch (error) {}
 }
 
 async function update() {
-	result = validateForm("modal_edit");
+	result = validateForm("modal_edit_cat_proced");
 
 	if (result != false) {
 		const datos = new FormData();
@@ -69,8 +69,8 @@ async function update() {
 				swal("Registro Actualizado", {
 					icon: "success",
 				});
-				cleanForm("modal_edit");
-				$("#modal_edit").modal("hide");
+				cleanForm("modal_edit_cat_proced");
+				$("#modal_edit_cat_proced").modal("hide");
 				displayResult(data);
 			} else {
 				swal("Error", {
@@ -84,7 +84,7 @@ async function update() {
 
 /* se almacena el registro en la bd */
 async function add() {
-	result = validateForm("modal_add");
+	result = validateForm("modal_add_cat_proced");
 
 	if (result != false) {
 		const datos = new FormData();
@@ -106,8 +106,8 @@ async function add() {
 				swal("Registro Almacenado", {
 					icon: "success",
 				});
-				cleanForm("modal_add");
-				$("#modal_add").modal("hide");
+				cleanForm("modal_add_cat_proced");
+				$("#modal_add_cat_proced").modal("hide");
 				displayResult(data);
 			} else {
 				swal("Error", {
@@ -213,7 +213,7 @@ function displayResultfind(data) {
 		}).then(function () {});
 	} else {
 		if (data.resultado) {
-			$("#modal_edit").modal("show");
+			$("#modal_edit_cat_proced").modal("show");
 			$("#registros").html(data.resultado);
 		} else {
 			console.log("no han resultados");
@@ -235,7 +235,7 @@ $("#search").click(function (e) {
 @param {object} e - Evento del botón "Agregar".
 */
 $("#add").click(function (e) {
-	$("#modal_add").modal("show");
+	$("#modal_add_cat_proced").modal("show");
 });
 /**
 * Función que se ejecuta al hacer clic en el botón "Buscar .

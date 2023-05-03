@@ -8,10 +8,10 @@ use Classes\Html;
 use Classes\Cache;
 
 /* categoria procedimientos */
-class Model__cat_proced extends ActiveRecord
+class Model_citas extends ActiveRecord
 {
 	/* tabla de la Base de datos */
-	protected static $tabla = "cat_proced";
+	protected static $tabla = "citas";
 
 	/* columnas de la tabla  de la BD*/
 	protected static $columnasDB = [];
@@ -41,8 +41,10 @@ class Model__cat_proced extends ActiveRecord
 	}
 
 	private static $reglasValidacion = [
-		"nombre" => ["required"],
-		"descripcion" => ["required"],
+		"id_proced" => ["required"],
+		"fecha" => ["required"],
+		"hora" => ["required"],
+		"id_cliente" => ["required"],
 	];
 
 	public function validar()

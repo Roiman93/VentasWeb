@@ -4,7 +4,7 @@
         <a class="ui logo icon image" href="">
             <img src="build/img/inicio.webp" width="35%">
         </a>
-        <a href="/"><b>Ventas Web</b></a>
+        <a href="/"><b>Control Web</b></a>
 
     </div>
 
@@ -24,19 +24,19 @@
     <div class="item">
         <div class="header">Modulo facturación</div>
         <div class="menu">
-            <a class="item" href="/ventas"> <i class="shopping  cart icon"></i><label>Ventas</label></a>
-            <a class="item" href=""><i class="box icon"></i><label>Mesas</label></a>
-            <a class="item" href="/cliente"><i class="id badge icon"></i><label>Registro de
-                    Clientes</label> </a>
+            <!-- <a class="item" href="/ventas"> <i class="shopping  cart icon"></i><label>Ventas</label></a> -->
+            <!-- <a class="item" href=""><i class="box icon"></i><label>Mesas</label></a> -->
+            <a class="item" href="/cliente"><i class="id badge icon"></i><label>Registro Pacientes</label> </a>
+            <a class="item" href="/agenda"><i class="id badge icon"></i><label>Agenda</label> </a>
             <!-- <a class="ui item"href="?opcion=List_Cliente"><i class="file alternate icon"></i><label>Listado de Clientes</label></a> -->
-            <a class="item" href="/List_ventas"><i class="file alternate icon"></i><label>Listado de
-                    Ventas</label></a>
+            <!-- <a class="item" href="/List_ventas"><i class="file alternate icon"></i><label>Listado de
+                    Ventas</label></a> -->
 
         </div>
     </div>
     <!-- fin intem -->
 
-    <div class="item">
+    <!-- <div class="item">
         <div class="header">Modulo caja</div>
         <div class="menu">
 
@@ -45,9 +45,9 @@
 
 
         </div>
-    </div>
+    </div> -->
 
-    <div class="item">
+    <!-- <div class="item">
         <div class="header">Modulo inventario</div>
         <div class="menu">
 
@@ -56,9 +56,9 @@
 
 
         </div>
-    </div>
+    </div> -->
 
-    <div class="item">
+    <!-- <div class="item">
         <div class="header">Modulo compras</div>
         <div class="menu">
 
@@ -71,16 +71,18 @@
 
 
         </div>
-    </div>
+    </div> -->
 
     <div class="item">
         <div class="header">Configuración</div>
         <div class="menu">
 
-            <a class="ui item" href="?opcion=vista_config"><i class="cogs icon"></i><label>Configuracion</label></a>
+            <a class="ui item" href="/categorias_precedimientos"><i class="cogs icon"></i><label>Categorias Procedimientos</label></a>
+            <a class="ui item" href="/procedimientos"><i class="cogs icon"></i><label>Procedimientos</label></a>
+            <!-- <a class="ui item" href="?opcion=vista_config"><i class="cogs icon"></i><label>Configuracion</label></a>
             <a class="ui item" href="?opcion=Resolucion"><i class="pencil alternate icon"></i><label>Resolucion de
                     Facturacion</label></a>
-            <a class="ui item" href="?opcion=usuarios"><i class="user icon"></i><label>Usuarios</label></a>
+            <a class="ui item" href="?opcion=usuarios"><i class="user icon"></i><label>Usuarios</label></a> -->
 
 
         </div>
@@ -118,9 +120,7 @@
 
                     </b>
                     <b>&nbsp &nbsp
-                        <i class="shield alternate icon"></i> <?php isset($_SESSION["admin"]) && $_SESSION["admin"] == 1
-                        	? print "Administrador"
-                        	: print "Vendedor"; ?>
+                        <i class="shield alternate icon"></i> <?php isset($_SESSION["admin"]) && $_SESSION["admin"] == 1 ? print "Administrador" : print "Vendedor"; ?>
                     </b>
                 </div>
 
